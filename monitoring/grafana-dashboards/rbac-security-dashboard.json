@@ -1,0 +1,412 @@
+{
+    "dashboard": {
+        "id": null,
+        "title": "Dynamic RBAC Security Dashboard",
+        "tags": [
+            "rbac",
+            "security",
+            "audit"
+        ],
+        "style": "dark",
+        "timezone": "browser",
+        "refresh": "30s",
+        "time": {
+            "from": "now-24h",
+            "to": "now"
+        },
+        "panels": [
+            {
+                "id": 1,
+                "title": "Failed Login Attempts",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "increase(rbac_failed_login_attempts_total[1h])",
+                        "legendFormat": "Failed Logins (1h)",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "short",
+                        "min": 0,
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 5
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 20
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 6,
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            {
+                "id": 2,
+                "title": "Privilege Escalation Attempts",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "increase(rbac_privilege_escalation_attempts_total[24h])",
+                        "legendFormat": "Escalation Attempts (24h)",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "short",
+                        "min": 0,
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 1
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 6,
+                    "x": 6,
+                    "y": 0
+                }
+            },
+            {
+                "id": 3,
+                "title": "Suspicious Access Events",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "increase(rbac_suspicious_access_total[24h])",
+                        "legendFormat": "Suspicious Events (24h)",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "short",
+                        "min": 0,
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 5
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 15
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 6,
+                    "x": 12,
+                    "y": 0
+                }
+            },
+            {
+                "id": 4,
+                "title": "After Hours Access",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "increase(rbac_after_hours_access_total[24h])",
+                        "legendFormat": "After Hours (24h)",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "short",
+                        "min": 0,
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 10
+                                },
+                                {
+                                    "color": "orange",
+                                    "value": 25
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 6,
+                    "x": 18,
+                    "y": 0
+                }
+            },
+            {
+                "id": 5,
+                "title": "Security Events Timeline",
+                "type": "timeseries",
+                "targets": [
+                    {
+                        "expr": "increase(rbac_failed_login_attempts_total[5m])",
+                        "legendFormat": "Failed Logins",
+                        "refId": "A"
+                    },
+                    {
+                        "expr": "increase(rbac_privilege_escalation_attempts_total[5m])",
+                        "legendFormat": "Privilege Escalation",
+                        "refId": "B"
+                    },
+                    {
+                        "expr": "increase(rbac_suspicious_access_total[5m])",
+                        "legendFormat": "Suspicious Access",
+                        "refId": "C"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "short",
+                        "min": 0
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 24,
+                    "x": 0,
+                    "y": 8
+                }
+            },
+            {
+                "id": 6,
+                "title": "Top Failed Login Sources",
+                "type": "table",
+                "targets": [
+                    {
+                        "expr": "topk(10, sum by (source_ip) (increase(rbac_failed_login_attempts_total[24h])))",
+                        "legendFormat": "{{source_ip}}",
+                        "refId": "A",
+                        "format": "table"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "short"
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 16
+                }
+            },
+            {
+                "id": 7,
+                "title": "Permission Denial Rate by User",
+                "type": "table",
+                "targets": [
+                    {
+                        "expr": "topk(10, sum by (user_id) (rate(rbac_permission_checks_total{result=\"denied\"}[1h])))",
+                        "legendFormat": "{{user_id}}",
+                        "refId": "A",
+                        "format": "table"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "reqps"
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 16
+                }
+            },
+            {
+                "id": 8,
+                "title": "Bulk Data Access Events",
+                "type": "timeseries",
+                "targets": [
+                    {
+                        "expr": "increase(rbac_bulk_data_access_total[1h])",
+                        "legendFormat": "Bulk Access Events",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "short",
+                        "min": 0
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 24
+                }
+            },
+            {
+                "id": 9,
+                "title": "Role Assignment Changes",
+                "type": "timeseries",
+                "targets": [
+                    {
+                        "expr": "increase(rbac_role_assignments_total[1h])",
+                        "legendFormat": "Role Assignments",
+                        "refId": "A"
+                    },
+                    {
+                        "expr": "increase(rbac_role_removals_total[1h])",
+                        "legendFormat": "Role Removals",
+                        "refId": "B"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "short",
+                        "min": 0
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 24
+                }
+            },
+            {
+                "id": 10,
+                "title": "Audit Log Health",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "rbac_audit_log_gaps_total",
+                        "legendFormat": "Log Gaps",
+                        "refId": "A"
+                    },
+                    {
+                        "expr": "time() - rbac_last_audit_log_timestamp",
+                        "legendFormat": "Last Log Age (seconds)",
+                        "refId": "B"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "short",
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 300
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 900
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 24,
+                    "x": 0,
+                    "y": 32
+                }
+            }
+        ],
+        "templating": {
+            "list": [
+                {
+                    "name": "workspace",
+                    "type": "query",
+                    "query": "label_values(rbac_permission_checks_total, workspace_id)",
+                    "refresh": 1,
+                    "includeAll": true,
+                    "multi": true
+                },
+                {
+                    "name": "time_range",
+                    "type": "custom",
+                    "options": [
+                        {
+                            "text": "Last 1 hour",
+                            "value": "1h"
+                        },
+                        {
+                            "text": "Last 6 hours",
+                            "value": "6h"
+                        },
+                        {
+                            "text": "Last 24 hours",
+                            "value": "24h"
+                        },
+                        {
+                            "text": "Last 7 days",
+                            "value": "7d"
+                        }
+                    ],
+                    "current": {
+                        "text": "Last 24 hours",
+                        "value": "24h"
+                    }
+                }
+            ]
+        },
+        "annotations": {
+            "list": [
+                {
+                    "name": "Security Incidents",
+                    "datasource": "prometheus",
+                    "expr": "changes(rbac_security_incidents_total[1m])",
+                    "titleFormat": "Security Incident",
+                    "textFormat": "Security incident detected",
+                    "iconColor": "red"
+                },
+                {
+                    "name": "Role Changes",
+                    "datasource": "prometheus",
+                    "expr": "changes(rbac_role_modifications_total[1m])",
+                    "titleFormat": "Role Modified",
+                    "textFormat": "Role configuration changed"
+                }
+            ]
+        }
+    }
+}

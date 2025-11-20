@@ -1,0 +1,491 @@
+{
+    "dashboard": {
+        "id": null,
+        "title": "Dynamic RBAC Performance Dashboard",
+        "tags": [
+            "rbac",
+            "security",
+            "performance"
+        ],
+        "style": "dark",
+        "timezone": "browser",
+        "refresh": "30s",
+        "time": {
+            "from": "now-1h",
+            "to": "now"
+        },
+        "panels": [
+            {
+                "id": 1,
+                "title": "Permission Check Latency",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "avg(rbac_permission_check_duration_seconds)",
+                        "legendFormat": "Average Latency",
+                        "refId": "A"
+                    },
+                    {
+                        "expr": "histogram_quantile(0.95, rbac_permission_check_duration_seconds_bucket)",
+                        "legendFormat": "95th Percentile",
+                        "refId": "B"
+                    },
+                    {
+                        "expr": "histogram_quantile(0.99, rbac_permission_check_duration_seconds_bucket)",
+                        "legendFormat": "99th Percentile",
+                        "refId": "C"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "s",
+                        "min": 0,
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 0.1
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 0.5
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            {
+                "id": 2,
+                "title": "Permission Check Rate",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "rate(rbac_permission_checks_total[5m])",
+                        "legendFormat": "Checks/sec",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "reqps",
+                        "min": 0,
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 100
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 500
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 0
+                }
+            },
+            {
+                "id": 3,
+                "title": "Cache Hit Rate",
+                "type": "gauge",
+                "targets": [
+                    {
+                        "expr": "rate(rbac_cache_hits_total[5m]) / (rate(rbac_cache_hits_total[5m]) + rate(rbac_cache_misses_total[5m])) * 100",
+                        "legendFormat": "Hit Rate %",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "percent",
+                        "min": 0,
+                        "max": 100,
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "red",
+                                    "value": null
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 70
+                                },
+                                {
+                                    "color": "green",
+                                    "value": 90
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 8,
+                    "x": 0,
+                    "y": 8
+                }
+            },
+            {
+                "id": 4,
+                "title": "Active Sessions",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "rbac_active_sessions",
+                        "legendFormat": "Active Sessions",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "short",
+                        "min": 0,
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 1000
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 5000
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 8,
+                    "x": 8,
+                    "y": 8
+                }
+            },
+            {
+                "id": 5,
+                "title": "Database Query Performance",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "avg(rbac_db_query_duration_seconds)",
+                        "legendFormat": "Avg Query Time",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "s",
+                        "min": 0,
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 0.05
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 0.2
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 8,
+                    "x": 16,
+                    "y": 8
+                }
+            },
+            {
+                "id": 6,
+                "title": "Permission Check Latency Over Time",
+                "type": "timeseries",
+                "targets": [
+                    {
+                        "expr": "histogram_quantile(0.50, rbac_permission_check_duration_seconds_bucket)",
+                        "legendFormat": "50th Percentile",
+                        "refId": "A"
+                    },
+                    {
+                        "expr": "histogram_quantile(0.95, rbac_permission_check_duration_seconds_bucket)",
+                        "legendFormat": "95th Percentile",
+                        "refId": "B"
+                    },
+                    {
+                        "expr": "histogram_quantile(0.99, rbac_permission_check_duration_seconds_bucket)",
+                        "legendFormat": "99th Percentile",
+                        "refId": "C"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "s",
+                        "min": 0
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 24,
+                    "x": 0,
+                    "y": 16
+                }
+            },
+            {
+                "id": 7,
+                "title": "Permission Checks by Result",
+                "type": "piechart",
+                "targets": [
+                    {
+                        "expr": "sum by (result) (rate(rbac_permission_checks_total[5m]))",
+                        "legendFormat": "{{result}}",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "reqps"
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 24
+                }
+            },
+            {
+                "id": 8,
+                "title": "Cache Operations",
+                "type": "timeseries",
+                "targets": [
+                    {
+                        "expr": "rate(rbac_cache_hits_total[5m])",
+                        "legendFormat": "Cache Hits/sec",
+                        "refId": "A"
+                    },
+                    {
+                        "expr": "rate(rbac_cache_misses_total[5m])",
+                        "legendFormat": "Cache Misses/sec",
+                        "refId": "B"
+                    },
+                    {
+                        "expr": "rate(rbac_cache_invalidations_total[5m])",
+                        "legendFormat": "Cache Invalidations/sec",
+                        "refId": "C"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "reqps",
+                        "min": 0
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 24
+                }
+            },
+            {
+                "id": 9,
+                "title": "Role and Permission Counts",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "rbac_total_roles",
+                        "legendFormat": "Total Roles",
+                        "refId": "A"
+                    },
+                    {
+                        "expr": "rbac_total_permissions",
+                        "legendFormat": "Total Permissions",
+                        "refId": "B"
+                    },
+                    {
+                        "expr": "rbac_total_users_with_roles",
+                        "legendFormat": "Users with Roles",
+                        "refId": "C"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "short",
+                        "min": 0
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 24,
+                    "x": 0,
+                    "y": 32
+                }
+            },
+            {
+                "id": 10,
+                "title": "Error Rate",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "rate(rbac_errors_total[5m])",
+                        "legendFormat": "Errors/sec",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "reqps",
+                        "min": 0,
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 0.1
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 1
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 8,
+                    "x": 0,
+                    "y": 40
+                }
+            },
+            {
+                "id": 11,
+                "title": "Memory Usage",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "rbac_memory_usage_bytes",
+                        "legendFormat": "Memory Usage",
+                        "refId": "A"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "bytes",
+                        "min": 0,
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 1073741824
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 2147483648
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 8,
+                    "x": 8,
+                    "y": 40
+                }
+            },
+            {
+                "id": 12,
+                "title": "Top Permissions by Usage",
+                "type": "table",
+                "targets": [
+                    {
+                        "expr": "topk(10, sum by (permission) (rate(rbac_permission_checks_total[1h])))",
+                        "legendFormat": "{{permission}}",
+                        "refId": "A",
+                        "format": "table"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "reqps"
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 8,
+                    "x": 16,
+                    "y": 40
+                }
+            }
+        ],
+        "templating": {
+            "list": [
+                {
+                    "name": "instance",
+                    "type": "query",
+                    "query": "label_values(rbac_permission_checks_total, instance)",
+                    "refresh": 1,
+                    "includeAll": true,
+                    "multi": true
+                },
+                {
+                    "name": "workspace",
+                    "type": "query",
+                    "query": "label_values(rbac_permission_checks_total, workspace_id)",
+                    "refresh": 1,
+                    "includeAll": true,
+                    "multi": true
+                }
+            ]
+        },
+        "annotations": {
+            "list": [
+                {
+                    "name": "RBAC Events",
+                    "datasource": "prometheus",
+                    "expr": "changes(rbac_configuration_changes_total[1m])",
+                    "titleFormat": "RBAC Configuration Change",
+                    "textFormat": "Configuration updated"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,144 @@
+# Alertmanager configuration for PharmacyCopilot notifications
+
+global:
+  smtp_smarthost: 'smtp.resend.com:587'
+  smtp_from: 'alerts@PharmacyCopilot.com'
+  smtp_auth_username: 'resend'
+  smtp_auth_password: 'YOUR_RESEND_API_KEY'
+
+route:
+  group_by: ['alertname', 'service']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'web.hook'
+  routes:
+    - match:
+        severity: critical
+      receiver: 'critical-alerts'
+      group_wait: 5s
+      repeat_interval: 5m
+    - match:
+        service: PharmacyCopilot-api
+      receiver: 'api-team'
+    - match:
+        service: database
+      receiver: 'database-team'
+    - match:
+        service: security
+      receiver: 'security-team'
+      group_wait: 5s
+      repeat_interval: 15m
+
+receivers:
+  - name: 'web.hook'
+    webhook_configs:
+      - url: 'http://localhost:5005/webhook'
+        send_resolved: true
+
+  - name: 'critical-alerts'
+    email_configs:
+      - to: 'critical-alerts@PharmacyCopilot.com'
+        subject: '[CRITICAL] PharmacyCopilot Alert: {{ .GroupLabels.alertname }}'
+        body: |
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Service: {{ .Labels.service }}
+          Severity: {{ .Labels.severity }}
+          Started: {{ .StartsAt }}
+          {{ end }}
+        headers:
+          Priority: 'high'
+    slack_configs:
+      - api_url: 'YOUR_SLACK_WEBHOOK_URL'
+        channel: '#critical-alerts'
+        title: 'Critical Alert: {{ .GroupLabels.alertname }}'
+        text: |
+          {{ range .Alerts }}
+          *Alert:* {{ .Annotations.summary }}
+          *Description:* {{ .Annotations.description }}
+          *Service:* {{ .Labels.service }}
+          *Severity:* {{ .Labels.severity }}
+          {{ end }}
+        color: 'danger'
+
+  - name: 'api-team'
+    email_configs:
+      - to: 'api-team@PharmacyCopilot.com'
+        subject: '[API] PharmacyCopilot Alert: {{ .GroupLabels.alertname }}'
+        body: |
+          API Service Alert
+
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Started: {{ .StartsAt }}
+          {{ end }}
+
+          Dashboard: https://monitoring.PharmacyCopilot.com/d/api-dashboard
+    slack_configs:
+      - api_url: 'YOUR_SLACK_WEBHOOK_URL'
+        channel: '#api-alerts'
+        title: 'API Alert: {{ .GroupLabels.alertname }}'
+        text: |
+          {{ range .Alerts }}
+          {{ .Annotations.summary }}
+          {{ .Annotations.description }}
+          {{ end }}
+        color: 'warning'
+
+  - name: 'database-team'
+    email_configs:
+      - to: 'database-team@PharmacyCopilot.com'
+        subject: '[DATABASE] PharmacyCopilot Alert: {{ .GroupLabels.alertname }}'
+        body: |
+          Database Alert
+
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Started: {{ .StartsAt }}
+          {{ end }}
+
+          MongoDB Dashboard: https://monitoring.PharmacyCopilot.com/d/mongodb-dashboard
+    pagerduty_configs:
+      - routing_key: 'YOUR_PAGERDUTY_INTEGRATION_KEY'
+        description: 'Database Alert: {{ .GroupLabels.alertname }}'
+
+  - name: 'security-team'
+    email_configs:
+      - to: 'security-team@PharmacyCopilot.com'
+        subject: '[SECURITY] PharmacyCopilot Alert: {{ .GroupLabels.alertname }}'
+        body: |
+          Security Alert - Immediate Attention Required
+
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Started: {{ .StartsAt }}
+          {{ end }}
+
+          Security Dashboard: https://monitoring.PharmacyCopilot.com/d/security-dashboard
+        headers:
+          Priority: 'high'
+    slack_configs:
+      - api_url: 'YOUR_SLACK_WEBHOOK_URL'
+        channel: '#security-alerts'
+        title: '🚨 Security Alert: {{ .GroupLabels.alertname }}'
+        text: |
+          {{ range .Alerts }}
+          *Alert:* {{ .Annotations.summary }}
+          *Description:* {{ .Annotations.description }}
+          {{ end }}
+        color: 'danger'
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'service']
+
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'

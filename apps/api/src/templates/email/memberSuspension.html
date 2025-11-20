@@ -1,0 +1,189 @@
+<!-- SUBJECT: Account Suspended - {{workspaceName}} -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Suspended - PharmacyCopilot</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8fafc;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        .title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #dc2626;
+            margin-bottom: 10px;
+        }
+        .alert-box {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .reason-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #64748b;
+        }
+        .info-value {
+            color: #1e293b;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .cta-button:hover {
+            background: #1d4ed8;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .footer a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        @media only screen and (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+            }
+            .title {
+                font-size: 24px;
+            }
+            .info-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏥 PharmacyCopilot</div>
+            <h1 class="title">⚠️ Account Suspended</h1>
+        </div>
+
+        <div class="alert-box">
+            <p style="margin: 0; font-size: 16px; color: #991b1b;">
+                <strong>Dear {{firstName}},</strong>
+            </p>
+            <p style="margin: 10px 0 0 0; color: #991b1b;">
+                Your access to <strong>{{workspaceName}}</strong> has been temporarily suspended.
+            </p>
+        </div>
+
+        <div class="reason-box">
+            <div style="font-weight: 600; color: #1e293b; margin-bottom: 10px; font-size: 16px;">
+                Suspension Reason:
+            </div>
+            <div style="color: #475569; font-size: 15px; line-height: 1.6;">
+                {{reason}}
+            </div>
+        </div>
+
+        <div style="background: #f1f5f9; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <div class="info-row">
+                <span class="info-label">Workspace:</span>
+                <span class="info-value">{{workspaceName}}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Suspended On:</span>
+                <span class="info-value">{{suspendedDate}}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Status:</span>
+                <span class="info-value" style="color: #dc2626; font-weight: 600;">Suspended</span>
+            </div>
+        </div>
+
+        <div style="background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 15px; margin: 20px 0;">
+            <p style="margin: 0; color: #92400e; font-size: 14px;">
+                <strong>What this means:</strong>
+            </p>
+            <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #78350f; font-size: 14px;">
+                <li>You cannot access the workspace or its resources</li>
+                <li>Your account data remains secure and intact</li>
+                <li>You will not receive workspace notifications</li>
+            </ul>
+        </div>
+
+        <div style="margin: 30px 0; padding: 20px; background: #f8fafc; border-radius: 8px;">
+            <h3 style="color: #1e293b; margin-top: 0;">What to do next:</h3>
+            <p style="color: #475569; margin-bottom: 15px;">
+                If you believe this suspension was made in error or would like to discuss the matter, please contact your workspace administrator or our support team.
+            </p>
+            <div style="text-align: center;">
+                <a href="{{supportUrl}}" class="cta-button">Contact Support</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>This action was taken by the workspace administrator of {{workspaceName}}.</p>
+            <p>
+                <a href="{{supportUrl}}">Need help?</a> | 
+                <a href="{{privacyUrl}}">Privacy Policy</a>
+            </p>
+            <p style="margin-top: 20px;">
+                <strong>PharmacyCopilot</strong> - Empowering Healthcare Professionals
+            </p>
+        </div>
+    </div>
+</body>
+</html>

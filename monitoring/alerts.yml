@@ -1,0 +1,338 @@
+# Prometheus Alert Rules for PharmacyCopilot SaaS Settings Module
+
+groups:
+  # Application Health Alerts
+  - name: application-health
+    rules:
+      - alert: ApplicationDown
+        expr: up{job="PharmacyCopilot-saas-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: PharmacyCopilot-saas
+          team: platform
+        annotations:
+          summary: "PharmacyCopilot SaaS application is down"
+          description: "The PharmacyCopilot SaaS Settings application has been down for more than 1 minute."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/application-down"
+
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+          service: PharmacyCopilot-saas
+          team: platform
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/high-error-rate"
+
+      - alert: CriticalErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.1
+        for: 1m
+        labels:
+          severity: critical
+          service: PharmacyCopilot-saas
+          team: platform
+        annotations:
+          summary: "Critical error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/critical-error-rate"
+
+  # Performance Alerts
+  - name: performance
+    rules:
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: PharmacyCopilot-saas
+          team: platform
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }}s for the last 5 minutes."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/high-response-time"
+
+      - alert: VeryHighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 5
+        for: 2m
+        labels:
+          severity: critical
+          service: PharmacyCopilot-saas
+          team: platform
+        annotations:
+          summary: "Very high response time detected"
+          description: "95th percentile response time is {{ $value }}s for the last 5 minutes."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/very-high-response-time"
+
+      - alert: HighRequestRate
+        expr: rate(http_requests_total[5m]) > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: PharmacyCopilot-saas
+          team: platform
+        annotations:
+          summary: "High request rate detected"
+          description: "Request rate is {{ $value }} requests/second for the last 5 minutes."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/high-request-rate"
+
+  # Database Alerts
+  - name: database
+    rules:
+      - alert: DatabaseDown
+        expr: up{job="postgres-exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: database
+          team: platform
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "PostgreSQL database has been down for more than 1 minute."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/database-down"
+
+      - alert: DatabaseHighConnections
+        expr: pg_stat_database_numbackends / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+          team: platform
+        annotations:
+          summary: "High database connection usage"
+          description: "Database connection usage is {{ $value | humanizePercentage }}."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/high-db-connections"
+
+      - alert: DatabaseSlowQueries
+        expr: rate(pg_stat_database_tup_returned[5m]) / rate(pg_stat_database_tup_fetched[5m]) < 0.1
+        for: 10m
+        labels:
+          severity: warning
+          service: database
+          team: platform
+        annotations:
+          summary: "Database slow queries detected"
+          description: "Database query efficiency is {{ $value | humanizePercentage }}."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/slow-queries"
+
+      - alert: DatabaseDiskSpaceLow
+        expr: (pg_database_size_bytes / (1024^3)) > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+          team: platform
+        annotations:
+          summary: "Database disk space running low"
+          description: "Database size is {{ $value }}GB."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/low-disk-space"
+
+  # Redis Alerts
+  - name: redis
+    rules:
+      - alert: RedisDown
+        expr: up{job="redis-exporter"} == 0
+        for: 1m
+        labels:
+          severity: warning
+          service: redis
+          team: platform
+        annotations:
+          summary: "Redis cache is down"
+          description: "Redis cache has been down for more than 1 minute."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/redis-down"
+
+      - alert: RedisHighMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          service: redis
+          team: platform
+        annotations:
+          summary: "Redis high memory usage"
+          description: "Redis memory usage is {{ $value | humanizePercentage }}."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/redis-high-memory"
+
+      - alert: RedisHighConnections
+        expr: redis_connected_clients > 100
+        for: 5m
+        labels:
+          severity: warning
+          service: redis
+          team: platform
+        annotations:
+          summary: "Redis high connection count"
+          description: "Redis has {{ $value }} connected clients."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/redis-high-connections"
+
+  # System Resource Alerts
+  - name: system-resources
+    rules:
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+          team: platform
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}% on {{ $labels.instance }}."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/high-cpu"
+
+      - alert: CriticalCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 95
+        for: 2m
+        labels:
+          severity: critical
+          service: system
+          team: platform
+        annotations:
+          summary: "Critical CPU usage detected"
+          description: "CPU usage is {{ $value }}% on {{ $labels.instance }}."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/critical-cpu"
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+          team: platform
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/high-memory"
+
+      - alert: CriticalMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.95
+        for: 2m
+        labels:
+          severity: critical
+          service: system
+          team: platform
+        annotations:
+          summary: "Critical memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/critical-memory"
+
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+          team: platform
+        annotations:
+          summary: "Low disk space detected"
+          description: "Disk usage is {{ $value | humanizePercentage }} on {{ $labels.instance }} ({{ $labels.mountpoint }})."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/low-disk-space"
+
+      - alert: DiskSpaceCritical
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes > 0.95
+        for: 2m
+        labels:
+          severity: critical
+          service: system
+          team: platform
+        annotations:
+          summary: "Critical disk space detected"
+          description: "Disk usage is {{ $value | humanizePercentage }} on {{ $labels.instance }} ({{ $labels.mountpoint }})."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/critical-disk-space"
+
+  # Network and Connectivity Alerts
+  - name: network
+    rules:
+      - alert: HighNetworkTraffic
+        expr: rate(node_network_receive_bytes_total[5m]) + rate(node_network_transmit_bytes_total[5m]) > 100000000
+        for: 5m
+        labels:
+          severity: warning
+          service: network
+          team: platform
+        annotations:
+          summary: "High network traffic detected"
+          description: "Network traffic is {{ $value | humanizeBytes }}/s on {{ $labels.instance }}."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/high-network-traffic"
+
+      - alert: ExternalServiceDown
+        expr: probe_success{job="blackbox-http"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          service: external
+          team: platform
+        annotations:
+          summary: "External service is down"
+          description: "External service {{ $labels.instance }} is not responding."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/external-service-down"
+
+  # Business Logic Alerts
+  - name: business-logic
+    rules:
+      - alert: HighFailedLogins
+        expr: rate(failed_login_attempts_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: security
+          team: security
+        annotations:
+          summary: "High failed login attempts"
+          description: "Failed login rate is {{ $value }} attempts/second."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/high-failed-logins"
+
+      - alert: PaymentProcessingFailures
+        expr: rate(payment_failures_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: critical
+          service: payments
+          team: business
+        annotations:
+          summary: "High payment processing failures"
+          description: "Payment failure rate is {{ $value }} failures/second."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/payment-failures"
+
+      - alert: FeatureFlagEvaluationErrors
+        expr: rate(feature_flag_evaluation_errors_total[5m]) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: feature-flags
+          team: platform
+        annotations:
+          summary: "Feature flag evaluation errors"
+          description: "Feature flag evaluation error rate is {{ $value }} errors/second."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/feature-flag-errors"
+
+  # Security Alerts
+  - name: security
+    rules:
+      - alert: SuspiciousActivity
+        expr: rate(suspicious_activity_total[5m]) > 0.1
+        for: 1m
+        labels:
+          severity: critical
+          service: security
+          team: security
+        annotations:
+          summary: "Suspicious activity detected"
+          description: "Suspicious activity rate is {{ $value }} events/second."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/suspicious-activity"
+
+      - alert: UnauthorizedAccess
+        expr: rate(unauthorized_access_attempts_total[5m]) > 5
+        for: 2m
+        labels:
+          severity: warning
+          service: security
+          team: security
+        annotations:
+          summary: "High unauthorized access attempts"
+          description: "Unauthorized access attempt rate is {{ $value }} attempts/second."
+          runbook_url: "https://docs.PharmacyCopilot.com/runbooks/unauthorized-access"

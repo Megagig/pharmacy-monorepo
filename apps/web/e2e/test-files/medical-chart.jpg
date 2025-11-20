@@ -1,0 +1,3 @@
+# This is a placeholder for a medical chart image
+# In a real implementation, this would be a binary JPEG file
+# For testing purposes, we'll use a text placeholder that can be detected by tests

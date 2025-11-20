@@ -1,0 +1,361 @@
+/* Patient Portal Accessibility Styles */
+
+/* High Contrast Mode */
+.high-contrast-mode {
+  --primary-color: #000000;
+  --secondary-color: #ffffff;
+  --background-color: #ffffff;
+  --text-color: #000000;
+  --border-color: #000000;
+  --focus-color: #ff0000;
+  --error-color: #ff0000;
+  --success-color: #008000;
+  --warning-color: #ff8c00;
+}
+
+.high-contrast-mode * {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+.high-contrast-mode button,
+.high-contrast-mode .MuiButton-root {
+  background-color: var(--secondary-color) !important;
+  color: var(--primary-color) !important;
+  border: 2px solid var(--primary-color) !important;
+}
+
+.high-contrast-mode button:hover,
+.high-contrast-mode .MuiButton-root:hover {
+  background-color: var(--primary-color) !important;
+  color: var(--secondary-color) !important;
+}
+
+.high-contrast-mode input,
+.high-contrast-mode .MuiTextField-root input {
+  background-color: var(--secondary-color) !important;
+  color: var(--primary-color) !important;
+  border: 2px solid var(--primary-color) !important;
+}
+
+/* Font Size Preferences */
+.font-size-small {
+  font-size: 14px;
+}
+
+.font-size-small .MuiTypography-root {
+  font-size: 0.875rem;
+}
+
+.font-size-small .MuiButton-root {
+  font-size: 0.75rem;
+}
+
+.font-size-medium {
+  font-size: 16px;
+}
+
+.font-size-medium .MuiTypography-root {
+  font-size: 1rem;
+}
+
+.font-size-medium .MuiButton-root {
+  font-size: 0.875rem;
+}
+
+.font-size-large {
+  font-size: 18px;
+}
+
+.font-size-large .MuiTypography-root {
+  font-size: 1.125rem;
+}
+
+.font-size-large .MuiButton-root {
+  font-size: 1rem;
+}
+
+.font-size-large h1,
+.font-size-large .MuiTypography-h1 {
+  font-size: 2.5rem;
+}
+
+.font-size-large h2,
+.font-size-large .MuiTypography-h2 {
+  font-size: 2rem;
+}
+
+.font-size-large h3,
+.font-size-large .MuiTypography-h3 {
+  font-size: 1.75rem;
+}
+
+.font-size-large h4,
+.font-size-large .MuiTypography-h4 {
+  font-size: 1.5rem;
+}
+
+.font-size-large h5,
+.font-size-large .MuiTypography-h5 {
+  font-size: 1.25rem;
+}
+
+.font-size-large h6,
+.font-size-large .MuiTypography-h6 {
+  font-size: 1.125rem;
+}
+
+/* Reduced Motion */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+.reduce-motion .MuiCollapse-root {
+  transition: none !important;
+}
+
+.reduce-motion .MuiDrawer-root {
+  transition: none !important;
+}
+
+.reduce-motion .MuiMenu-root {
+  transition: none !important;
+}
+
+/* Focus Indicators */
+*:focus {
+  outline: 3px solid #2196f3;
+  outline-offset: 2px;
+}
+
+.high-contrast-mode *:focus {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 2px;
+}
+
+/* Skip Links */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 9999;
+  border-radius: 4px;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Screen Reader Only Content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Keyboard Navigation Indicators */
+.keyboard-user *:focus {
+  outline: 3px solid #2196f3;
+  outline-offset: 2px;
+}
+
+.keyboard-user button:focus,
+.keyboard-user .MuiButton-root:focus {
+  outline: 3px solid #2196f3;
+  outline-offset: 2px;
+}
+
+/* Mobile Accessibility */
+@media (max-width: 768px) {
+  /* Larger touch targets */
+  button,
+  .MuiButton-root,
+  .MuiIconButton-root {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improved spacing for touch */
+  .MuiListItem-root {
+    min-height: 48px;
+  }
+  
+  /* Better contrast for mobile */
+  .MuiTextField-root input {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Print Styles */
+@media print {
+  .no-print,
+  .MuiDrawer-root,
+  .MuiAppBar-root,
+  .accessibility-toolbar {
+    display: none !important;
+  }
+  
+  * {
+    background: white !important;
+    color: black !important;
+  }
+  
+  a {
+    text-decoration: underline;
+  }
+  
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+}
+
+/* Error States */
+.error-state {
+  border: 2px solid #f44336;
+  background-color: #ffebee;
+}
+
+.high-contrast-mode .error-state {
+  border: 2px solid var(--error-color);
+  background-color: var(--secondary-color);
+}
+
+/* Success States */
+.success-state {
+  border: 2px solid #4caf50;
+  background-color: #e8f5e8;
+}
+
+.high-contrast-mode .success-state {
+  border: 2px solid var(--success-color);
+  background-color: var(--secondary-color);
+}
+
+/* Warning States */
+.warning-state {
+  border: 2px solid #ff9800;
+  background-color: #fff3e0;
+}
+
+.high-contrast-mode .warning-state {
+  border: 2px solid var(--warning-color);
+  background-color: var(--secondary-color);
+}
+
+/* Loading States */
+.loading-state {
+  position: relative;
+}
+
+.loading-state::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reduce-motion .loading-state .MuiCircularProgress-root {
+  animation: none;
+}
+
+/* Responsive Typography */
+@media (max-width: 600px) {
+  .font-size-large h1,
+  .font-size-large .MuiTypography-h1 {
+    font-size: 2rem;
+  }
+  
+  .font-size-large h2,
+  .font-size-large .MuiTypography-h2 {
+    font-size: 1.75rem;
+  }
+  
+  .font-size-large h3,
+  .font-size-large .MuiTypography-h3 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Dark Mode Accessibility */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --focus-color: #90caf9;
+  }
+}
+
+/* Reduced Motion Preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High Contrast Preference */
+@media (prefers-contrast: high) {
+  * {
+    border-width: 2px;
+  }
+  
+  button,
+  .MuiButton-root {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Color Blindness Support */
+.color-blind-friendly .error-state {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 2px,
+    rgba(244, 67, 54, 0.1) 2px,
+    rgba(244, 67, 54, 0.1) 4px
+  );
+}
+
+.color-blind-friendly .success-state {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 2px,
+    rgba(76, 175, 80, 0.1) 2px,
+    rgba(76, 175, 80, 0.1) 4px
+  );
+}
+
+.color-blind-friendly .warning-state {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 152, 0, 0.1) 2px,
+    rgba(255, 152, 0, 0.1) 4px
+  );
+}

@@ -1,0 +1,485 @@
+{
+    "plans": {
+        "free_trial": {
+            "name": "Free Trial",
+            "code": "free_trial",
+            "tier": "free_trial",
+            "tierRank": 0,
+            "priceNGN": 0,
+            "billingInterval": "monthly",
+            "trialDuration": 14,
+            "popularPlan": false,
+            "isContactSales": false,
+            "whatsappNumber": null,
+            "description": "14-day free trial with full access to all features",
+            "isActive": true,
+            "isTrial": true,
+            "isCustom": false,
+            "features": [
+                "dashboard",
+                "patient_management",
+                "clinical_notes",
+                "medication_management",
+                "basic_reports",
+                "email_reminders",
+                "sms_reminders",
+                "care_note_export",
+                "adr_module",
+                "drug_therapy_management",
+                "team_management",
+                "api_access",
+                "audit_logs",
+                "data_backup",
+                "adr_reporting",
+                "drug_interaction_checker",
+                "dose_calculator",
+                "multi_location_dashboard",
+                "shared_patient_records",
+                "group_analytics",
+                "cdss",
+                "ai_diagnostics",
+                "clinical_decision_support",
+                "drug_information"
+            ],
+            "limits": {
+                "patients": null,
+                "users": null,
+                "locations": null,
+                "storage": null,
+                "apiCalls": null,
+                "clinicalNotes": null,
+                "reminderSms": null
+            }
+        },
+        "basic": {
+            "name": "Basic",
+            "code": "basic",
+            "tier": "basic",
+            "tierRank": 1,
+            "priceNGN": 1500,
+            "billingInterval": "monthly",
+            "trialDuration": null,
+            "popularPlan": false,
+            "isContactSales": false,
+            "whatsappNumber": null,
+            "description": "Essential features for individual pharmacists",
+            "isActive": true,
+            "isTrial": false,
+            "isCustom": false,
+            "features": [
+                "dashboard",
+                "patient_management",
+                "clinical_notes",
+                "medication_management",
+                "basic_reports",
+                "email_reminders"
+            ],
+            "limits": {
+                "patients": 100,
+                "users": 1,
+                "locations": 1,
+                "storage": 1000,
+                "apiCalls": 1000,
+                "clinicalNotes": 500,
+                "reminderSms": 50
+            }
+        },
+        "pro": {
+            "name": "Pro",
+            "code": "pro",
+            "tier": "pro",
+            "tierRank": 2,
+            "priceNGN": 2500,
+            "billingInterval": "monthly",
+            "trialDuration": null,
+            "popularPlan": true,
+            "isContactSales": false,
+            "whatsappNumber": null,
+            "description": "Advanced features for growing pharmacies",
+            "isActive": true,
+            "isTrial": false,
+            "isCustom": false,
+            "features": [
+                "dashboard",
+                "patient_management",
+                "clinical_notes",
+                "medication_management",
+                "basic_reports",
+                "advanced_reports",
+                "email_reminders",
+                "sms_reminders",
+                "care_note_export",
+                "reports_export",
+                "team_management",
+                "priority_support"
+            ],
+            "limits": {
+                "patients": 500,
+                "users": 3,
+                "locations": 1,
+                "storage": 5000,
+                "apiCalls": 5000,
+                "clinicalNotes": 2000,
+                "reminderSms": 200
+            }
+        },
+        "pharmily": {
+            "name": "Pharmily",
+            "code": "pharmily",
+            "tier": "pharmily",
+            "tierRank": 3,
+            "priceNGN": 4500,
+            "billingInterval": "monthly",
+            "trialDuration": null,
+            "popularPlan": false,
+            "isContactSales": false,
+            "whatsappNumber": null,
+            "description": "Comprehensive solution for established pharmacies",
+            "isActive": true,
+            "isTrial": false,
+            "isCustom": false,
+            "features": [
+                "dashboard",
+                "patient_management",
+                "clinical_notes",
+                "medication_management",
+                "basic_reports",
+                "advanced_reports",
+                "email_reminders",
+                "sms_reminders",
+                "care_note_export",
+                "reports_export",
+                "adr_module",
+                "drug_therapy_management",
+                "team_management",
+                "api_access",
+                "audit_logs",
+                "data_backup",
+                "priority_support",
+                "adr_reporting",
+                "drug_interaction_checker",
+                "dose_calculator",
+                "ai_diagnostics",
+                "clinical_decision_support",
+                "drug_information"
+            ],
+            "limits": {
+                "patients": 2000,
+                "users": 10,
+                "locations": 1,
+                "storage": 20000,
+                "apiCalls": 20000,
+                "clinicalNotes": null,
+                "reminderSms": 1000
+            }
+        },
+        "network": {
+            "name": "Network",
+            "code": "network",
+            "tier": "network",
+            "tierRank": 4,
+            "priceNGN": 7500,
+            "billingInterval": "monthly",
+            "trialDuration": null,
+            "popularPlan": false,
+            "isContactSales": false,
+            "whatsappNumber": null,
+            "description": "Multi-location management for pharmacy chains",
+            "isActive": true,
+            "isTrial": false,
+            "isCustom": false,
+            "features": [
+                "dashboard",
+                "patient_management",
+                "clinical_notes",
+                "medication_management",
+                "basic_reports",
+                "advanced_reports",
+                "email_reminders",
+                "sms_reminders",
+                "care_note_export",
+                "reports_export",
+                "adr_module",
+                "drug_therapy_management",
+                "team_management",
+                "api_access",
+                "audit_logs",
+                "data_backup",
+                "priority_support",
+                "adr_reporting",
+                "drug_interaction_checker",
+                "dose_calculator",
+                "multi_location_dashboard",
+                "shared_patient_records",
+                "group_analytics",
+                "integrations",
+                "ai_diagnostics",
+                "clinical_decision_support",
+                "drug_information"
+            ],
+            "limits": {
+                "patients": null,
+                "users": 50,
+                "locations": 10,
+                "storage": 100000,
+                "apiCalls": 100000,
+                "clinicalNotes": null,
+                "reminderSms": 5000
+            }
+        },
+        "enterprise": {
+            "name": "Enterprise",
+            "code": "enterprise",
+            "tier": "enterprise",
+            "tierRank": 5,
+            "priceNGN": 0,
+            "billingInterval": "monthly",
+            "trialDuration": null,
+            "popularPlan": false,
+            "isContactSales": true,
+            "whatsappNumber": "+2348060374755",
+            "description": "Custom solutions for large organizations",
+            "isActive": true,
+            "isTrial": false,
+            "isCustom": true,
+            "features": [
+                "dashboard",
+                "patient_management",
+                "clinical_notes",
+                "medication_management",
+                "basic_reports",
+                "advanced_reports",
+                "email_reminders",
+                "sms_reminders",
+                "care_note_export",
+                "reports_export",
+                "adr_module",
+                "drug_therapy_management",
+                "team_management",
+                "api_access",
+                "audit_logs",
+                "data_backup",
+                "dedicated_support",
+                "adr_reporting",
+                "drug_interaction_checker",
+                "dose_calculator",
+                "multi_location_dashboard",
+                "shared_patient_records",
+                "group_analytics",
+                "cdss",
+                "integrations",
+                "custom_integrations",
+                "ai_diagnostics",
+                "clinical_decision_support",
+                "drug_information"
+            ],
+            "limits": {
+                "patients": null,
+                "users": null,
+                "locations": null,
+                "storage": null,
+                "apiCalls": null,
+                "clinicalNotes": null,
+                "reminderSms": null
+            }
+        }
+    },
+    "features": {
+        "dashboard": {
+            "name": "Dashboard Overview",
+            "category": "core",
+            "description": "Main dashboard with key metrics and insights"
+        },
+        "patient_management": {
+            "name": "Patient Management",
+            "category": "clinical",
+            "description": "Comprehensive patient record management"
+        },
+        "clinical_notes": {
+            "name": "Clinical Notes",
+            "category": "clinical",
+            "description": "Create and manage clinical notes and assessments"
+        },
+        "medication_management": {
+            "name": "Medication Management",
+            "category": "clinical",
+            "description": "Track and manage patient medications"
+        },
+        "basic_reports": {
+            "name": "Basic Reports",
+            "category": "reporting",
+            "description": "Standard reporting and analytics"
+        },
+        "advanced_reports": {
+            "name": "Advanced Reports",
+            "category": "reporting",
+            "description": "Advanced analytics and custom reports"
+        },
+        "email_reminders": {
+            "name": "Email Reminders",
+            "category": "communication",
+            "description": "Automated email reminder system"
+        },
+        "sms_reminders": {
+            "name": "SMS Reminders",
+            "category": "communication",
+            "description": "SMS notification and reminder system"
+        },
+        "care_note_export": {
+            "name": "Care Note Export",
+            "category": "export",
+            "description": "Export clinical notes and care plans"
+        },
+        "reports_export": {
+            "name": "Reports Export",
+            "category": "export",
+            "description": "Export reports in various formats"
+        },
+        "adr_module": {
+            "name": "ADR Module",
+            "category": "advanced",
+            "description": "Adverse Drug Reaction monitoring and reporting"
+        },
+        "drug_therapy_management": {
+            "name": "Drug Therapy Management",
+            "category": "clinical",
+            "description": "Comprehensive medication therapy review"
+        },
+        "team_management": {
+            "name": "Team Management",
+            "category": "administration",
+            "description": "User and team member management"
+        },
+        "api_access": {
+            "name": "API Access",
+            "category": "integration",
+            "description": "RESTful API access for integrations"
+        },
+        "audit_logs": {
+            "name": "Audit Logs",
+            "category": "security",
+            "description": "Comprehensive audit trail and logging"
+        },
+        "data_backup": {
+            "name": "Data Backup",
+            "category": "security",
+            "description": "Automated data backup and recovery"
+        },
+        "priority_support": {
+            "name": "Priority Support",
+            "category": "support",
+            "description": "Priority customer support and assistance"
+        },
+        "dedicated_support": {
+            "name": "Dedicated Support",
+            "category": "support",
+            "description": "Dedicated account manager and support"
+        },
+        "adr_reporting": {
+            "name": "ADR Reporting",
+            "category": "advanced",
+            "description": "Advanced adverse drug reaction reporting"
+        },
+        "drug_interaction_checker": {
+            "name": "Drug Interaction Checker",
+            "category": "clinical",
+            "description": "Real-time drug interaction screening"
+        },
+        "dose_calculator": {
+            "name": "Dose Calculator",
+            "category": "clinical",
+            "description": "Automated dosage calculation tools"
+        },
+        "multi_location_dashboard": {
+            "name": "Multi-Location Dashboard",
+            "category": "enterprise",
+            "description": "Centralized dashboard for multiple locations"
+        },
+        "shared_patient_records": {
+            "name": "Shared Patient Records",
+            "category": "enterprise",
+            "description": "Cross-location patient record sharing"
+        },
+        "group_analytics": {
+            "name": "Group Analytics",
+            "category": "enterprise",
+            "description": "Analytics across multiple locations"
+        },
+        "cdss": {
+            "name": "Clinical Decision Support System",
+            "category": "advanced",
+            "description": "AI-powered clinical decision support"
+        },
+        "integrations": {
+            "name": "Third-party Integrations",
+            "category": "integration",
+            "description": "Pre-built integrations with common systems"
+        },
+        "custom_integrations": {
+            "name": "Custom Integrations",
+            "category": "integration",
+            "description": "Custom API integrations and development"
+        },
+        "ai_diagnostics": {
+            "name": "AI Diagnostics",
+            "category": "advanced",
+            "description": "AI-powered diagnostic analysis and clinical decision support"
+        },
+        "clinical_decision_support": {
+            "name": "Clinical Decision Support",
+            "category": "advanced",
+            "description": "Clinical decision support system and diagnostic workflows"
+        },
+        "drug_information": {
+            "name": "Drug Information",
+            "category": "clinical",
+            "description": "Drug interaction checking, contraindications, and drug information lookup"
+        }
+    },
+    "categories": {
+        "core": {
+            "name": "Core Features",
+            "description": "Essential functionality for all users"
+        },
+        "clinical": {
+            "name": "Clinical Features",
+            "description": "Clinical workflow and patient care tools"
+        },
+        "reporting": {
+            "name": "Reporting & Analytics",
+            "description": "Data analysis and reporting capabilities"
+        },
+        "communication": {
+            "name": "Communication",
+            "description": "Patient and team communication tools"
+        },
+        "export": {
+            "name": "Data Export",
+            "description": "Data export and sharing capabilities"
+        },
+        "advanced": {
+            "name": "Advanced Features",
+            "description": "Specialized clinical and regulatory tools"
+        },
+        "administration": {
+            "name": "Administration",
+            "description": "User and workspace management"
+        },
+        "integration": {
+            "name": "Integrations",
+            "description": "API and third-party system integrations"
+        },
+        "security": {
+            "name": "Security & Compliance",
+            "description": "Data security and compliance features"
+        },
+        "support": {
+            "name": "Support",
+            "description": "Customer support and assistance levels"
+        },
+        "enterprise": {
+            "name": "Enterprise Features",
+            "description": "Multi-location and enterprise-scale features"
+        }
+    }
+}

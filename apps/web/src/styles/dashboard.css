@@ -1,0 +1,714 @@
+/* Modern Dashboard Layout - Full Width */
+.modern-dashboard {
+  padding: 24px;
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+/* Dashboard Charts Grid - Full Width */
+.dashboard-charts-grid {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 32px !important;
+  margin-bottom: 32px !important;
+}
+
+.dashboard-charts-grid > * {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+  margin-bottom: 32px;
+  position: relative;
+}
+
+.dashboard-header::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.05) 0%,
+    rgba(16, 185, 129, 0.05) 100%
+  );
+  border-radius: 20px;
+  z-index: -1;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #3b82f6, #10b981);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 8px 0;
+  position: relative;
+}
+
+.dashboard-header p {
+  font-size: 1.1rem;
+  color: #64748b;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Enhanced Chart Styles */
+.dashboard-chart-container {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  position: relative;
+}
+
+.recharts-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+}
+
+.recharts-surface {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.recharts-responsive-container {
+  width: 100% !important;
+  min-width: 0 !important;
+  flex: 1 !important;
+}
+
+/* Enhanced Tooltip Styling */
+.recharts-default-tooltip {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+  backdrop-filter: blur(10px) !important;
+  padding: 12px 16px !important;
+}
+
+.recharts-tooltip-label {
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  margin-bottom: 4px !important;
+}
+
+.recharts-tooltip-item {
+  color: #475569 !important;
+  font-weight: 500 !important;
+}
+
+/* Pie Chart Enhancements */
+.recharts-pie-sector {
+  outline: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: all 0.2s ease;
+}
+
+.recharts-pie-sector:hover {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  transform: scale(1.02);
+}
+
+/* Line Chart Enhancements */
+.recharts-line-dot {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.recharts-active-dot {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+/* Bar Chart Enhancements */
+.recharts-bar-rectangle {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Professional Chart Grid Layout - 2 Column */
+.dashboard-charts-professional {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.dashboard-charts-professional .MuiCard-root {
+  min-height: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  width: 100%;
+}
+
+.dashboard-charts-professional .MuiCard-root:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Ensure full width utilization */
+.MuiGrid-container {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.MuiGrid-item {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Enhanced Chart Container Spacing */
+.dashboard-charts-professional .MuiCardContent-root,
+.dashboard-charts-grid .MuiCardContent-root {
+  padding: 24px !important;
+}
+
+/* Chart Title Styling */
+.dashboard-charts-professional .MuiTypography-h6,
+.dashboard-charts-grid .MuiTypography-h6 {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+/* Chart Subtitle Styling */
+.dashboard-charts-professional .MuiTypography-body2,
+.dashboard-charts-grid .MuiTypography-body2 {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+}
+
+/* Force full width for all chart cards */
+.dashboard-charts-grid .MuiCard-root {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-charts-grid .MuiCard-root:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Grid and Layout Improvements */
+.dashboard-grid-item {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.dashboard-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dashboard-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Animation Classes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Loading States */
+.dashboard-loading,
+.dashboard-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.2rem;
+}
+
+.loading-spinner {
+  color: #64748b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.loading-spinner::before {
+  content: '';
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e2e8f0;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.error-message {
+  color: #ef4444;
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+  padding: 20px 28px;
+  border-radius: 16px;
+  border: 1px solid #fecaca;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* Force full width for MUI components */
+.MuiGrid-item {
+  width: 100%;
+  max-width: 100%;
+}
+
+.MuiCard-root {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.MuiCardContent-root {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Floating Action Button */
+.dashboard-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+  .modern-dashboard {
+    max-width: 1200px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .modern-dashboard {
+    padding: 20px;
+  }
+
+  .dashboard-chart-container {
+    min-height: 350px;
+  }
+
+  /* Adjust professional chart grid for medium screens */
+  .dashboard-charts-professional {
+    gap: 24px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-charts-professional .MuiCard-root {
+    min-height: 450px;
+  }
+}
+
+@media (max-width: 768px) {
+  .modern-dashboard {
+    padding: 16px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 2rem;
+  }
+
+  .dashboard-header p {
+    font-size: 1rem;
+  }
+
+  .dashboard-chart-container {
+    min-height: 300px;
+  }
+
+  .recharts-responsive-container {
+    min-height: 300px !important;
+  }
+
+  .dashboard-fab {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  /* Mobile: Stack charts vertically */
+  .dashboard-charts-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .dashboard-charts-professional {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .dashboard-charts-professional .MuiCard-root {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-dashboard {
+    padding: 12px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .dashboard-header p {
+    font-size: 0.9rem;
+  }
+
+  .dashboard-chart-container {
+    min-height: 200px;
+  }
+
+  .recharts-responsive-container {
+    min-height: 200px !important;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .modern-dashboard {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  }
+
+  .dashboard-header::before {
+    background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.1) 0%,
+      rgba(16, 185, 129, 0.1) 100%
+    );
+  }
+
+  .dashboard-header p {
+    color: #94a3b8;
+  }
+
+  .loading-spinner {
+    color: #94a3b8;
+  }
+
+  .error-message {
+    background: linear-gradient(135deg, #1f2937, #374151);
+    color: #fca5a5;
+    border-color: #7f1d1d;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .dashboard-card {
+    border: 2px solid;
+  }
+
+  .recharts-default-tooltip {
+    border: 2px solid !important;
+  }
+}
+
+/* Admin Dashboard Grids */
+.admin-kpis-grid,
+.admin-charts-grid,
+.admin-alerts-grid {
+  width: 100% !important;
+  display: grid !important;
+}
+
+.admin-kpis-grid {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+  gap: 24px !important;
+  justify-content: center !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+}
+
+.admin-charts-grid {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+  gap: 24px !important;
+  justify-content: center !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+}
+
+.admin-alerts-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 24px !important;
+}
+
+/* Usage Dashboard Grids */
+.usage-cards-grid,
+.usage-chart-grid {
+  width: 100% !important;
+  display: grid !important;
+}
+
+.usage-cards-grid {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  gap: 24px !important;
+  justify-content: center !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+}
+
+.usage-chart-grid {
+  grid-template-columns: 2fr 1fr !important;
+  gap: 24px !important;
+}
+
+/* Performance Dashboard Grids */
+.performance-charts-grid,
+.performance-summary-grid {
+  width: 100% !important;
+  display: grid !important;
+}
+
+.performance-charts-grid {
+  grid-template-columns: 2fr 1fr !important;
+  gap: 24px !important;
+}
+
+.performance-summary-grid {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+  gap: 24px !important;
+  justify-content: center !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+}
+
+/* Clinical Interventions and Quick Actions Grids */
+.clinical-interventions-grid,
+.quick-actions-grid {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+  gap: 24px !important;
+  justify-content: center !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+}
+
+/* Recent Activities Grid */
+.recent-activities-grid {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 24px !important;
+}
+
+/* Main KPIs Grid */
+.main-kpis-grid {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  gap: 24px !important;
+  justify-content: center !important;
+  max-width: 1400px !important;
+  margin: 0 auto !important;
+}
+
+/* Universal Card Styling for All Grids */
+.admin-kpis-grid .MuiCard-root,
+.admin-charts-grid .MuiCard-root,
+.admin-alerts-grid .MuiCard-root,
+.usage-cards-grid .MuiCard-root,
+.usage-chart-grid .MuiCard-root,
+.performance-charts-grid .MuiCard-root,
+.performance-summary-grid .MuiCard-root,
+.clinical-interventions-grid .MuiCard-root,
+.quick-actions-grid .MuiCard-root,
+.recent-activities-grid .MuiCard-root,
+.main-kpis-grid .MuiCard-root {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.admin-kpis-grid .MuiCard-root:hover,
+.admin-charts-grid .MuiCard-root:hover,
+.admin-alerts-grid .MuiCard-root:hover,
+.usage-cards-grid .MuiCard-root:hover,
+.usage-chart-grid .MuiCard-root:hover,
+.performance-charts-grid .MuiCard-root:hover,
+.performance-summary-grid .MuiCard-root:hover,
+.clinical-interventions-grid .MuiCard-root:hover,
+.quick-actions-grid .MuiCard-root:hover,
+.recent-activities-grid .MuiCard-root:hover,
+.main-kpis-grid .MuiCard-root:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Recent Activities Specific Styling */
+.recent-activities-grid .MuiList-root {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.recent-activities-grid .MuiListItem-root {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.recent-activities-grid .MuiListItem-root:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.recent-activities-grid .MuiAvatar-root {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Grid Updates */
+@media (max-width: 1200px) {
+  /* Tablet responsive adjustments */
+  .admin-kpis-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+    max-width: 800px !important;
+  }
+
+  .admin-charts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) !important;
+    max-width: 900px !important;
+  }
+
+  .usage-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+    max-width: 900px !important;
+  }
+
+  .performance-summary-grid,
+  .clinical-interventions-grid,
+  .quick-actions-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+    max-width: 800px !important;
+  }
+
+  .main-kpis-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    max-width: 900px !important;
+  }
+
+  .recent-activities-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Mobile: Stack all grids vertically */
+  .dashboard-charts-grid,
+  .admin-kpis-grid,
+  .admin-charts-grid,
+  .admin-alerts-grid,
+  .usage-cards-grid,
+  .usage-chart-grid,
+  .performance-charts-grid,
+  .performance-summary-grid,
+  .clinical-interventions-grid,
+  .quick-actions-grid,
+  .recent-activities-grid,
+  .main-kpis-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .dashboard-charts-professional {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .dashboard-charts-professional .MuiCard-root {
+    min-height: 400px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-slide-in-right,
+  .animate-pulse {
+    animation: none;
+  }
+
+  .recharts-pie-sector,
+  .recharts-line-dot,
+  .recharts-active-dot,
+  .recharts-bar-rectangle {
+    transition: none;
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "pharmacy-monorepo",
+  "name": "api",
   "private": true,
   "scripts": {
     "build": "turbo run build",

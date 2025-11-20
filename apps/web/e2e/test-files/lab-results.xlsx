@@ -1,0 +1,12 @@
+# This is a placeholder for an Excel file containing lab results
+# In a real implementation, this would be a binary XLSX file
+# For testing purposes, we'll use a text placeholder
+
+Lab Results for Patient: Jane Smith
+Date: 2024-01-15
+
+Test Name | Result | Reference Range | Status
+---------|--------|----------------|--------
+Glucose  | 95     | 70-100 mg/dL   | Normal
+HbA1c    | 6.2%   | <7.0%          | Good Control
+Creatinine| 1.1   | 0.6-1.2 mg/dL  | Normal

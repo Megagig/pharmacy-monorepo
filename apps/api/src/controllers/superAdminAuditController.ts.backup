@@ -1,0 +1,466 @@
+import { Response } from 'express';
+import { AuthRequest } from '../middlewares/auth';
+import UnifiedAuditService, { AuditQueryFilters } from '../services/unifiedAuditService';
+import { sendSuccess, sendError } from '../utils/responseHelpers';
+import logger from '../utils/logger';
+
+/**
+ * Super Admin Audit Controller
+ * Handles all audit trail operations for super administrators
+ * Provides comprehensive visibility into ALL system activities
+ */
+
+export class SuperAdminAuditController {
+  /**
+   * Get comprehensive audit trail
+   * GET /api/super-admin/audit-trail
+   */
+  static async getAuditTrail(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      // Only super_admin can access
+      if (req.user?.role !== 'super_admin') {
+        sendError(res, 'Unauthorized: Super admin access required', 403);
+        return;
+      }
+
+      const {
+        page,
+        limit,
+        startDate,
+        endDate,
+        userId,
+        workplaceId,
+        activityType,
+        action,
+        riskLevel,
+        success,
+        flagged,
+        complianceCategory,
+        searchQuery,
+        entityType,
+        entityId,
+      } = req.query;
+
+      const filters: AuditQueryFilters = {
+        page: page ? parseInt(page as string) : 1,
+        limit: limit ? parseInt(limit as string) : 50,
+      };
+
+      // Apply filters
+      if (startDate) filters.startDate = new Date(startDate as string);
+      if (endDate) filters.endDate = new Date(endDate as string);
+      if (userId) filters.userId = userId as string;
+      if (workplaceId) filters.workplaceId = workplaceId as string;
+      if (activityType) filters.activityType = activityType as string;
+      if (action) filters.action = action as string;
+      if (riskLevel) filters.riskLevel = riskLevel as string;
+      if (success !== undefined) filters.success = success === 'true';
+      if (flagged !== undefined) filters.flagged = flagged === 'true';
+      if (complianceCategory) filters.complianceCategory = complianceCategory as string;
+      if (searchQuery) filters.searchQuery = searchQuery as string;
+      if (entityType) filters.entityType = entityType as string;
+      if (entityId) filters.entityId = entityId as string;
+
+      const result = await UnifiedAuditService.getAuditTrail(filters);
+
+      // Log this access
+      await UnifiedAuditService.logActivity(
+        {
+          userId: req.user._id,
+          activityType: 'audit_export',
+          action: 'AUDIT_TRAIL_VIEWED',
+          description: `${req.user.firstName} ${req.user.lastName} viewed audit trail`,
+          riskLevel: 'low',
+          metadata: {
+            filters,
+          },
+        },
+        req
+      );
+
+      sendSuccess(res, 'Audit trail retrieved successfully', result);
+    } catch (error) {
+      logger.error('Error fetching audit trail:', error);
+      sendError(res, 'Failed to retrieve audit trail', 500);
+    }
+  }
+
+  /**
+   * Get audit statistics
+   * GET /api/super-admin/audit-trail/stats
+   */
+  static async getAuditStats(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      // Only super_admin can access
+      if (req.user?.role !== 'super_admin') {
+        sendError(res, 'Unauthorized: Super admin access required', 403);
+        return;
+      }
+
+      const { workplaceId, startDate, endDate } = req.query;
+
+      let start: Date | undefined;
+      let end: Date | undefined;
+
+      if (startDate) start = new Date(startDate as string);
+      if (endDate) end = new Date(endDate as string);
+
+      const stats = await UnifiedAuditService.getActivityStats(
+        workplaceId as string,
+        start,
+        end
+      );
+
+      sendSuccess(res, 'Audit statistics retrieved successfully', stats);
+    } catch (error) {
+      logger.error('Error fetching audit stats:', error);
+      sendError(res, 'Failed to retrieve audit statistics', 500);
+    }
+  }
+
+  /**
+   * Export audit data
+   * GET /api/super-admin/audit-trail/export
+   */
+  static async exportAuditData(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      // Only super_admin can access
+      if (req.user?.role !== 'super_admin') {
+        sendError(res, 'Unauthorized: Super admin access required', 403);
+        return;
+      }
+
+      const {
+        format = 'json',
+        startDate,
+        endDate,
+        userId,
+        workplaceId,
+        activityType,
+        riskLevel,
+      } = req.query;
+
+      const filters: AuditQueryFilters = {};
+
+      if (startDate) filters.startDate = new Date(startDate as string);
+      if (endDate) filters.endDate = new Date(endDate as string);
+      if (userId) filters.userId = userId as string;
+      if (workplaceId) filters.workplaceId = workplaceId as string;
+      if (activityType) filters.activityType = activityType as string;
+      if (riskLevel) filters.riskLevel = riskLevel as string;
+
+      const data = await UnifiedAuditService.exportAuditData(
+        filters,
+        format as 'json' | 'csv'
+      );
+
+      // Log export action
+      await UnifiedAuditService.logActivity(
+        {
+          userId: req.user._id,
+          activityType: 'data_export',
+          action: 'AUDIT_DATA_EXPORTED',
+          description: `${req.user.firstName} ${req.user.lastName} exported audit data in ${format} format`,
+          riskLevel: 'high',
+          complianceCategory: 'HIPAA',
+          metadata: {
+            format,
+            filters,
+            recordCount: Array.isArray(data) ? data.length : 1,
+          },
+        },
+        req
+      );
+
+      if (format === 'csv') {
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader(
+          'Content-Disposition',
+          `attachment; filename=audit-trail-${Date.now()}.csv`
+        );
+        res.send(data);
+      } else {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader(
+          'Content-Disposition',
+          `attachment; filename=audit-trail-${Date.now()}.json`
+        );
+        res.json(data);
+      }
+    } catch (error) {
+      logger.error('Error exporting audit data:', error);
+      sendError(res, 'Failed to export audit data', 500);
+    }
+  }
+
+  /**
+   * Get user activity timeline
+   * GET /api/super-admin/audit-trail/users/:userId
+   */
+  static async getUserActivityTimeline(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      // Only super_admin can access
+      if (req.user?.role !== 'super_admin') {
+        sendError(res, 'Unauthorized: Super admin access required', 403);
+        return;
+      }
+
+      const { userId } = req.params;
+      const { limit } = req.query;
+
+      const timeline = await UnifiedAuditService.getUserActivityTimeline(
+        userId,
+        limit ? parseInt(limit as string) : 100
+      );
+
+      sendSuccess(res, 'User activity timeline retrieved successfully', {
+        userId,
+        activities: timeline,
+        total: timeline.length,
+      });
+    } catch (error) {
+      logger.error('Error fetching user activity timeline:', error);
+      sendError(res, 'Failed to retrieve user activity timeline', 500);
+    }
+  }
+
+  /**
+   * Get entity activity history
+   * GET /api/super-admin/audit-trail/entities/:entityType/:entityId
+   */
+  static async getEntityActivityHistory(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      // Only super_admin can access
+      if (req.user?.role !== 'super_admin') {
+        sendError(res, 'Unauthorized: Super admin access required', 403);
+        return;
+      }
+
+      const { entityType, entityId } = req.params;
+      const { limit } = req.query;
+
+      const history = await UnifiedAuditService.getEntityActivityHistory(
+        entityType,
+        entityId,
+        limit ? parseInt(limit as string) : 100
+      );
+
+      sendSuccess(res, 'Entity activity history retrieved successfully', {
+        entityType,
+        entityId,
+        activities: history,
+        total: history.length,
+      });
+    } catch (error) {
+      logger.error('Error fetching entity activity history:', error);
+      sendError(res, 'Failed to retrieve entity activity history', 500);
+    }
+  }
+
+  /**
+   * Search audit logs
+   * GET /api/super-admin/audit-trail/search
+   */
+  static async searchAuditLogs(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      // Only super_admin can access
+      if (req.user?.role !== 'super_admin') {
+        sendError(res, 'Unauthorized: Super admin access required', 403);
+        return;
+      }
+
+      const { q, limit } = req.query;
+
+      if (!q) {
+        sendError(res, 'Search query is required', 400);
+        return;
+      }
+
+      const results = await UnifiedAuditService.searchAuditLogs(
+        q as string,
+        limit ? parseInt(limit as string) : 50
+      );
+
+      sendSuccess(res, 'Search completed successfully', {
+        query: q,
+        results,
+        total: results.length,
+      });
+    } catch (error) {
+      logger.error('Error searching audit logs:', error);
+      sendError(res, 'Failed to search audit logs', 500);
+    }
+  }
+
+  /**
+   * Flag audit entry
+   * PUT /api/super-admin/audit-trail/:auditId/flag
+   */
+  static async flagAuditEntry(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      // Only super_admin can access
+      if (req.user?.role !== 'super_admin') {
+        sendError(res, 'Unauthorized: Super admin access required', 403);
+        return;
+      }
+
+      const { auditId } = req.params;
+      const { flagged = true } = req.body;
+
+      const updated = await UnifiedAuditService.flagAuditEntry(auditId, flagged);
+
+      if (!updated) {
+        sendError(res, 'Audit entry not found', 404);
+        return;
+      }
+
+      // Log this action
+      await UnifiedAuditService.logActivity(
+        {
+          userId: req.user._id,
+          activityType: 'audit_export',
+          action: flagged ? 'AUDIT_ENTRY_FLAGGED' : 'AUDIT_ENTRY_UNFLAGGED',
+          description: `${req.user.firstName} ${req.user.lastName} ${
+            flagged ? 'flagged' : 'unflagged'
+          } audit entry`,
+          targetEntity: {
+            entityType: 'AuditLog',
+            entityId: auditId,
+            entityName: updated.action,
+          },
+          riskLevel: 'medium',
+        },
+        req
+      );
+
+      sendSuccess(res, `Audit entry ${flagged ? 'flagged' : 'unflagged'} successfully`, updated);
+    } catch (error) {
+      logger.error('Error flagging audit entry:', error);
+      sendError(res, 'Failed to flag audit entry', 500);
+    }
+  }
+
+  /**
+   * Review audit entry
+   * PUT /api/super-admin/audit-trail/:auditId/review
+   */
+  static async reviewAuditEntry(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      // Only super_admin can access
+      if (req.user?.role !== 'super_admin') {
+        sendError(res, 'Unauthorized: Super admin access required', 403);
+        return;
+      }
+
+      const { auditId } = req.params;
+      const { reviewNotes } = req.body;
+
+      if (!reviewNotes) {
+        sendError(res, 'Review notes are required', 400);
+        return;
+      }
+
+      const updated = await UnifiedAuditService.reviewAuditEntry(
+        auditId,
+        req.user._id.toString(),
+        reviewNotes
+      );
+
+      if (!updated) {
+        sendError(res, 'Audit entry not found', 404);
+        return;
+      }
+
+      // Log this action
+      await UnifiedAuditService.logActivity(
+        {
+          userId: req.user._id,
+          activityType: 'audit_export',
+          action: 'AUDIT_ENTRY_REVIEWED',
+          description: `${req.user.firstName} ${req.user.lastName} reviewed audit entry`,
+          targetEntity: {
+            entityType: 'AuditLog',
+            entityId: auditId,
+            entityName: updated.action,
+          },
+          riskLevel: 'low',
+          metadata: {
+            reviewNotes,
+          },
+        },
+        req
+      );
+
+      sendSuccess(res, 'Audit entry reviewed successfully', updated);
+    } catch (error) {
+      logger.error('Error reviewing audit entry:', error);
+      sendError(res, 'Failed to review audit entry', 500);
+    }
+  }
+
+  /**
+   * Get activity types
+   * GET /api/super-admin/audit-trail/activity-types
+   */
+  static async getActivityTypes(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      // Only super_admin can access
+      if (req.user?.role !== 'super_admin') {
+        sendError(res, 'Unauthorized: Super admin access required', 403);
+        return;
+      }
+
+      const activityTypes = [
+        'authentication',
+        'authorization',
+        'user_management',
+        'patient_management',
+        'medication_management',
+        'mtr_session',
+        'clinical_intervention',
+        'communication',
+        'workspace_management',
+        'security_event',
+        'system_configuration',
+        'file_operation',
+        'report_generation',
+        'audit_export',
+        'diagnostic_ai',
+        'subscription_management',
+        'payment_transaction',
+        'compliance_event',
+        'data_export',
+        'data_import',
+        'other',
+      ];
+
+      sendSuccess(res, 'Activity types retrieved successfully', activityTypes);
+    } catch (error) {
+      logger.error('Error fetching activity types:', error);
+      sendError(res, 'Failed to retrieve activity types', 500);
+    }
+  }
+
+  /**
+   * Get risk levels
+   * GET /api/super-admin/audit-trail/risk-levels
+   */
+  static async getRiskLevels(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      // Only super_admin can access
+      if (req.user?.role !== 'super_admin') {
+        sendError(res, 'Unauthorized: Super admin access required', 403);
+        return;
+      }
+
+      const riskLevels = ['low', 'medium', 'high', 'critical'];
+
+      sendSuccess(res, 'Risk levels retrieved successfully', riskLevels);
+    } catch (error) {
+      logger.error('Error fetching risk levels:', error);
+      sendError(res, 'Failed to retrieve risk levels', 500);
+    }
+  }
+}
+
+export default SuperAdminAuditController;

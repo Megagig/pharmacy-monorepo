@@ -1,0 +1,216 @@
+# Reports & Analytics Module - Monitoring Configuration
+
+# Prometheus Monitoring Rules
+groups:
+  - name: reports-analytics
+    rules:
+      # Report Generation Performance
+      - alert: ReportGenerationSlow
+        expr: histogram_quantile(0.95, rate(report_generation_duration_seconds_bucket[5m])) > 30
+        for: 2m
+        labels:
+          severity: warning
+          module: reports-analytics
+        annotations:
+          summary: 'Report generation is slow'
+          description: '95th percentile report generation time is {{ $value }}s'
+
+      - alert: ReportGenerationFailed
+        expr: rate(report_generation_failures_total[5m]) > 0.1
+        for: 1m
+        labels:
+          severity: critical
+          module: reports-analytics
+        annotations:
+          summary: 'High report generation failure rate'
+          description: 'Report generation failure rate is {{ $value }} per second'
+
+      # Export Performance
+      - alert: ExportQueueBacklog
+        expr: report_export_queue_size > 100
+        for: 5m
+        labels:
+          severity: warning
+          module: reports-analytics
+        annotations:
+          summary: 'Export queue backlog detected'
+          description: 'Export queue has {{ $value }} pending jobs'
+
+      - alert: ExportFailureRate
+        expr: rate(report_export_failures_total[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+          module: reports-analytics
+        annotations:
+          summary: 'High export failure rate'
+          description: 'Export failure rate is {{ $value }} per second'
+
+      # Cache Performance
+      - alert: ReportsCacheHitRateLow
+        expr: rate(reports_cache_hits_total[5m]) / rate(reports_cache_requests_total[5m]) < 0.7
+        for: 5m
+        labels:
+          severity: warning
+          module: reports-analytics
+        annotations:
+          summary: 'Low cache hit rate for reports'
+          description: 'Cache hit rate is {{ $value | humanizePercentage }}'
+
+      # Database Performance
+      - alert: ReportAggregationSlow
+        expr: histogram_quantile(0.95, rate(report_aggregation_duration_seconds_bucket[5m])) > 10
+        for: 3m
+        labels:
+          severity: warning
+          module: reports-analytics
+        annotations:
+          summary: 'Report aggregation queries are slow'
+          description: '95th percentile aggregation time is {{ $value }}s'
+
+      # Resource Usage
+      - alert: ReportsMemoryUsageHigh
+        expr: process_resident_memory_bytes{job="pharma-care-backend"} / 1024 / 1024 > 1500
+        for: 5m
+        labels:
+          severity: warning
+          module: reports-analytics
+        annotations:
+          summary: 'High memory usage in reports module'
+          description: 'Memory usage is {{ $value }}MB'
+
+      - alert: ReportsCPUUsageHigh
+        expr: rate(process_cpu_seconds_total{job="pharma-care-backend"}[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          module: reports-analytics
+        annotations:
+          summary: 'High CPU usage in reports module'
+          description: 'CPU usage is {{ $value }}%'
+
+      # Security Alerts
+      - alert: UnauthorizedReportAccess
+        expr: rate(report_access_unauthorized_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          module: reports-analytics
+        annotations:
+          summary: 'Unauthorized report access attempts'
+          description: '{{ $value }} unauthorized access attempts per second'
+
+      - alert: SuspiciousExportActivity
+        expr: rate(report_export_requests_total[1m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          module: reports-analytics
+        annotations:
+          summary: 'Suspicious export activity detected'
+          description: 'High export request rate: {{ $value }} per second'
+
+---
+# Grafana Dashboard Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reports-analytics-dashboard
+  namespace: monitoring
+data:
+  dashboard.json: |
+    {
+      "dashboard": {
+        "id": null,
+        "title": "Reports & Analytics Module",
+        "tags": ["pharma-care", "reports", "analytics"],
+        "timezone": "browser",
+        "panels": [
+          {
+            "id": 1,
+            "title": "Report Generation Rate",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "rate(report_generation_total[5m])",
+                "legendFormat": "Reports/sec"
+              }
+            ],
+            "yAxes": [
+              {
+                "label": "Reports per second"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "title": "Report Generation Duration",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.50, rate(report_generation_duration_seconds_bucket[5m]))",
+                "legendFormat": "50th percentile"
+              },
+              {
+                "expr": "histogram_quantile(0.95, rate(report_generation_duration_seconds_bucket[5m]))",
+                "legendFormat": "95th percentile"
+              }
+            ],
+            "yAxes": [
+              {
+                "label": "Duration (seconds)"
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "title": "Export Queue Status",
+            "type": "singlestat",
+            "targets": [
+              {
+                "expr": "report_export_queue_size",
+                "legendFormat": "Queue Size"
+              }
+            ]
+          },
+          {
+            "id": 4,
+            "title": "Cache Hit Rate",
+            "type": "singlestat",
+            "targets": [
+              {
+                "expr": "rate(reports_cache_hits_total[5m]) / rate(reports_cache_requests_total[5m]) * 100",
+                "legendFormat": "Hit Rate %"
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "title": "Active Users by Report Type",
+            "type": "piechart",
+            "targets": [
+              {
+                "expr": "sum by (report_type) (report_active_users)",
+                "legendFormat": "{{ report_type }}"
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "title": "Error Rate by Report Type",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "rate(report_generation_failures_total[5m]) by (report_type)",
+                "legendFormat": "{{ report_type }}"
+              }
+            ]
+          }
+        ],
+        "time": {
+          "from": "now-1h",
+          "to": "now"
+        },
+        "refresh": "30s"
+      }
+    }

@@ -1,0 +1,276 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Variables for instant theme switching */
+:root {
+  /* Light theme variables */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-accent: #eff6ff;
+  --bg-hover: #f1f5f9;
+  --bg-active: #e2e8f0;
+  
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --text-accent: #2563eb;
+  --text-muted: #cbd5e1;
+  
+  --border-primary: #e2e8f0;
+  --border-secondary: #cbd5e1;
+  --border-accent: #3b82f6;
+  --border-hover: #94a3b8;
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  
+  /* Brand colors */
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+  
+  --success-50: #f0fdf4;
+  --success-500: #22c55e;
+  --success-600: #16a34a;
+  
+  --warning-50: #fffbeb;
+  --warning-500: #f59e0b;
+  --warning-600: #d97706;
+  
+  --error-50: #fef2f2;
+  --error-500: #ef4444;
+  --error-600: #dc2626;
+  
+  /* Theme transition properties */
+  --theme-transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  --theme-transition-fast: background-color 0.1s ease, color 0.1s ease, border-color 0.1s ease;
+}
+
+.dark {
+  /* Dark theme variables */
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --bg-accent: #1e40af;
+  --bg-hover: #334155;
+  --bg-active: #475569;
+  
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --text-accent: #60a5fa;
+  --text-muted: #475569;
+  
+  --border-primary: #334155;
+  --border-secondary: #475569;
+  --border-accent: #60a5fa;
+  --border-hover: #64748b;
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  
+  /* Brand colors for dark theme */
+  --primary-50: #1e293b;
+  --primary-100: #334155;
+  --primary-500: #60a5fa;
+  --primary-600: #3b82f6;
+  --primary-700: #2563eb;
+  
+  --success-50: #064e3b;
+  --success-500: #34d399;
+  --success-600: #10b981;
+  
+  --warning-50: #78350f;
+  --warning-500: #fbbf24;
+  --warning-600: #f59e0b;
+  
+  --error-50: #7f1d1d;
+  --error-500: #f87171;
+  --error-600: #ef4444;
+}
+
+/* Apply CSS variables to base elements */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: var(--theme-transition);
+}
+
+/* Utility classes using CSS variables */
+@layer utilities {
+  .bg-theme-primary {
+    background-color: var(--bg-primary);
+  }
+  
+  .bg-theme-secondary {
+    background-color: var(--bg-secondary);
+  }
+  
+  .bg-theme-tertiary {
+    background-color: var(--bg-tertiary);
+  }
+  
+  .bg-theme-accent {
+    background-color: var(--bg-accent);
+  }
+  
+  .bg-theme-hover {
+    background-color: var(--bg-hover);
+  }
+  
+  .text-theme-primary {
+    color: var(--text-primary);
+  }
+  
+  .text-theme-secondary {
+    color: var(--text-secondary);
+  }
+  
+  .text-theme-tertiary {
+    color: var(--text-tertiary);
+  }
+  
+  .text-theme-accent {
+    color: var(--text-accent);
+  }
+  
+  .border-theme-primary {
+    border-color: var(--border-primary);
+  }
+  
+  .border-theme-secondary {
+    border-color: var(--border-secondary);
+  }
+  
+  .border-theme-accent {
+    border-color: var(--border-accent);
+  }
+  
+  .shadow-theme-sm {
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .shadow-theme-md {
+    box-shadow: var(--shadow-md);
+  }
+  
+  .shadow-theme-lg {
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .transition-theme {
+    transition: var(--theme-transition);
+  }
+  
+  .transition-theme-fast {
+    transition: var(--theme-transition-fast);
+  }
+}
+
+/* Component-specific theme variables */
+@layer components {
+  .card-theme {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    box-shadow: var(--shadow-sm);
+    transition: var(--theme-transition);
+  }
+  
+  .card-theme:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .button-theme-primary {
+    background-color: var(--primary-500);
+    color: white;
+    border: 1px solid var(--primary-500);
+    transition: var(--theme-transition-fast);
+  }
+  
+  .button-theme-primary:hover {
+    background-color: var(--primary-600);
+    border-color: var(--primary-600);
+  }
+  
+  .button-theme-secondary {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+    transition: var(--theme-transition-fast);
+  }
+  
+  .button-theme-secondary:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--border-hover);
+  }
+  
+  .input-theme {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+    transition: var(--theme-transition-fast);
+  }
+  
+  .input-theme:focus {
+    border-color: var(--border-accent);
+    box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+  }
+  
+  .navbar-theme {
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-primary);
+    box-shadow: var(--shadow-sm);
+    transition: var(--theme-transition);
+  }
+  
+  .sidebar-theme {
+    background-color: var(--bg-secondary);
+    border-right: 1px solid var(--border-primary);
+    transition: var(--theme-transition);
+  }
+}
+
+/* Prevent layout shifts during theme transitions */
+.theme-transitioning,
+.theme-transitioning * {
+  transition: none !important;
+}
+
+/* Smooth theme transitions for specific elements */
+.theme-transition-enabled {
+  transition: var(--theme-transition);
+}
+
+.theme-transition-enabled * {
+  transition: var(--theme-transition);
+}
+
+/* Performance optimized theme switching */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --theme-transition: none;
+    --theme-transition-fast: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --border-primary: #000000;
+    --text-primary: #000000;
+  }
+  
+  .dark {
+    --border-primary: #ffffff;
+    --text-primary: #ffffff;
+  }
+}

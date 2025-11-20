@@ -1,0 +1,5 @@
+# Utilities will be implemented in subsequent tasks
+# This directory will contain:
+# - tokenGenerator.ts
+# - orderIdGenerator.ts
+# - resultValidator.ts

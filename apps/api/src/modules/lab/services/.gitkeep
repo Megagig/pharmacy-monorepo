@@ -1,0 +1,6 @@
+# Services will be implemented in subsequent tasks
+# This directory will contain:
+# - manualLabService.ts
+# - pdfGenerationService.ts
+# - tokenService.ts
+# - testCatalogService.ts

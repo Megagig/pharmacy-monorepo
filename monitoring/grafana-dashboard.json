@@ -1,0 +1,320 @@
+{
+    "dashboard": {
+        "id": null,
+        "title": "PharmacyCopilot Workspace Subscription Monitoring",
+        "tags": [
+            "PharmacyCopilot",
+            "workspace",
+            "subscription",
+            "rbac"
+        ],
+        "timezone": "browser",
+        "panels": [
+            {
+                "id": 1,
+                "title": "API Response Times",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=\"PharmacyCopilot-api\"}[5m]))",
+                        "legendFormat": "95th percentile"
+                    },
+                    {
+                        "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket{job=\"PharmacyCopilot-api\"}[5m]))",
+                        "legendFormat": "50th percentile"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "label": "Response Time (seconds)",
+                        "min": 0
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            {
+                "id": 2,
+                "title": "API Request Rate",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "rate(http_requests_total{job=\"PharmacyCopilot-api\"}[5m])",
+                        "legendFormat": "{{method}} {{endpoint}}"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "label": "Requests per second",
+                        "min": 0
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 0
+                }
+            },
+            {
+                "id": 3,
+                "title": "Subscription Status Distribution",
+                "type": "piechart",
+                "targets": [
+                    {
+                        "expr": "PharmacyCopilot_subscriptions_total",
+                        "legendFormat": "{{status}}"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 8,
+                    "x": 0,
+                    "y": 8
+                }
+            },
+            {
+                "id": 4,
+                "title": "Active Workspaces",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "PharmacyCopilot_workspaces_active_total",
+                        "legendFormat": "Active Workspaces"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "green",
+                                    "value": null
+                                },
+                                {
+                                    "color": "red",
+                                    "value": 80
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 8,
+                    "x": 8,
+                    "y": 8
+                }
+            },
+            {
+                "id": 5,
+                "title": "Trial Conversions",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "rate(PharmacyCopilot_trial_conversions_total[24h])",
+                        "legendFormat": "Daily Conversions"
+                    }
+                ],
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "short",
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "red",
+                                    "value": null
+                                },
+                                {
+                                    "color": "yellow",
+                                    "value": 5
+                                },
+                                {
+                                    "color": "green",
+                                    "value": 10
+                                }
+                            ]
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 8,
+                    "x": 16,
+                    "y": 8
+                }
+            },
+            {
+                "id": 6,
+                "title": "Invitation Metrics",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "rate(PharmacyCopilot_invitations_sent_total[1h])",
+                        "legendFormat": "Invitations Sent/hour"
+                    },
+                    {
+                        "expr": "rate(PharmacyCopilot_invitations_accepted_total[1h])",
+                        "legendFormat": "Invitations Accepted/hour"
+                    },
+                    {
+                        "expr": "PharmacyCopilot_invitations_pending_total",
+                        "legendFormat": "Pending Invitations"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "label": "Count",
+                        "min": 0
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 16
+                }
+            },
+            {
+                "id": 7,
+                "title": "Usage Limit Violations",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "rate(PharmacyCopilot_usage_limit_violations_total[5m])",
+                        "legendFormat": "{{resource}} limit violations"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "label": "Violations per second",
+                        "min": 0
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 16
+                }
+            },
+            {
+                "id": 8,
+                "title": "Database Connection Pool",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "mongodb_connections_current",
+                        "legendFormat": "Current Connections"
+                    },
+                    {
+                        "expr": "mongodb_connections_available",
+                        "legendFormat": "Available Connections"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "label": "Connections",
+                        "min": 0
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 24
+                }
+            },
+            {
+                "id": 9,
+                "title": "Email Delivery Status",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "rate(PharmacyCopilot_emails_sent_total[5m])",
+                        "legendFormat": "{{status}} emails"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "label": "Emails per second",
+                        "min": 0
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 24
+                }
+            },
+            {
+                "id": 10,
+                "title": "Memory Usage",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "process_resident_memory_bytes{job=\"PharmacyCopilot-api\"}",
+                        "legendFormat": "{{instance}} RSS Memory"
+                    },
+                    {
+                        "expr": "nodejs_heap_size_used_bytes{job=\"PharmacyCopilot-api\"}",
+                        "legendFormat": "{{instance}} Heap Used"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "label": "Bytes",
+                        "min": 0
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 32
+                }
+            },
+            {
+                "id": 11,
+                "title": "Error Rate",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "rate(http_requests_total{job=\"PharmacyCopilot-api\",status=~\"4..|5..\"}[5m])",
+                        "legendFormat": "{{status}} errors"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "label": "Errors per second",
+                        "min": 0
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 32
+                }
+            }
+        ],
+        "time": {
+            "from": "now-1h",
+            "to": "now"
+        },
+        "refresh": "30s",
+        "schemaVersion": 27,
+        "version": 1
+    }
+}

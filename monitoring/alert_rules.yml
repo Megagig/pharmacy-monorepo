@@ -1,0 +1,247 @@
+# Prometheus alerting rules for PharmacyCopilot Workspace Subscription system
+
+groups:
+  - name: PharmacyCopilot_api_alerts
+    rules:
+      # High API response time
+      - alert: HighAPIResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="PharmacyCopilot-api"}[5m])) > 2
+        for: 2m
+        labels:
+          severity: warning
+          service: PharmacyCopilot-api
+        annotations:
+          summary: 'High API response time detected'
+          description: '95th percentile response time is {{ $value }}s for the last 5 minutes'
+
+      # High error rate
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{job="PharmacyCopilot-api",status=~"5.."}[5m]) > 0.1
+        for: 1m
+        labels:
+          severity: critical
+          service: PharmacyCopilot-api
+        annotations:
+          summary: 'High error rate detected'
+          description: 'Error rate is {{ $value }} errors per second'
+
+      # API service down
+      - alert: APIServiceDown
+        expr: up{job="PharmacyCopilot-api"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: PharmacyCopilot-api
+        annotations:
+          summary: 'PharmacyCopilot API service is down'
+          description: 'The PharmacyCopilot API service has been down for more than 30 seconds'
+
+  - name: PharmacyCopilot_subscription_alerts
+    rules:
+      # High trial expiry rate without conversion
+      - alert: HighTrialExpiryRate
+        expr: rate(PharmacyCopilot_trials_expired_total[24h]) > rate(PharmacyCopilot_trial_conversions_total[24h]) * 3
+        for: 1h
+        labels:
+          severity: warning
+          service: subscription-management
+        annotations:
+          summary: 'High trial expiry rate without conversion'
+          description: 'Trial expiry rate is significantly higher than conversion rate'
+
+      # Subscription payment failures
+      - alert: SubscriptionPaymentFailures
+        expr: rate(PharmacyCopilot_payment_failures_total[1h]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          service: payment-processing
+        annotations:
+          summary: 'High subscription payment failure rate'
+          description: 'Payment failure rate is {{ $value }} failures per second'
+
+      # Usage limit violations spike
+      - alert: UsageLimitViolationsSpike
+        expr: rate(PharmacyCopilot_usage_limit_violations_total[5m]) > 1
+        for: 2m
+        labels:
+          severity: warning
+          service: usage-monitoring
+        annotations:
+          summary: 'Spike in usage limit violations'
+          description: 'Usage limit violations rate is {{ $value }} per second'
+
+  - name: PharmacyCopilot_invitation_alerts
+    rules:
+      # High invitation failure rate
+      - alert: HighInvitationFailureRate
+        expr: rate(PharmacyCopilot_invitations_failed_total[10m]) / rate(PharmacyCopilot_invitations_sent_total[10m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: invitation-system
+        annotations:
+          summary: 'High invitation failure rate'
+          description: '{{ $value | humanizePercentage }} of invitations are failing'
+
+      # Low invitation acceptance rate
+      - alert: LowInvitationAcceptanceRate
+        expr: rate(PharmacyCopilot_invitations_accepted_total[24h]) / rate(PharmacyCopilot_invitations_sent_total[24h]) < 0.3
+        for: 2h
+        labels:
+          severity: warning
+          service: invitation-system
+        annotations:
+          summary: 'Low invitation acceptance rate'
+          description: 'Only {{ $value | humanizePercentage }} of invitations are being accepted'
+
+      # Too many pending invitations
+      - alert: TooManyPendingInvitations
+        expr: PharmacyCopilot_invitations_pending_total > 1000
+        for: 10m
+        labels:
+          severity: warning
+          service: invitation-system
+        annotations:
+          summary: 'Too many pending invitations'
+          description: 'There are {{ $value }} pending invitations system-wide'
+
+  - name: PharmacyCopilot_database_alerts
+    rules:
+      # MongoDB connection issues
+      - alert: MongoDBConnectionIssues
+        expr: mongodb_connections_current / mongodb_connections_available > 0.8
+        for: 2m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: 'MongoDB connection pool nearly exhausted'
+          description: '{{ $value | humanizePercentage }} of MongoDB connections are in use'
+
+      # High database query time
+      - alert: HighDatabaseQueryTime
+        expr: mongodb_op_latencies_histogram_seconds{type="command"} > 0.5
+        for: 2m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: 'High database query latency'
+          description: 'Database query latency is {{ $value }}s'
+
+      # Database disk space low
+      - alert: DatabaseDiskSpaceLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/var/lib/mongodb"} / node_filesystem_size_bytes{mountpoint="/var/lib/mongodb"}) < 0.1
+        for: 5m
+        labels:
+          severity: critical
+          service: database
+        annotations:
+          summary: 'Database disk space critically low'
+          description: 'Only {{ $value | humanizePercentage }} disk space remaining for MongoDB'
+
+  - name: PharmacyCopilot_email_alerts
+    rules:
+      # High email delivery failure rate
+      - alert: HighEmailFailureRate
+        expr: rate(PharmacyCopilot_emails_failed_total[10m]) / rate(PharmacyCopilot_emails_sent_total[10m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: email-delivery
+        annotations:
+          summary: 'High email delivery failure rate'
+          description: '{{ $value | humanizePercentage }} of emails are failing to deliver'
+
+      # Email queue backup
+      - alert: EmailQueueBackup
+        expr: PharmacyCopilot_email_queue_size > 100
+        for: 10m
+        labels:
+          severity: warning
+          service: email-delivery
+        annotations:
+          summary: 'Email queue backing up'
+          description: '{{ $value }} emails are queued for delivery'
+
+  - name: PharmacyCopilot_system_alerts
+    rules:
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.9
+        for: 2m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: 'High memory usage'
+          description: 'Memory usage is {{ $value | humanizePercentage }}'
+
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: 'High CPU usage'
+          description: 'CPU usage is {{ $value }}%'
+
+      # Disk space low
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.1
+        for: 5m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: 'Disk space critically low'
+          description: 'Only {{ $value | humanizePercentage }} disk space remaining on {{ $labels.mountpoint }}'
+
+      # PM2 process down
+      - alert: PM2ProcessDown
+        expr: pm2_process_up == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: process-management
+        annotations:
+          summary: 'PM2 process is down'
+          description: 'PM2 process {{ $labels.name }} is down'
+
+  - name: PharmacyCopilot_security_alerts
+    rules:
+      # High rate of authentication failures
+      - alert: HighAuthFailureRate
+        expr: rate(PharmacyCopilot_auth_failures_total[5m]) > 5
+        for: 2m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: 'High authentication failure rate'
+          description: '{{ $value }} authentication failures per second'
+
+      # Suspicious invitation activity
+      - alert: SuspiciousInvitationActivity
+        expr: rate(PharmacyCopilot_invitations_sent_total[5m]) by (workspace_id) > 10
+        for: 1m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: 'Suspicious invitation activity detected'
+          description: 'Workspace {{ $labels.workspace_id }} is sending {{ $value }} invitations per second'
+
+      # Rate limit violations
+      - alert: RateLimitViolations
+        expr: rate(PharmacyCopilot_rate_limit_violations_total[5m]) > 1
+        for: 2m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: 'High rate of rate limit violations'
+          description: '{{ $value }} rate limit violations per second'

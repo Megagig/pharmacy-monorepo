@@ -1,0 +1,455 @@
+# Dynamic RBAC Prometheus Alerting Rules
+# Version: 1.0
+# Description: Comprehensive alerting rules for RBAC system monitoring
+
+groups:
+  - name: rbac.performance
+    interval: 30s
+    rules:
+      # High Permission Check Latency
+      - alert: RBACHighLatency
+        expr: histogram_quantile(0.95, rbac_permission_check_duration_seconds_bucket) > 0.5
+        for: 2m
+        labels:
+          severity: warning
+          component: rbac
+          category: performance
+        annotations:
+          summary: 'High RBAC permission check latency'
+          description: '95th percentile permission check latency is {{ $value }}s, which is above the 0.5s threshold'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-high-latency'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-performance'
+
+      # Critical Permission Check Latency
+      - alert: RBACCriticalLatency
+        expr: histogram_quantile(0.95, rbac_permission_check_duration_seconds_bucket) > 2.0
+        for: 1m
+        labels:
+          severity: critical
+          component: rbac
+          category: performance
+        annotations:
+          summary: 'Critical RBAC permission check latency'
+          description: '95th percentile permission check latency is {{ $value }}s, which is critically high'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-critical-latency'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-performance'
+
+      # Low Cache Hit Rate
+      - alert: RBACLowCacheHitRate
+        expr: (rate(rbac_cache_hits_total[5m]) / (rate(rbac_cache_hits_total[5m]) + rate(rbac_cache_misses_total[5m]))) * 100 < 80
+        for: 5m
+        labels:
+          severity: warning
+          component: rbac
+          category: performance
+        annotations:
+          summary: 'Low RBAC cache hit rate'
+          description: 'RBAC cache hit rate is {{ $value }}%, which is below the 80% threshold'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-low-cache-hit-rate'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-performance'
+
+      # High Database Query Time
+      - alert: RBACSlowDatabaseQueries
+        expr: avg(rbac_db_query_duration_seconds) > 0.1
+        for: 3m
+        labels:
+          severity: warning
+          component: rbac
+          category: performance
+        annotations:
+          summary: 'Slow RBAC database queries'
+          description: 'Average RBAC database query time is {{ $value }}s, which is above the 0.1s threshold'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-slow-db-queries'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-performance'
+
+  - name: rbac.errors
+    interval: 30s
+    rules:
+      # High Error Rate
+      - alert: RBACHighErrorRate
+        expr: rate(rbac_errors_total[5m]) > 1
+        for: 2m
+        labels:
+          severity: warning
+          component: rbac
+          category: errors
+        annotations:
+          summary: 'High RBAC error rate'
+          description: 'RBAC error rate is {{ $value }} errors/sec, which is above the 1 error/sec threshold'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-high-error-rate'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-performance'
+
+      # Critical Error Rate
+      - alert: RBACCriticalErrorRate
+        expr: rate(rbac_errors_total[5m]) > 10
+        for: 1m
+        labels:
+          severity: critical
+          component: rbac
+          category: errors
+        annotations:
+          summary: 'Critical RBAC error rate'
+          description: 'RBAC error rate is {{ $value }} errors/sec, which is critically high'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-critical-error-rate'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-performance'
+
+      # Permission Check Failures
+      - alert: RBACPermissionCheckFailures
+        expr: rate(rbac_permission_checks_total{result="error"}[5m]) > 0.5
+        for: 2m
+        labels:
+          severity: warning
+          component: rbac
+          category: errors
+        annotations:
+          summary: 'High RBAC permission check failure rate'
+          description: 'Permission check failure rate is {{ $value }} failures/sec'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-permission-failures'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-performance'
+
+      # Database Connection Errors
+      - alert: RBACDatabaseConnectionErrors
+        expr: rate(rbac_db_connection_errors_total[5m]) > 0.1
+        for: 1m
+        labels:
+          severity: critical
+          component: rbac
+          category: errors
+        annotations:
+          summary: 'RBAC database connection errors'
+          description: 'Database connection error rate is {{ $value }} errors/sec'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-db-connection-errors'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-performance'
+
+  - name: rbac.security
+    interval: 30s
+    rules:
+      # Multiple Failed Login Attempts
+      - alert: RBACMultipleFailedLogins
+        expr: increase(rbac_failed_login_attempts_total[5m]) > 10
+        for: 1m
+        labels:
+          severity: warning
+          component: rbac
+          category: security
+        annotations:
+          summary: 'Multiple failed login attempts detected'
+          description: '{{ $value }} failed login attempts in the last 5 minutes'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-failed-logins'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-security'
+
+      # Privilege Escalation Attempts
+      - alert: RBACPrivilegeEscalationAttempt
+        expr: increase(rbac_privilege_escalation_attempts_total[1m]) > 0
+        for: 0s
+        labels:
+          severity: critical
+          component: rbac
+          category: security
+        annotations:
+          summary: 'Privilege escalation attempt detected'
+          description: '{{ $value }} privilege escalation attempts detected'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-privilege-escalation'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-security'
+
+      # Suspicious Access Patterns
+      - alert: RBACSuspiciousAccessPattern
+        expr: increase(rbac_suspicious_access_total[10m]) > 5
+        for: 1m
+        labels:
+          severity: warning
+          component: rbac
+          category: security
+        annotations:
+          summary: 'Suspicious access patterns detected'
+          description: '{{ $value }} suspicious access events in the last 10 minutes'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-suspicious-access'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-security'
+
+      # After Hours Access
+      - alert: RBACAfterHoursAccess
+        expr: increase(rbac_after_hours_access_total[1h]) > 10
+        for: 5m
+        labels:
+          severity: info
+          component: rbac
+          category: security
+        annotations:
+          summary: 'High after-hours access activity'
+          description: '{{ $value }} after-hours access events in the last hour'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-after-hours-access'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-security'
+
+      # Bulk Data Access
+      - alert: RBACBulkDataAccess
+        expr: increase(rbac_bulk_data_access_total[1h]) > 5
+        for: 2m
+        labels:
+          severity: warning
+          component: rbac
+          category: security
+        annotations:
+          summary: 'Bulk data access detected'
+          description: '{{ $value }} bulk data access events in the last hour'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-bulk-data-access'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-security'
+
+  - name: rbac.availability
+    interval: 30s
+    rules:
+      # RBAC Service Down
+      - alert: RBACServiceDown
+        expr: up{job="rbac-service"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: rbac
+          category: availability
+        annotations:
+          summary: 'RBAC service is down'
+          description: 'RBAC service instance {{ $labels.instance }} is down'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-service-down'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-performance'
+
+      # High Memory Usage
+      - alert: RBACHighMemoryUsage
+        expr: rbac_memory_usage_bytes > 2147483648 # 2GB
+        for: 5m
+        labels:
+          severity: warning
+          component: rbac
+          category: resources
+        annotations:
+          summary: 'High RBAC memory usage'
+          description: 'RBAC service memory usage is {{ $value | humanize1024 }}'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-high-memory'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-performance'
+
+      # Cache Service Unavailable
+      - alert: RBACCacheUnavailable
+        expr: rbac_cache_availability == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: rbac
+          category: availability
+        annotations:
+          summary: 'RBAC cache service unavailable'
+          description: 'RBAC cache service is not responding'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-cache-unavailable'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-performance'
+
+      # Database Connection Pool Exhaustion
+      - alert: RBACDatabasePoolExhaustion
+        expr: rbac_db_pool_active_connections / rbac_db_pool_max_connections > 0.9
+        for: 2m
+        labels:
+          severity: warning
+          component: rbac
+          category: resources
+        annotations:
+          summary: 'RBAC database connection pool near exhaustion'
+          description: 'Database connection pool is {{ $value | humanizePercentage }} full'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-db-pool-exhaustion'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-performance'
+
+  - name: rbac.compliance
+    interval: 60s
+    rules:
+      # Audit Log Gaps
+      - alert: RBACAuditLogGaps
+        expr: increase(rbac_audit_log_gaps_total[1h]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          component: rbac
+          category: compliance
+        annotations:
+          summary: 'RBAC audit log gaps detected'
+          description: '{{ $value }} audit log gaps detected in the last hour'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-audit-log-gaps'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-compliance'
+
+      # Overdue Access Reviews
+      - alert: RBACOverdueAccessReviews
+        expr: rbac_overdue_access_reviews > 0
+        for: 1h
+        labels:
+          severity: warning
+          component: rbac
+          category: compliance
+        annotations:
+          summary: 'Overdue RBAC access reviews'
+          description: '{{ $value }} access reviews are overdue'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-overdue-reviews'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-compliance'
+
+      # Expired Temporary Permissions
+      - alert: RBACExpiredTemporaryPermissions
+        expr: rbac_expired_temporary_permissions > 10
+        for: 30m
+        labels:
+          severity: info
+          component: rbac
+          category: compliance
+        annotations:
+          summary: 'Multiple expired temporary permissions'
+          description: '{{ $value }} temporary permissions have expired and need cleanup'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-expired-permissions'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-compliance'
+
+      # Inactive Users with Active Roles
+      - alert: RBACInactiveUsersWithRoles
+        expr: rbac_inactive_users_with_roles > 5
+        for: 1h
+        labels:
+          severity: warning
+          component: rbac
+          category: compliance
+        annotations:
+          summary: 'Inactive users with active roles'
+          description: '{{ $value }} inactive users still have active role assignments'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-inactive-users'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-compliance'
+
+  - name: rbac.business
+    interval: 60s
+    rules:
+      # High Permission Denial Rate
+      - alert: RBACHighPermissionDenialRate
+        expr: (rate(rbac_permission_checks_total{result="denied"}[10m]) / rate(rbac_permission_checks_total[10m])) * 100 > 20
+        for: 5m
+        labels:
+          severity: warning
+          component: rbac
+          category: business
+        annotations:
+          summary: 'High permission denial rate'
+          description: '{{ $value }}% of permission checks are being denied'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-high-denial-rate'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-business'
+
+      # Unusual Permission Usage Patterns
+      - alert: RBACUnusualPermissionUsage
+        expr: |
+          (
+            rate(rbac_permission_checks_total[1h]) - 
+            rate(rbac_permission_checks_total[1h] offset 24h)
+          ) / rate(rbac_permission_checks_total[1h] offset 24h) * 100 > 50
+        for: 10m
+        labels:
+          severity: info
+          component: rbac
+          category: business
+        annotations:
+          summary: 'Unusual permission usage patterns'
+          description: 'Permission usage has increased by {{ $value }}% compared to the same time yesterday'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-unusual-usage'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-business'
+
+      # Role Assignment Anomalies
+      - alert: RBACRoleAssignmentAnomalies
+        expr: increase(rbac_role_assignments_total[1h]) > 50
+        for: 5m
+        labels:
+          severity: info
+          component: rbac
+          category: business
+        annotations:
+          summary: 'High volume of role assignments'
+          description: '{{ $value }} role assignments in the last hour, which is unusually high'
+          runbook_url: 'https://docs.pharma-care.com/runbooks/rbac-role-assignment-anomalies'
+          dashboard_url: 'https://grafana.pharma-care.com/d/rbac-business'
+
+# Alert routing and notification configuration
+alerting:
+  # Alert manager configuration
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+# Notification channels configuration (to be used with Alertmanager)
+notification_channels:
+  - name: rbac-critical
+    type: slack
+    settings:
+      webhook_url: '${SLACK_WEBHOOK_URL}'
+      channel: '#rbac-alerts'
+      title: '🚨 Critical RBAC Alert'
+      text: |
+        **Alert:** {{ .GroupLabels.alertname }}
+        **Severity:** {{ .GroupLabels.severity }}
+        **Description:** {{ range .Alerts }}{{ .Annotations.description }}{{ end }}
+        **Runbook:** {{ range .Alerts }}{{ .Annotations.runbook_url }}{{ end }}
+        **Dashboard:** {{ range .Alerts }}{{ .Annotations.dashboard_url }}{{ end }}
+
+  - name: rbac-warning
+    type: email
+    settings:
+      addresses: ['rbac-team@pharma-care.com', 'security-team@pharma-care.com']
+      subject: '⚠️ RBAC Warning Alert'
+      body: |
+        Alert: {{ .GroupLabels.alertname }}
+        Severity: {{ .GroupLabels.severity }}
+        Description: {{ range .Alerts }}{{ .Annotations.description }}{{ end }}
+
+        For more details, check the dashboard: {{ range .Alerts }}{{ .Annotations.dashboard_url }}{{ end }}
+
+        Runbook: {{ range .Alerts }}{{ .Annotations.runbook_url }}{{ end }}
+
+  - name: rbac-info
+    type: webhook
+    settings:
+      url: '${WEBHOOK_URL}/rbac-alerts'
+      http_method: POST
+      headers:
+        Content-Type: application/json
+      body: |
+        {
+          "alert": "{{ .GroupLabels.alertname }}",
+          "severity": "{{ .GroupLabels.severity }}",
+          "description": "{{ range .Alerts }}{{ .Annotations.description }}{{ end }}",
+          "timestamp": "{{ .Alerts.FiringTime }}",
+          "runbook": "{{ range .Alerts }}{{ .Annotations.runbook_url }}{{ end }}"
+        }
+
+# Alert routing rules
+routing:
+  group_by: ['alertname', 'severity']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 12h
+  receiver: 'default'
+  routes:
+    - match:
+        severity: critical
+      receiver: rbac-critical
+      group_wait: 10s
+      repeat_interval: 5m
+
+    - match:
+        severity: warning
+      receiver: rbac-warning
+      group_wait: 30s
+      repeat_interval: 1h
+
+    - match:
+        severity: info
+      receiver: rbac-info
+      group_wait: 2m
+      repeat_interval: 6h
+
+# Inhibition rules to prevent alert spam
+inhibit_rules:
+  - source_match:
+      severity: critical
+    target_match:
+      severity: warning
+    equal: ['alertname', 'instance']
+
+  - source_match:
+      alertname: RBACServiceDown
+    target_match_re:
+      alertname: RBAC.*
+    equal: ['instance']

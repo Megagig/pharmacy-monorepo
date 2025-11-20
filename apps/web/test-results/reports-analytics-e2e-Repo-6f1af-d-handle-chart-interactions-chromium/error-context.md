@@ -1,0 +1,62 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - 'button "Current theme: System. Click to cycle through themes." [ref=e7] [cursor=pointer]':
+      - img [ref=e9] [cursor=pointer]
+    - generic [ref=e14]:
+      - link "← Back to Homepage" [ref=e16] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e17]:
+        - heading "P" [level=4] [ref=e19]
+        - heading "Welcome Back" [level=1] [ref=e20]
+        - paragraph [ref=e21]: Sign in to your PharmacyCopilot account
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - text: Email Address
+            - generic [ref=e25]: "*"
+          - generic [ref=e26]:
+            - img [ref=e28]
+            - textbox "Email Address" [active] [ref=e30]
+            - group:
+              - generic: Email Address *
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - text: Password
+            - generic [ref=e33]: "*"
+          - generic [ref=e34]:
+            - img [ref=e36]
+            - textbox "Password" [ref=e38]
+            - button [ref=e40] [cursor=pointer]:
+              - img [ref=e41] [cursor=pointer]
+            - group:
+              - generic: Password *
+        - generic [ref=e43]:
+          - generic [ref=e44] [cursor=pointer]:
+            - generic [ref=e45] [cursor=pointer]:
+              - checkbox "Remember me" [ref=e46] [cursor=pointer]
+              - img [ref=e47] [cursor=pointer]
+            - generic [ref=e49] [cursor=pointer]: Remember me
+          - link "Forgot password?" [ref=e50] [cursor=pointer]:
+            - /url: /forgot-password
+        - button "Sign In" [ref=e51] [cursor=pointer]
+        - separator [ref=e52]:
+          - paragraph [ref=e54]: or
+        - paragraph [ref=e56]:
+          - text: Don't have an account?
+          - link "Sign up" [ref=e57] [cursor=pointer]:
+            - /url: /register
+        - generic [ref=e59]:
+          - text: By signing in, you agree to our
+          - link "Terms of Service" [ref=e60] [cursor=pointer]:
+            - /url: /terms
+          - text: and
+          - link "Privacy Policy" [ref=e61] [cursor=pointer]:
+            - /url: /privacy
+  - generic [ref=e62]:
+    - img [ref=e64]
+    - button "Open Tanstack query devtools" [ref=e112] [cursor=pointer]:
+      - img [ref=e113] [cursor=pointer]
+```

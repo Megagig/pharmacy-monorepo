@@ -1,0 +1,258 @@
+<!-- SUBJECT: {{acceptedUserName}} joined your workspace on PharmacyCopilot -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invitation Accepted - PharmacyCopilot</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f8fafc;
+      }
+      .container {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2563eb;
+        margin-bottom: 10px;
+      }
+      .title {
+        font-size: 28px;
+        font-weight: 600;
+        color: #059669;
+        margin-bottom: 10px;
+      }
+      .success-badge {
+        background: #d1fae5;
+        color: #065f46;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+      .user-info {
+        background: #f0fdf4;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        border-left: 4px solid #059669;
+      }
+      .workspace-info {
+        background: #f1f5f9;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        border-left: 4px solid #2563eb;
+      }
+      .cta-button {
+        display: inline-block;
+        background: #2563eb;
+        color: white;
+        padding: 14px 28px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        text-align: center;
+        margin: 20px 0;
+      }
+      .cta-button:hover {
+        background: #1d4ed8;
+      }
+      .next-steps {
+        background: #f9fafb;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .step {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+      }
+      .step-number {
+        background: #2563eb;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        margin-right: 12px;
+        flex-shrink: 0;
+      }
+      .step-content {
+        color: #374151;
+      }
+      .footer {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        text-align: center;
+        font-size: 14px;
+        color: #6b7280;
+      }
+      .footer a {
+        color: #2563eb;
+        text-decoration: none;
+      }
+      .footer a:hover {
+        text-decoration: underline;
+      }
+      @media only screen and (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+        .container {
+          padding: 20px;
+        }
+        .title {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">🏥 PharmacyCopilot</div>
+        <div class="success-badge">Success</div>
+        <h1 class="title">Great News!</h1>
+        <p>Your team member has joined the workspace</p>
+      </div>
+
+      <div class="user-info">
+        <div
+          style="
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 5px;
+          "
+        >
+          {{acceptedUserName}}
+        </div>
+        <div style="color: #64748b; margin-bottom: 10px">
+          {{acceptedUserEmail}}
+        </div>
+        <div
+          style="
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+          "
+        >
+          Role: {{role}}
+        </div>
+      </div>
+
+      <div class="workspace-info">
+        <div
+          style="
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 5px;
+          "
+        >
+          Joined: {{workspaceName}}
+        </div>
+        <div style="color: #64748b; font-size: 14px">
+          <strong>Accepted on:</strong> {{acceptedDate}}
+        </div>
+      </div>
+
+      <div
+        style="
+          background: #f0f9ff;
+          border-left: 4px solid #0ea5e9;
+          padding: 15px;
+          margin: 20px 0;
+          border-radius: 4px;
+        "
+      >
+        <div style="font-weight: 600; color: #0c4a6e; margin-bottom: 5px">
+          🎉 Your team is growing!
+        </div>
+        <div style="color: #0c4a6e">
+          {{acceptedUserName}} can now access all workspace features and
+          collaborate with your team on patient care.
+        </div>
+      </div>
+
+      <div class="next-steps">
+        <h3 style="color: #374151; margin-bottom: 15px">Next Steps:</h3>
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <strong>Welcome your new team member</strong><br />
+            Send them a welcome message and introduce them to the team
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <strong>Set up their workspace access</strong><br />
+            Review their permissions and assign them to relevant patient cases
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <strong>Share important resources</strong><br />
+            Point them to key protocols, guidelines, and team documentation
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center">
+        <a href="{{workspaceUrl}}" class="cta-button">Manage Team Members</a>
+      </div>
+
+      <div class="footer">
+        <p>
+          {{acceptedUserName}} accepted the invitation you sent to join
+          {{workspaceName}}.
+        </p>
+        <p>
+          You can manage team members and their permissions in your workspace
+          settings.
+        </p>
+        <p>
+          <a href="{{supportUrl}}">Need help?</a> |
+          <a href="{{workspaceUrl}}">Workspace Settings</a>
+        </p>
+        <p style="margin-top: 20px">
+          <strong>PharmacyCopilot</strong> - Empowering Healthcare Professionals
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

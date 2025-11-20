@@ -1,0 +1,800 @@
+/**
+ * Appointment Routes
+ * 
+ * Routes for appointment scheduling and management with feature flag protection
+ */
+
+import express from 'express';
+import { body, query, param } from 'express-validator';
+import { auth } from '../middlewares/auth';
+import rbac from '../middlewares/rbac';
+import { validateRequest } from '../middlewares/validation';
+import {
+  requirePatientEngagementModule,
+  requireAppointmentScheduling,
+  requireRecurringAppointments,
+  requirePatientPortal,
+  PATIENT_ENGAGEMENT_FLAGS
+} from '../middlewares/patientEngagementFeatureFlags';
+import appointmentController from '../controllers/appointmentController';
+
+const router = express.Router();
+
+// Apply authentication to all routes
+router.use(auth);
+
+// Apply patient engagement module check to all routes
+router.use(requirePatientEngagementModule);
+
+/**
+ * @route   GET /api/appointments
+ * @desc    Get appointments list with filtering and pagination
+ * @access  Private (All authenticated users)
+ */
+router.get(
+  '/',
+  requireAppointmentScheduling,
+  [
+    query('page')
+      .optional()
+      .isInt({ min: 1 })
+      .withMessage('Page must be a positive integer'),
+    query('limit')
+      .optional()
+      .isInt({ min: 1, max: 100 })
+      .withMessage('Limit must be between 1 and 100'),
+    query('status')
+      .optional()
+      .isIn(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'])
+      .withMessage('Invalid status filter'),
+    query('pharmacistId')
+      .optional()
+      .isMongoId()
+      .withMessage('Pharmacist ID must be valid'),
+    query('patientId')
+      .optional()
+      .isMongoId()
+      .withMessage('Patient ID must be valid'),
+    query('startDate')
+      .optional()
+      .isISO8601()
+      .withMessage('Start date must be in ISO format'),
+    query('endDate')
+      .optional()
+      .isISO8601()
+      .withMessage('End date must be in ISO format'),
+  ],
+  validateRequest,
+  appointmentController.getAppointments
+);
+
+/**
+ * @route   GET /api/appointments/calendar
+ * @desc    Get appointments for calendar view
+ * @access  Private (All authenticated users)
+ */
+router.get(
+  '/calendar',
+  requireAppointmentScheduling,
+  [
+    query('view')
+      .optional()
+      .isIn(['day', 'week', 'month'])
+      .withMessage('View must be day, week, or month'),
+    query('date')
+      .optional()
+      .isISO8601()
+      .withMessage('Date must be in ISO format'),
+    query('pharmacistId')
+      .optional()
+      .isMongoId()
+      .withMessage('Pharmacist ID must be valid'),
+    query('locationId')
+      .optional()
+      .isString()
+      .withMessage('Location ID must be a string'),
+  ],
+  validateRequest,
+  appointmentController.getCalendarAppointments
+);
+
+/**
+ * @route   GET /api/appointments/available-slots
+ * @desc    Get available appointment slots
+ * @access  Private (All authenticated users)
+ */
+router.get(
+  '/available-slots',
+  requireAppointmentScheduling,
+  [
+    query('date')
+      .isISO8601()
+      .withMessage('Date is required and must be in ISO format'),
+    query('pharmacistId')
+      .optional()
+      .isMongoId()
+      .withMessage('Pharmacist ID must be valid'),
+    query('duration')
+      .optional()
+      .isInt({ min: 5, max: 120 })
+      .withMessage('Duration must be between 5 and 120 minutes'),
+    query('type')
+      .optional()
+      .isIn(['mtm_session', 'chronic_disease_review', 'new_medication_consultation', 
+             'vaccination', 'health_check', 'smoking_cessation', 'general_followup'])
+      .withMessage('Invalid appointment type'),
+  ],
+  validateRequest,
+  appointmentController.getAvailableSlots
+);
+
+/**
+ * @route   POST /api/appointments
+ * @desc    Create new appointment
+ * @access  Private (All authenticated users)
+ */
+router.post(
+  '/',
+  requireAppointmentScheduling,
+  [
+    body('patientId')
+      .isMongoId()
+      .withMessage('Patient ID is required and must be valid'),
+    body('type')
+      .isIn(['mtm_session', 'chronic_disease_review', 'new_medication_consultation', 
+             'vaccination', 'health_check', 'smoking_cessation', 'general_followup'])
+      .withMessage('Valid appointment type is required'),
+    body('scheduledDate')
+      .isISO8601()
+      .withMessage('Scheduled date is required and must be in ISO format'),
+    body('scheduledTime')
+      .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+      .withMessage('Scheduled time must be in HH:mm format'),
+    body('duration')
+      .isInt({ min: 5, max: 120 })
+      .withMessage('Duration must be between 5 and 120 minutes'),
+    body('assignedTo')
+      .optional()
+      .isMongoId()
+      .withMessage('Assigned pharmacist ID must be valid'),
+    body('description')
+      .optional()
+      .isLength({ max: 500 })
+      .withMessage('Description must not exceed 500 characters'),
+    body('isRecurring')
+      .optional()
+      .isBoolean()
+      .withMessage('isRecurring must be a boolean'),
+    body('recurrencePattern')
+      .optional()
+      .isObject()
+      .withMessage('Recurrence pattern must be an object'),
+    body('recurrencePattern.frequency')
+      .if(body('isRecurring').equals('true'))
+      .isIn(['daily', 'weekly', 'biweekly', 'monthly', 'quarterly'])
+      .withMessage('Valid recurrence frequency is required'),
+  ],
+  validateRequest,
+  appointmentController.createAppointment
+);
+
+/**
+ * @route   GET /api/appointments/:id
+ * @desc    Get single appointment
+ * @access  Private (All authenticated users)
+ */
+router.get(
+  '/:id',
+  requireAppointmentScheduling,
+  [
+    param('id')
+      .isMongoId()
+      .withMessage('Appointment ID must be valid'),
+  ],
+  validateRequest,
+  appointmentController.getAppointment
+);
+
+/**
+ * @route   PUT /api/appointments/:id
+ * @desc    Update appointment
+ * @access  Private (All authenticated users)
+ */
+router.put(
+  '/:id',
+  requireAppointmentScheduling,
+  [
+    param('id')
+      .isMongoId()
+      .withMessage('Appointment ID must be valid'),
+    body('scheduledDate')
+      .optional()
+      .isISO8601()
+      .withMessage('Scheduled date must be in ISO format'),
+    body('scheduledTime')
+      .optional()
+      .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+      .withMessage('Scheduled time must be in HH:mm format'),
+    body('duration')
+      .optional()
+      .isInt({ min: 5, max: 120 })
+      .withMessage('Duration must be between 5 and 120 minutes'),
+    body('description')
+      .optional()
+      .isLength({ max: 500 })
+      .withMessage('Description must not exceed 500 characters'),
+    body('updateType')
+      .optional()
+      .isIn(['this_only', 'this_and_future'])
+      .withMessage('Update type must be this_only or this_and_future'),
+  ],
+  validateRequest,
+  appointmentController.updateAppointment
+);
+
+/**
+ * @route   PATCH /api/appointments/:id/status
+ * @desc    Update appointment status
+ * @access  Private (All authenticated users)
+ */
+router.patch(
+  '/:id/status',
+  requireAppointmentScheduling,
+  [
+    param('id')
+      .isMongoId()
+      .withMessage('Appointment ID must be valid'),
+    body('status')
+      .isIn(['confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'])
+      .withMessage('Valid status is required'),
+    body('reason')
+      .if(body('status').isIn(['cancelled', 'no_show']))
+      .notEmpty()
+      .withMessage('Reason is required for cancellation or no-show'),
+    body('outcome')
+      .if(body('status').equals('completed'))
+      .isObject()
+      .withMessage('Outcome is required for completion'),
+  ],
+  validateRequest,
+  appointmentController.updateAppointmentStatus
+);
+
+/**
+ * @route   POST /api/appointments/:id/reschedule
+ * @desc    Reschedule appointment
+ * @access  Private (All authenticated users)
+ */
+router.post(
+  '/:id/reschedule',
+  requireAppointmentScheduling,
+  [
+    param('id')
+      .isMongoId()
+      .withMessage('Appointment ID must be valid'),
+    body('newDate')
+      .isISO8601()
+      .withMessage('New date is required and must be in ISO format'),
+    body('newTime')
+      .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+      .withMessage('New time is required and must be in HH:mm format'),
+    body('reason')
+      .notEmpty()
+      .withMessage('Reason for rescheduling is required'),
+    body('notifyPatient')
+      .optional()
+      .isBoolean()
+      .withMessage('notifyPatient must be a boolean'),
+  ],
+  validateRequest,
+  appointmentController.rescheduleAppointment
+);
+
+/**
+ * @route   POST /api/appointments/:id/cancel
+ * @desc    Cancel appointment
+ * @access  Private (All authenticated users)
+ */
+router.post(
+  '/:id/cancel',
+  requireAppointmentScheduling,
+  [
+    param('id')
+      .isMongoId()
+      .withMessage('Appointment ID must be valid'),
+    body('reason')
+      .notEmpty()
+      .withMessage('Cancellation reason is required'),
+    body('notifyPatient')
+      .optional()
+      .isBoolean()
+      .withMessage('notifyPatient must be a boolean'),
+    body('cancelType')
+      .optional()
+      .isIn(['this_only', 'all_future'])
+      .withMessage('Cancel type must be this_only or all_future'),
+  ],
+  validateRequest,
+  appointmentController.cancelAppointment
+);
+
+/**
+ * @route   POST /api/appointments/:id/confirm
+ * @desc    Confirm appointment (can be used by patients with token)
+ * @access  Private or Public with confirmation token
+ */
+router.post(
+  '/:id/confirm',
+  // Note: This endpoint can be accessed without full auth if confirmation token is provided
+  [
+    param('id')
+      .isMongoId()
+      .withMessage('Appointment ID must be valid'),
+    body('confirmationToken')
+      .optional()
+      .isString()
+      .withMessage('Confirmation token must be a string'),
+  ],
+  validateRequest,
+  appointmentController.confirmAppointment
+);
+
+/**
+ * @route   GET /api/appointments/patient/:patientId
+ * @desc    Get appointments for a specific patient
+ * @access  Private (All authenticated users)
+ */
+router.get(
+  '/patient/:patientId',
+  requireAppointmentScheduling,
+  [
+    param('patientId')
+      .isMongoId()
+      .withMessage('Patient ID must be valid'),
+    query('status')
+      .optional()
+      .isIn(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'])
+      .withMessage('Invalid status filter'),
+    query('limit')
+      .optional()
+      .isInt({ min: 1, max: 100 })
+      .withMessage('Limit must be between 1 and 100'),
+    query('page')
+      .optional()
+      .isInt({ min: 1 })
+      .withMessage('Page must be a positive integer'),
+  ],
+  validateRequest,
+  appointmentController.getPatientAppointments
+);
+
+/**
+ * @route   GET /api/appointments/upcoming
+ * @desc    Get upcoming appointments
+ * @access  Private (All authenticated users)
+ */
+router.get(
+  '/upcoming',
+  requireAppointmentScheduling,
+  [
+    query('days')
+      .optional()
+      .isInt({ min: 1, max: 30 })
+      .withMessage('Days must be between 1 and 30'),
+    query('pharmacistId')
+      .optional()
+      .isMongoId()
+      .withMessage('Pharmacist ID must be valid'),
+  ],
+  validateRequest,
+  appointmentController.getUpcomingAppointments
+);
+
+/**
+ * Recurring Appointments Routes (require additional feature flag)
+ */
+
+/**
+ * @route   POST /api/appointments/:id/recurring/update
+ * @desc    Update recurring appointment series
+ * @access  Private (All authenticated users)
+ */
+router.post(
+  '/:id/recurring/update',
+  requireRecurringAppointments,
+  [
+    param('id')
+      .isMongoId()
+      .withMessage('Appointment ID must be valid'),
+    body('updateType')
+      .isIn(['this_only', 'this_and_future', 'all_instances'])
+      .withMessage('Update type is required'),
+    body('changes')
+      .isObject()
+      .withMessage('Changes object is required'),
+  ],
+  validateRequest,
+  appointmentController.updateRecurringAppointment
+);
+
+/**
+ * @route   GET /api/appointments/:id/recurring/series
+ * @desc    Get all appointments in recurring series
+ * @access  Private (All authenticated users)
+ */
+router.get(
+  '/:id/recurring/series',
+  requireRecurringAppointments,
+  [
+    param('id')
+      .isMongoId()
+      .withMessage('Appointment ID must be valid'),
+  ],
+  validateRequest,
+  appointmentController.getRecurringSeries
+);
+
+/**
+ * Patient Portal Routes (require patient portal feature flag)
+ */
+
+/**
+ * @route   GET /api/appointments/portal/types
+ * @desc    Get available appointment types for patient portal
+ * @access  Public (for patient portal)
+ */
+router.get(
+  '/portal/types',
+  requirePatientPortal,
+  appointmentController.getAppointmentTypes
+);
+
+/**
+ * @route   POST /api/appointments/portal/book
+ * @desc    Book appointment through patient portal
+ * @access  Public (for patient portal)
+ */
+router.post(
+  '/portal/book',
+  requirePatientPortal,
+  [
+    body('patientInfo')
+      .isObject()
+      .withMessage('Patient information is required'),
+    body('appointmentType')
+      .isIn(['mtm_session', 'chronic_disease_review', 'new_medication_consultation', 
+             'vaccination', 'health_check', 'smoking_cessation', 'general_followup'])
+      .withMessage('Valid appointment type is required'),
+    body('scheduledDate')
+      .isISO8601()
+      .withMessage('Scheduled date is required'),
+    body('scheduledTime')
+      .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+      .withMessage('Scheduled time is required'),
+  ],
+  validateRequest,
+  appointmentController.bookAppointmentPortal
+);
+
+/**
+ * @route   GET /api/appointments/next-available-slot
+ * @desc    Get next available slot for a pharmacist
+ * @access  Private (All authenticated users)
+ */
+router.get(
+  '/next-available-slot',
+  requireAppointmentScheduling,
+  [
+    query('pharmacistId')
+      .isMongoId()
+      .withMessage('Pharmacist ID is required and must be valid'),
+    query('duration')
+      .optional()
+      .isInt({ min: 5, max: 480 })
+      .withMessage('Duration must be between 5 and 480 minutes'),
+    query('type')
+      .optional()
+      .isIn(['mtm_session', 'chronic_disease_review', 'new_medication_consultation', 
+             'vaccination', 'health_check', 'smoking_cessation', 'general_followup'])
+      .withMessage('Invalid appointment type'),
+    query('daysAhead')
+      .optional()
+      .isInt({ min: 1, max: 90 })
+      .withMessage('Days ahead must be between 1 and 90'),
+  ],
+  validateRequest,
+  appointmentController.getNextAvailableSlot
+);
+
+/**
+ * @route   POST /api/appointments/validate-slot
+ * @desc    Validate slot availability
+ * @access  Private (All authenticated users)
+ */
+router.post(
+  '/validate-slot',
+  requireAppointmentScheduling,
+  [
+    body('pharmacistId')
+      .isMongoId()
+      .withMessage('Pharmacist ID is required and must be valid'),
+    body('date')
+      .isISO8601()
+      .withMessage('Date is required and must be in ISO format'),
+    body('time')
+      .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+      .withMessage('Time must be in HH:mm format'),
+    body('duration')
+      .optional()
+      .isInt({ min: 5, max: 480 })
+      .withMessage('Duration must be between 5 and 480 minutes'),
+    body('type')
+      .optional()
+      .isIn(['mtm_session', 'chronic_disease_review', 'new_medication_consultation', 
+             'vaccination', 'health_check', 'smoking_cessation', 'general_followup'])
+      .withMessage('Invalid appointment type'),
+  ],
+  validateRequest,
+  appointmentController.validateSlot
+);
+
+/**
+ * @route   GET /api/appointments/pharmacist-availability
+ * @desc    Get pharmacist availability summary for a date range
+ * @access  Private (All authenticated users)
+ */
+router.get(
+  '/pharmacist-availability',
+  requireAppointmentScheduling,
+  [
+    query('pharmacistId')
+      .isMongoId()
+      .withMessage('Pharmacist ID is required and must be valid'),
+    query('startDate')
+      .isISO8601()
+      .withMessage('Start date is required and must be in ISO format'),
+    query('endDate')
+      .isISO8601()
+      .withMessage('End date is required and must be in ISO format'),
+    query('duration')
+      .optional()
+      .isInt({ min: 5, max: 480 })
+      .withMessage('Duration must be between 5 and 480 minutes'),
+  ],
+  validateRequest,
+  appointmentController.getPharmacistAvailability
+);
+
+/**
+ * @route   POST /api/appointments/smart-suggestions
+ * @desc    Get smart appointment suggestions
+ * @access  Private (All authenticated users)
+ */
+router.post(
+  '/smart-suggestions',
+  requireAppointmentScheduling,
+  [
+    body('patientId')
+      .isMongoId()
+      .withMessage('Patient ID is required and must be valid'),
+    body('appointmentType')
+      .isIn(['mtm_session', 'chronic_disease_review', 'new_medication_consultation', 
+             'vaccination', 'health_check', 'smoking_cessation', 'general_followup'])
+      .withMessage('Valid appointment type is required'),
+    body('duration')
+      .optional()
+      .isInt({ min: 5, max: 480 })
+      .withMessage('Duration must be between 5 and 480 minutes'),
+    body('urgencyLevel')
+      .optional()
+      .isIn(['low', 'medium', 'high', 'urgent'])
+      .withMessage('Invalid urgency level'),
+    body('maxDaysAhead')
+      .optional()
+      .isInt({ min: 1, max: 90 })
+      .withMessage('Max days ahead must be between 1 and 90'),
+  ],
+  validateRequest,
+  appointmentController.getSmartSuggestions
+);
+
+/**
+ * @route   POST /api/appointments/auto-schedule
+ * @desc    Auto-schedule appointment using smart suggestions
+ * @access  Private (All authenticated users)
+ */
+router.post(
+  '/auto-schedule',
+  requireAppointmentScheduling,
+  [
+    body('patientId')
+      .isMongoId()
+      .withMessage('Patient ID is required and must be valid'),
+    body('appointmentType')
+      .isIn(['mtm_session', 'chronic_disease_review', 'new_medication_consultation', 
+             'vaccination', 'health_check', 'smoking_cessation', 'general_followup'])
+      .withMessage('Valid appointment type is required'),
+    body('duration')
+      .optional()
+      .isInt({ min: 5, max: 480 })
+      .withMessage('Duration must be between 5 and 480 minutes'),
+    body('urgencyLevel')
+      .optional()
+      .isIn(['low', 'medium', 'high', 'urgent'])
+      .withMessage('Invalid urgency level'),
+    body('acceptTopSuggestion')
+      .optional()
+      .isBoolean()
+      .withMessage('Accept top suggestion must be boolean'),
+  ],
+  validateRequest,
+  appointmentController.autoScheduleAppointment
+);
+
+/**
+ * @route   GET /api/appointments/optimization-report
+ * @desc    Get scheduling optimization report
+ * @access  Private (Manager, Admin)
+ */
+router.get(
+  '/optimization-report',
+  requireAppointmentScheduling,
+  rbac.requireRole('pharmacy_manager', 'admin'),
+  [
+    query('startDate')
+      .isISO8601()
+      .withMessage('Start date is required and must be in ISO format'),
+    query('endDate')
+      .isISO8601()
+      .withMessage('End date is required and must be in ISO format'),
+  ],
+  validateRequest,
+  appointmentController.getOptimizationReport
+);
+
+/**
+ * WAITLIST MANAGEMENT ROUTES
+ */
+
+/**
+ * @route   GET /api/appointments/waitlist
+ * @desc    Get waitlist entries with filtering
+ * @access  Private (All authenticated users)
+ */
+router.get(
+  '/waitlist',
+  requireAppointmentScheduling,
+  [
+    query('status')
+      .optional({ values: 'null' })
+      .notEmpty()
+      .isIn(['active', 'fulfilled', 'expired', 'cancelled'])
+      .withMessage('Invalid status value'),
+    query('urgencyLevel')
+      .optional({ values: 'null' })
+      .custom((value) => !value || ['low', 'medium', 'high', 'urgent'].includes(value))
+      .withMessage('Invalid urgency level'),
+    query('appointmentType')
+      .optional({ values: 'null' })
+      .isString()
+      .withMessage('Appointment type must be a string'),
+    query('search')
+      .optional({ values: 'null' })
+      .isString()
+      .withMessage('Search must be a string'),
+  ],
+  validateRequest,
+  appointmentController.getWaitlist
+);
+
+/**
+ * @route   GET /api/appointments/waitlist/stats
+ * @desc    Get waitlist statistics
+ * @access  Private (All authenticated users)
+ */
+router.get(
+  '/waitlist/stats',
+  requireAppointmentScheduling,
+  appointmentController.getWaitlistStats
+);
+
+/**
+ * @route   POST /api/appointments/waitlist
+ * @desc    Add patient to waitlist
+ * @access  Private (All authenticated users)
+ */
+router.post(
+  '/waitlist',
+  requireAppointmentScheduling,
+  [
+    body('patientId')
+      .isMongoId()
+      .withMessage('Patient ID is required and must be valid'),
+    body('appointmentType')
+      .isIn(['mtm_session', 'chronic_disease_review', 'new_medication_consultation', 
+             'vaccination', 'health_check', 'smoking_cessation', 'general_followup'])
+      .withMessage('Valid appointment type is required'),
+    body('duration')
+      .isInt({ min: 5, max: 480 })
+      .withMessage('Duration must be between 5 and 480 minutes'),
+    body('urgencyLevel')
+      .isIn(['low', 'medium', 'high', 'urgent'])
+      .withMessage('Valid urgency level is required'),
+    body('maxWaitDays')
+      .isInt({ min: 1, max: 90 })
+      .withMessage('Max wait days must be between 1 and 90'),
+    body('preferredPharmacistId')
+      .optional()
+      .isMongoId()
+      .withMessage('Preferred pharmacist ID must be valid'),
+    body('preferredTimeSlots')
+      .optional()
+      .isArray()
+      .withMessage('Preferred time slots must be an array'),
+    body('preferredDays')
+      .optional()
+      .isArray()
+      .withMessage('Preferred days must be an array'),
+    body('notificationPreferences')
+      .isObject()
+      .withMessage('Notification preferences are required'),
+    body('notificationPreferences.email')
+      .isBoolean()
+      .withMessage('Email notification preference must be boolean'),
+    body('notificationPreferences.sms')
+      .isBoolean()
+      .withMessage('SMS notification preference must be boolean'),
+    body('notificationPreferences.push')
+      .isBoolean()
+      .withMessage('Push notification preference must be boolean'),
+  ],
+  validateRequest,
+  appointmentController.addToWaitlist
+);
+
+/**
+ * @route   POST /api/appointments/waitlist/:id/cancel
+ * @desc    Cancel waitlist entry
+ * @access  Private (All authenticated users)
+ */
+router.post(
+  '/waitlist/:id/cancel',
+  requireAppointmentScheduling,
+  [
+    param('id')
+      .isMongoId()
+      .withMessage('Waitlist entry ID must be valid'),
+  ],
+  validateRequest,
+  appointmentController.cancelWaitlistEntry
+);
+
+/**
+ * @route   POST /api/appointments/waitlist/process
+ * @desc    Process waitlist - check for available slots and notify patients
+ * @access  Private (All authenticated users)
+ */
+router.post(
+  '/waitlist/process',
+  requireAppointmentScheduling,
+  appointmentController.processWaitlist
+);
+
+/**
+ * @route   POST /api/appointments/waitlist/:id/notify
+ * @desc    Notify waitlist patient of available slots
+ * @access  Private (All authenticated users)
+ */
+router.post(
+  '/waitlist/:id/notify',
+  requireAppointmentScheduling,
+  [
+    param('id')
+      .isMongoId()
+      .withMessage('Waitlist entry ID must be valid'),
+  ],
+  validateRequest,
+  appointmentController.notifyWaitlistPatient
+);
+
+export default router;

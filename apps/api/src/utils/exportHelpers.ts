@@ -1,0 +1,275 @@
+// Export helper utilities for generating different report formats
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import logger from './logger';
+
+interface ReportData {
+    reportType: string;
+    workplaceId: string;
+    filters: any;
+    data: any[];
+    generatedAt: Date;
+    [key: string]: any;
+}
+
+interface ExportOptions {
+    includeCharts?: boolean;
+    includeRawData?: boolean;
+    customTemplate?: string;
+    [key: string]: any;
+}
+
+/**
+ * Generate PDF report from report data
+ */
+export const generatePDFReport = async (data: ReportData, fileName: string, options?: ExportOptions): Promise<string> => {
+    try {
+        // Create exports directory if it doesn't exist
+        const exportsDir = path.join(process.cwd(), 'exports');
+        await fs.mkdir(exportsDir, { recursive: true });
+
+        const filePath = path.join(exportsDir, `${fileName}.pdf`);
+
+        // For now, create a simple text file as PDF placeholder
+        // In a real implementation, you would use a library like puppeteer or pdfkit
+        const content = generateReportContent(data, options);
+        await fs.writeFile(filePath, content, 'utf-8');
+
+        logger.info(`PDF report generated: ${filePath}`);
+        return filePath;
+    } catch (error) {
+        logger.error('Failed to generate PDF report:', error);
+        throw new Error(`PDF generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+};
+
+/**
+ * Generate Excel report from report data
+ */
+export const generateExcelReport = async (data: ReportData, fileName: string, options?: ExportOptions): Promise<string> => {
+    try {
+        // Create exports directory if it doesn't exist
+        const exportsDir = path.join(process.cwd(), 'exports');
+        await fs.mkdir(exportsDir, { recursive: true });
+
+        const filePath = path.join(exportsDir, `${fileName}.xlsx`);
+
+        // For now, create a CSV file as Excel placeholder
+        // In a real implementation, you would use a library like exceljs
+        const csvContent = generateCSVContent(data, options);
+        await fs.writeFile(filePath, csvContent, 'utf-8');
+
+        logger.info(`Excel report generated: ${filePath}`);
+        return filePath;
+    } catch (error) {
+        logger.error('Failed to generate Excel report:', error);
+        throw new Error(`Excel generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+};
+
+/**
+ * Generate CSV report from report data
+ */
+export const generateCSVReport = async (data: ReportData, fileName: string, options?: ExportOptions): Promise<string> => {
+    try {
+        // Create exports directory if it doesn't exist
+        const exportsDir = path.join(process.cwd(), 'exports');
+        await fs.mkdir(exportsDir, { recursive: true });
+
+        const filePath = path.join(exportsDir, `${fileName}.csv`);
+
+        const csvContent = generateCSVContent(data, options);
+        await fs.writeFile(filePath, csvContent, 'utf-8');
+
+        logger.info(`CSV report generated: ${filePath}`);
+        return filePath;
+    } catch (error) {
+        logger.error('Failed to generate CSV report:', error);
+        throw new Error(`CSV generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+};
+
+/**
+ * Generate report content for text-based formats
+ */
+function generateReportContent(data: ReportData, options?: ExportOptions): string {
+    const { reportType, workplaceId, filters, generatedAt, data: reportData } = data;
+
+    let content = `PharmacyCopilot SaaS - ${reportType} Report\n`;
+    content += `========================================\n\n`;
+    content += `Generated: ${generatedAt.toISOString()}\n`;
+    content += `Workplace ID: ${workplaceId}\n`;
+    content += `Report Type: ${reportType}\n\n`;
+
+    if (filters && Object.keys(filters).length > 0) {
+        content += `Filters Applied:\n`;
+        Object.entries(filters).forEach(([key, value]) => {
+            content += `  ${key}: ${JSON.stringify(value)}\n`;
+        });
+        content += `\n`;
+    }
+
+    if (options?.includeCharts) {
+        content += `Charts: Included\n\n`;
+    }
+
+    if (options?.includeRawData && Array.isArray(reportData)) {
+        content += `Data Records: ${reportData.length}\n\n`;
+
+        if (reportData.length > 0) {
+            // Get headers from first record
+            const headers = Object.keys(reportData[0]);
+            content += headers.join('\t') + '\n';
+
+            // Add data rows
+            reportData.forEach(record => {
+                const row = headers.map(header => {
+                    const value = record[header];
+                    return typeof value === 'object' ? JSON.stringify(value) : String(value);
+                });
+                content += row.join('\t') + '\n';
+            });
+        }
+    }
+
+    content += `\nReport generated by PharmacyCopilot SaaS\n`;
+
+    return content;
+}
+
+/**
+ * Generate CSV content from report data
+ */
+function generateCSVContent(data: ReportData, options?: ExportOptions): string {
+    const { reportType, workplaceId, generatedAt, data: reportData } = data;
+
+    let csvContent = '';
+
+    // Add metadata as comments
+    csvContent += `# PharmacyCopilot SaaS - ${reportType} Report\n`;
+    csvContent += `# Generated: ${generatedAt.toISOString()}\n`;
+    csvContent += `# Workplace ID: ${workplaceId}\n`;
+    csvContent += `# Report Type: ${reportType}\n\n`;
+
+    if (options?.includeRawData && Array.isArray(reportData) && reportData.length > 0) {
+        // Get headers from first record
+        const headers = Object.keys(reportData[0]);
+        csvContent += headers.join(',') + '\n';
+
+        // Add data rows
+        reportData.forEach(record => {
+            const row = headers.map(header => {
+                const value = record[header];
+                if (value === null || value === undefined) {
+                    return '';
+                }
+
+                // Escape CSV special characters and wrap in quotes if needed
+                const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+                if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+                    return `"${stringValue.replace(/"/g, '""')}"`;
+                }
+                return stringValue;
+            });
+            csvContent += row.join(',') + '\n';
+        });
+    } else {
+        // If no data, create basic structure
+        csvContent += 'No Data Available\n';
+    }
+
+    return csvContent;
+}
+
+/**
+ * Clean up old export files
+ */
+export const cleanupOldExports = async (daysOld: number = 7): Promise<void> => {
+    try {
+        const exportsDir = path.join(process.cwd(), 'exports');
+        const cutoffDate = new Date(Date.now() - daysOld * 24 * 60 * 60 * 1000);
+
+        const files = await fs.readdir(exportsDir);
+        let deletedCount = 0;
+
+        for (const file of files) {
+            const filePath = path.join(exportsDir, file);
+            const stats = await fs.stat(filePath);
+
+            if (stats.mtime < cutoffDate) {
+                await fs.unlink(filePath);
+                deletedCount++;
+                logger.debug(`Deleted old export file: ${file}`);
+            }
+        }
+
+        if (deletedCount > 0) {
+            logger.info(`Cleaned up ${deletedCount} old export files`);
+        }
+    } catch (error) {
+        logger.error('Failed to cleanup old exports:', error);
+        // Don't throw error for cleanup failures
+    }
+};
+
+/**
+ * Get export file statistics
+ */
+export const getExportStats = async (): Promise<{
+    totalFiles: number;
+    totalSize: number;
+    fileTypes: Record<string, number>;
+}> => {
+    try {
+        const exportsDir = path.join(process.cwd(), 'exports');
+        const stats = {
+            totalFiles: 0,
+            totalSize: 0,
+            fileTypes: {} as Record<string, number>
+        };
+
+        const files = await fs.readdir(exportsDir);
+
+        for (const file of files) {
+            const filePath = path.join(exportsDir, file);
+            const fileStats = await fs.stat(filePath);
+
+            if (fileStats.isFile()) {
+                stats.totalFiles++;
+                stats.totalSize += fileStats.size;
+
+                // Count by file extension
+                const ext = path.extname(file).toLowerCase();
+                stats.fileTypes[ext] = (stats.fileTypes[ext] || 0) + 1;
+            }
+        }
+
+        return stats;
+    } catch (error) {
+        logger.error('Failed to get export stats:', error);
+        return {
+            totalFiles: 0,
+            totalSize: 0,
+            fileTypes: {}
+        };
+    }
+};
+
+/**
+ * Validate export file name
+ */
+export const isValidExportFileName = (fileName: string): boolean => {
+    // Basic validation - no special characters that could cause path issues
+    const invalidChars = /[<>:"/\\|?*]/;
+    return !invalidChars.test(fileName) && fileName.length > 0 && fileName.length < 255;
+};
+
+/**
+ * Sanitize export file name
+ */
+export const sanitizeExportFileName = (fileName: string): string => {
+    return fileName
+        .replace(/[<>:"/\\|?*]/g, '_')
+        .replace(/\s+/g, '_')
+        .substring(0, 250);
+};

@@ -1,0 +1,1111 @@
+
+> pharma-care-backend@1.0.0 dev
+> NODE_OPTIONS='--max-old-space-size=8192' nodemon --exec ts-node src/server.ts
+
+[33m[nodemon] 3.1.10[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): src/**/*[39m
+[33m[nodemon] watching extensions: ts,js,json[39m
+[32m[nodemon] starting `ts-node src/server.ts`[39m
+Paystack Service initialized with:  {
+  secretKeyExists: true,
+  publicKeyExists: true,
+  webhookSecretExists: true,
+  secretKeyFirstChars: 'sk_te...',
+  publicKeyFirstChars: 'pk_te...'
+}
+2025-11-17 17:03:30 [[32minfo[39m]: Encryption service initialized with default key {
+  "service": "pharma-care-api",
+  "keyId": "default-key-1763395410935",
+  "algorithm": "aes-256-cbc"
+}
+2025-11-17 17:03:38 [[32minfo[39m]: ✅ Background job service initialized successfully {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:03:39 [[32minfo[39m]: Notification providers initialized {
+  "service": "pharma-care-api"
+}
+✅ Cloudinary configuration validated
+2025-11-17 17:04:00 [[32minfo[39m]: Clinical trigger monitor scheduled jobs set up {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:01 [[32minfo[39m]: MongoDB profiling disabled for Atlas compatibility {
+  "service": "pharma-care-api"
+}
+(node:48877) [MONGOOSE] Warning: `errors` is a reserved schema pathname and may break some functionality. You are allowed to use it, but use at your own risk. To disable this warning pass `suppressReservedKeysWarning` as a schema option.
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-11-17 17:04:01 [[32minfo[39m]: Data directory ensured {
+  "service": "pharma-care-api",
+  "path": "/home/megagig/Desktop/PROJECTS/MERN/pharma-care-saas/backend/data"
+}
+2025-11-17 17:04:12 [[32minfo[39m]: MongoDB Connected: ac-x5xd7ih-shard-00-00.vf50xoc.mongodb.net {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:12 [[32minfo[39m]: MongoDB Connection Pool: 2-10 connections {
+  "service": "pharma-care-api"
+}
+✅ Database connected successfully
+2025-11-17 17:04:12 [[32minfo[39m]: 🚀 Starting startup validations... {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:12 [[32minfo[39m]: 📋 Syncing pricing plans with feature flags... {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:12 [[32minfo[39m]: 🔄 Starting pricing plan sync with feature flags... {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: 📋 Found 46 active feature flags {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: 📋 Found 10 active pricing plans {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: ⏭️  Skipped plan: Network (network) - no changes needed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: ⏭️  Skipped plan: Pro (pro) - no changes needed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: ⏭️  Skipped plan: Pharmily (pharmily) - no changes needed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: ⏭️  Skipped plan: Network (network) - no changes needed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: ⏭️  Skipped plan: Enterprise (enterprise) - no changes needed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: ⏭️  Skipped plan: Free Trial (free_trial) - no changes needed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: ⏭️  Skipped plan: Basic (basic) - no changes needed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: ⏭️  Skipped plan: Basic (basic) - no changes needed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: ⏭️  Skipped plan: Pro (pro) - no changes needed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: ⏭️  Skipped plan: Pharmily (pharmily) - no changes needed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: ✅ Pricing plan sync completed: 0 updated, 0 failed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: ✅ Pricing plans synced: 0 updated {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: 🔍 Validating subscription planId references... {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:18 [[32minfo[39m]: 🔍 Validating subscription planId references... {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:19 [[32minfo[39m]: 📋 Found 41 active subscriptions to validate {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:19 [[32minfo[39m]: ✅ Subscription 68cc253ccf90b17a116bf91c has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:20 [[32minfo[39m]: ✅ Subscription 68e6a12b28c7b8ae30ae722d has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:20 [[32minfo[39m]: ✅ Subscription 68f29e77cf84c88e3ab96fb3 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:20 [[32minfo[39m]: ✅ Subscription 68f2b9a76728aa31f40303eb has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:20 [[32minfo[39m]: ✅ Subscription 68f78b2d4e74189c5beb869e has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:21 [[32minfo[39m]: ✅ Subscription 68f78eaab1455627c0f7ec1a has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:22 [[32minfo[39m]: ✅ Subscription 68f7af95212c4a555014d3a9 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:23 [[32minfo[39m]: ✅ Subscription 68f8759b7da8b3af4196592f has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:23 [[32minfo[39m]: ✅ Subscription 68f880b6e6c2daeac2bd8712 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:23 [[32minfo[39m]: ✅ Subscription 68fa995a964ef41c962a7226 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:23 [[32minfo[39m]: ✅ Subscription 68b5cb82f1f0f9758b8afae4 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:24 [[32minfo[39m]: ✅ Subscription 68b5cd86f1f0f9758b8afbc4 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:24 [[32minfo[39m]: ✅ Subscription 68e4eced49ea396ef0043f0e has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:24 [[32minfo[39m]: ✅ Subscription 68eb6d6448842d80eaf5382d has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:24 [[32minfo[39m]: ✅ Subscription 68ecaf042c597c6989ae90e7 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:25 [[32minfo[39m]: ✅ Subscription 68f3f4e41d56dac4c34096cc has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:25 [[32minfo[39m]: ✅ Subscription 68f42c34231630fbc78cd73a has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:25 [[32minfo[39m]: ✅ Subscription 68f7dcfbf10c0cc935f86a7d has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:25 [[32minfo[39m]: ✅ Subscription 68f8dd8361acaa3733b2a6e6 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:25 [[32minfo[39m]: ✅ Subscription 68f8dd8461acaa3733b2a706 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:26 [[32minfo[39m]: ✅ Subscription 68f8dd8661acaa3733b2a727 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:26 [[32minfo[39m]: ✅ Subscription 68f8dd8761acaa3733b2a73e has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:27 [[32minfo[39m]: ✅ Subscription 68f9b1a026d0fe9954f2e802 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:27 [[32minfo[39m]: ✅ Subscription 68fb4805201e89ead925db75 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:28 [[32minfo[39m]: ✅ Subscription 68fb5b8711e8aae1f24b7ded has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:28 [[32minfo[39m]: ✅ Subscription 68fb68d252a9ef2c4eef727f has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:29 [[32minfo[39m]: ✅ Subscription 68fb9875d673a03511a14b92 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:29 [[32minfo[39m]: ✅ Subscription 68fbf2a9089c5b23f31944f0 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:29 [[32minfo[39m]: ✅ Subscription 68fddb8f990a28b0113b1fd5 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:30 [[32minfo[39m]: ✅ Subscription 68fe40c5990a28b0113b45a3 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:30 [[32minfo[39m]: ✅ Subscription 68fe4bfd990a28b0113b4b75 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:31 [[32minfo[39m]: ✅ Subscription 68fe9d25990a28b0113b7433 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:31 [[32minfo[39m]: ✅ Subscription 68ff1c9d42c5b5b2f11d5ffd has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:31 [[32minfo[39m]: ✅ Subscription 68ff436cb1b3d3682b237797 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:32 [[32minfo[39m]: ✅ Subscription 690253b4ccaecb0e95eea527 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:32 [[32minfo[39m]: ✅ Subscription 6908cc802436c757d5b49b69 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:32 [[32minfo[39m]: ✅ Subscription 690affd3b54fc9fc5f54ec4e has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:33 [[32minfo[39m]: ✅ Subscription 6911fad1d084f69f0d4e0a7d has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:35 [[32minfo[39m]: ✅ Subscription 6912644b799b606db904b904 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:35 [[32minfo[39m]: ✅ Subscription 69177d0dbeed87e70910d1d1 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:35 [[32minfo[39m]: ✅ Subscription 69182f627cfa910a0a629462 has valid planId {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:35 [[32minfo[39m]: ✅ Subscription validation completed: 0 fixed, 0 failed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:35 [[32minfo[39m]: ✅ Subscriptions validated: 0 fixed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:35 [[32minfo[39m]: ✅ All startup validations completed successfully {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:36 [[32minfo[39m]: 47 workspaces already exist. Skipping seed. {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:36 [[32minfo[39m]: System metrics collection started {
+  "service": "pharma-care-api"
+}
+ℹ️ Bull queues disabled (DISABLE_BULL_QUEUES=true)
+ℹ️ Background jobs will not be processed
+2025-11-17 17:04:36 [[32minfo[39m]: Communication Socket service initialized {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:36 [[32minfo[39m]: Socket.IO server set for NotificationService {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:36 [[32minfo[39m]: Socket notification service initialized {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:36 [[32minfo[39m]: Appointment Socket service initialized {
+  "service": "pharma-care-api"
+}
+📡 Initializing Redis presence tracking using shared connection...
+🔗 Redis URL configured: redis://:overcomer@4...
+2025-11-17 17:04:37 [[32minfo[39m]: 🔌 Redis: Connecting to Redis... {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:37 [[32minfo[39m]: 🔗 Redis: URL from env - redis://:overcomer@46.202.141.1:6379 {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:37 [[32minfo[39m]: 🔑 Redis: Password extracted - ove...mer {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:37 [[32minfo[39m]: 🏠 Redis: Connecting to 46.202.141.1:6379 {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:37 [[32minfo[39m]: ✅ Redis: Connected successfully {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:37 [[32minfo[39m]: ✅ Redis: Ready to accept commands {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:38 [[32minfo[39m]: ✅ Redis: Connection verified and ready {
+  "service": "pharma-care-api"
+}
+✅ Redis presence tracking initialized with shared connection
+2025-11-17 17:04:38 [[32minfo[39m]: ChatSocketService initialized {
+  "service": "pharma-care-api"
+}
+🚀 Server running on port 5000 in development mode
+📡 Socket.IO server initialized for real-time communication
+Starting invitation cron jobs...
+Invitation cron jobs started successfully
+2025-11-17 17:04:39 [[32minfo[39m]: Daily workspace stats recalculation job scheduled {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:39 [[32minfo[39m]: Monthly API call reset job scheduled {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:39 [[32minfo[39m]: Stale stats check job scheduled {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:39 [[32minfo[39m]: Workspace stats cron jobs started {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:40 [[32minfo[39m]: Usage alert check job scheduled (every 6 hours) {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:04:40 [[32minfo[39m]: Usage alert cron job started {
+  "service": "pharma-care-api"
+}
+Starting Email Delivery Cron Service...
+Email Delivery Cron Service started successfully
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+[0mGET /api/notifications/unread-count [32m200[0m 4021.064 ms - 128[0m
+Slow API request detected: GET /unread-count took 4019.57ms
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+[0mGET /api/notifications/unread-count [32m200[0m 2715.388 ms - 128[0m
+Slow API request detected: GET /unread-count took 2715.11ms
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+2025-11-17 17:05:51 [[33mwarn[39m]: Alert fired: High API Response Time: api_request_duration is 8317ms, threshold is 5000ms {
+  "service": "pharma-care-api",
+  "alertId": "y2xw7qpg8",
+  "ruleId": "x9q9a4og4",
+  "metric": "api_request_duration",
+  "value": 8317,
+  "threshold": 5000
+}
+[0mGET /api/notifications/unread-count [32m200[0m 8318.462 ms - 128[0m
+Slow request detected: /unread-count took 8320ms
+Slow API request detected: GET /unread-count took 8317.46ms
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+[0mGET /api/notifications/unread-count [32m200[0m 6058.334 ms - 128[0m
+Slow request detected: /unread-count took 6061ms
+Slow API request detected: GET /unread-count took 6058.08ms
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+[0mGET /api/notifications/unread-count [32m200[0m 5084.387 ms - 128[0m
+Slow request detected: /unread-count took 5085ms
+Slow API request detected: GET /unread-count took 5084.18ms
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+2025-11-17 17:07:18 [[32minfo[39m]: Alert resolved: High API Response Time: api_request_duration is 8317ms, threshold is 5000ms {
+  "service": "pharma-care-api",
+  "alertId": "y2xw7qpg8",
+  "duration": 86299
+}
+[0mGET /api/notifications/unread-count [32m200[0m 3803.844 ms - 128[0m
+Slow API request detected: GET /unread-count took 3802.94ms
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+2025-11-17 17:07:58 [[33mwarn[39m]: Alert fired: High API Response Time: api_request_duration is 14066ms, threshold is 5000ms {
+  "service": "pharma-care-api",
+  "alertId": "9ttbwg60e",
+  "ruleId": "x9q9a4og4",
+  "metric": "api_request_duration",
+  "value": 14066,
+  "threshold": 5000
+}
+[0mGET /api/notifications/unread-count [32m200[0m 14067.903 ms - 128[0m
+Slow request detected: /unread-count took 14074ms
+Slow API request detected: GET /unread-count took 14065.68ms
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+2025-11-17 17:08:18 [[32minfo[39m]: Alert resolved: High API Response Time: api_request_duration is 14066ms, threshold is 5000ms {
+  "service": "pharma-care-api",
+  "alertId": "9ttbwg60e",
+  "duration": 20273
+}
+[0mGET /api/notifications/unread-count [32m200[0m 4075.821 ms - 128[0m
+Slow API request detected: GET /unread-count took 4072.93ms
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+[0mGET /api/notifications/unread-count [32m200[0m 2567.817 ms - 128[0m
+Slow API request detected: GET /unread-count took 2567.63ms
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+[0mGET /api/notifications/unread-count [32m200[0m 1936.295 ms - 128[0m
+Slow API request detected: GET /unread-count took 1936.03ms
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+[0mGET /api/notifications/unread-count [32m200[0m 4624.466 ms - 128[0m
+Slow API request detected: GET /unread-count took 4624.08ms
+Running email retry job...
+Found 0 emails pending retry
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+[0mGET /api/notifications/unread-count [32m200[0m 3494.142 ms - 128[0m
+Slow API request detected: GET /unread-count took 3493.92ms
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+2025-11-17 17:10:51 [[33mwarn[39m]: Alert fired: High API Response Time: api_request_duration is 5188ms, threshold is 5000ms {
+  "service": "pharma-care-api",
+  "alertId": "v477h1vkj",
+  "ruleId": "x9q9a4og4",
+  "metric": "api_request_duration",
+  "value": 5188,
+  "threshold": 5000
+}
+[0mGET /api/notifications/unread-count [32m200[0m 5188.071 ms - 128[0m
+Slow request detected: /unread-count took 5189ms
+Slow API request detected: GET /unread-count took 5187.54ms
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+checkWorkplaceAccess debug: {
+  userId: new ObjectId("68fb4804201e89ead925db6e"),
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  currentPlanId: {
+    features: [
+      'basic_clinical_notes',
+      'basic_reports',
+      'patient_management',
+      'medication_management',
+      'team_management',
+      'ai_diagnostics',
+      'drug_information',
+      'patient_engagement_module',
+      'appointment_scheduling',
+      'followup_task_management',
+      'smart_reminder_system'
+    ],
+    _id: new ObjectId("68b48f106901acc9cfac9737"),
+    tier: 'free_trial',
+    __v: 1,
+    billingInterval: 'monthly',
+    createdAt: 2025-08-31T18:06:08.758Z,
+    description: '14-day free trial with full access to all features',
+    isActive: true,
+    isContactSales: false,
+    name: 'Free Trial',
+    popularPlan: false,
+    priceNGN: 0,
+    trialDuration: 14,
+    updatedAt: 2025-08-31T18:10:16.776Z,
+    whatsappNumber: null
+  },
+  role: 'pharmacist',
+  status: 'active',
+  isAdmin: undefined
+}
+Auth middleware - Subscription lookup: {
+  workplaceId: new ObjectId("68fb4805201e89ead925db70"),
+  subscriptionFound: true,
+  subscriptionStatus: 'trial',
+  subscriptionTier: 'free_trial',
+  hasPlanId: true
+}
+2025-11-17 17:11:19 [[32minfo[39m]: Alert resolved: High API Response Time: api_request_duration is 5188ms, threshold is 5000ms {
+  "service": "pharma-care-api",
+  "alertId": "v477h1vkj",
+  "duration": 28454
+}
+[0mGET /api/notifications/unread-count [32m200[0m 3451.788 ms - 128[0m
+Slow API request detected: GET /unread-count took 3451.24ms
+Received SIGTERM. Starting graceful shutdown...
+2025-11-17 17:11:26 [[32minfo[39m]: 🔌 Redis: Closing connection... {
+  "service": "pharma-care-api"
+}
+HTTP server closed
+2025-11-17 17:11:27 [[32minfo[39m]: ✅ Redis: Connection closed gracefully {
+  "service": "pharma-care-api"
+}
+✅ Shared Redis connection closed
+2025-11-17 17:11:27 [[32minfo[39m]: Closing all queues... {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:11:27 [[32minfo[39m]: All queues closed {
+  "service": "pharma-care-api"
+}
+✅ Queue Service shut down successfully
+2025-11-17 17:11:27 [[33mwarn[39m]: ⚠️ Redis: Connection closed {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:11:27 [[33mwarn[39m]: ⚠️ Redis: Connection ended {
+  "service": "pharma-care-api"
+}
+2025-11-17 17:11:27 [[33mwarn[39m]: MongoDB disconnected {
+  "service": "pharma-care-api"
+}
+✅ Database connection closed
+✅ Server closed successfully

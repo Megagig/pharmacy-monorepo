@@ -1,0 +1,781 @@
+{
+  "timestamp": "2025-09-27T07:40:51.679Z",
+  "totalSize": 3883239,
+  "totalGzipSize": 1120002,
+  "files": [
+    {
+      "name": "AccessTime-xdPKgXqL.js",
+      "size": 7243,
+      "gzipSize": 3044,
+      "type": "js"
+    },
+    {
+      "name": "AdapterDateFns-BacIp4vz.js",
+      "size": 31446,
+      "gzipSize": 6809,
+      "type": "js"
+    },
+    {
+      "name": "Add-DinP5QbX.js",
+      "size": 128,
+      "gzipSize": 140,
+      "type": "js"
+    },
+    {
+      "name": "AdminDashboard-OG__qlLt.js",
+      "size": 82351,
+      "gzipSize": 15107,
+      "type": "js"
+    },
+    {
+      "name": "Api-Jt2EzGd_.js",
+      "size": 305,
+      "gzipSize": 200,
+      "type": "js"
+    },
+    {
+      "name": "Area-DcDJzgON.js",
+      "size": 12771,
+      "gzipSize": 4682,
+      "type": "js"
+    },
+    {
+      "name": "ArrowBack-BItWCU58.js",
+      "size": 152,
+      "gzipSize": 153,
+      "type": "js"
+    },
+    {
+      "name": "AttachFile-Dz8yytRl.js",
+      "size": 337,
+      "gzipSize": 240,
+      "type": "js"
+    },
+    {
+      "name": "AttachMoney-oXtLzlsM.js",
+      "size": 434,
+      "gzipSize": 296,
+      "type": "js"
+    },
+    {
+      "name": "Autocomplete-DW-SeE61.js",
+      "size": 23375,
+      "gzipSize": 8237,
+      "type": "js"
+    },
+    {
+      "name": "BarChart-B-w3J0QG.js",
+      "size": 21957,
+      "gzipSize": 6694,
+      "type": "js"
+    },
+    {
+      "name": "BugReport-Bln5s9ri.js",
+      "size": 457,
+      "gzipSize": 319,
+      "type": "js"
+    },
+    {
+      "name": "BulkOperationProgress-BOD603zp.js",
+      "size": 12359,
+      "gzipSize": 3683,
+      "type": "js"
+    },
+    {
+      "name": "CalendarToday-BT92BQz8.js",
+      "size": 196,
+      "gzipSize": 180,
+      "type": "js"
+    },
+    {
+      "name": "Cancel-ngHfCh8l.js",
+      "size": 260,
+      "gzipSize": 193,
+      "type": "js"
+    },
+    {
+      "name": "CardActions-DyO_kInq.js",
+      "size": 780,
+      "gzipSize": 454,
+      "type": "js"
+    },
+    {
+      "name": "CaseIntakePage-8cqA5eYu.js",
+      "size": 71894,
+      "gzipSize": 19451,
+      "type": "js"
+    },
+    {
+      "name": "CaseResultsPage-CxBoUypN.js",
+      "size": 10338,
+      "gzipSize": 2866,
+      "type": "js"
+    },
+    {
+      "name": "Clear-De3B6C8y.js",
+      "size": 196,
+      "gzipSize": 160,
+      "type": "js"
+    },
+    {
+      "name": "ClinicalDecisionSupport-Chi7qfgm.js",
+      "size": 15293,
+      "gzipSize": 4791,
+      "type": "js"
+    },
+    {
+      "name": "ClinicalInterventionsLayout-BXWXetFM.js",
+      "size": 154881,
+      "gzipSize": 41625,
+      "type": "js"
+    },
+    {
+      "name": "ClinicalNoteDetailPage-CtXtEB0C.js",
+      "size": 18118,
+      "gzipSize": 4920,
+      "type": "js"
+    },
+    {
+      "name": "ClinicalNoteForm-CsfDrTFY.js",
+      "size": 23423,
+      "gzipSize": 7746,
+      "type": "js"
+    },
+    {
+      "name": "ClinicalNoteFormPage-DKYl_V99.js",
+      "size": 3338,
+      "gzipSize": 1514,
+      "type": "js"
+    },
+    {
+      "name": "ClinicalNotes-BERGH6Jc.js",
+      "size": 406400,
+      "gzipSize": 120426,
+      "type": "js"
+    },
+    {
+      "name": "ClinicalNotesUXEnhancer-BH-yuQhb.js",
+      "size": 13255,
+      "gzipSize": 4332,
+      "type": "js"
+    },
+    {
+      "name": "CloudOff-Z9x89yWa.js",
+      "size": 454,
+      "gzipSize": 322,
+      "type": "js"
+    },
+    {
+      "name": "CloudUpload-CGSNiQ02.js",
+      "size": 271,
+      "gzipSize": 224,
+      "type": "js"
+    },
+    {
+      "name": "CommunicationHub-BCwxg3Cv.js",
+      "size": 258974,
+      "gzipSize": 80396,
+      "type": "js"
+    },
+    {
+      "name": "ComponentDemo-CJDg6_Y-.js",
+      "size": 26789,
+      "gzipSize": 7320,
+      "type": "js"
+    },
+    {
+      "name": "DatePicker-BPHQbsZD.js",
+      "size": 6278,
+      "gzipSize": 1919,
+      "type": "js"
+    },
+    {
+      "name": "DateTimePicker-Dzc-KkZ0.js",
+      "size": 35064,
+      "gzipSize": 10056,
+      "type": "js"
+    },
+    {
+      "name": "Delete-CTgRaLP1.js",
+      "size": 167,
+      "gzipSize": 163,
+      "type": "js"
+    },
+    {
+      "name": "DiagnosticDashboard-tbXZIWM7.js",
+      "size": 17459,
+      "gzipSize": 5078,
+      "type": "js"
+    },
+    {
+      "name": "Download-vzkMIyVG.js",
+      "size": 130,
+      "gzipSize": 142,
+      "type": "js"
+    },
+    {
+      "name": "DrugInformationCenter-DW8bxioT.js",
+      "size": 28657,
+      "gzipSize": 7894,
+      "type": "js"
+    },
+    {
+      "name": "Edit-B2er_J4R.js",
+      "size": 223,
+      "gzipSize": 188,
+      "type": "js"
+    },
+    {
+      "name": "ErrorBoundary-C2-bA3VX.js",
+      "size": 1862,
+      "gzipSize": 915,
+      "type": "js"
+    },
+    {
+      "name": "ExpandLess-BOUZH1RV.js",
+      "size": 140,
+      "gzipSize": 144,
+      "type": "js"
+    },
+    {
+      "name": "Fab-Td7g1Onu.js",
+      "size": 3021,
+      "gzipSize": 1253,
+      "type": "js"
+    },
+    {
+      "name": "FeatureFlags-B56jMTrH.js",
+      "size": 14607,
+      "gzipSize": 3876,
+      "type": "js"
+    },
+    {
+      "name": "FilterList-BXxQXbYc.js",
+      "size": 135,
+      "gzipSize": 144,
+      "type": "js"
+    },
+    {
+      "name": "FixedGrid-_GBsh7MB.js",
+      "size": 751,
+      "gzipSize": 386,
+      "type": "js"
+    },
+    {
+      "name": "GetApp-Mhr9yMg-.js",
+      "size": 130,
+      "gzipSize": 142,
+      "type": "js"
+    },
+    {
+      "name": "Help-BF_LhLIn.js",
+      "size": 16491,
+      "gzipSize": 5382,
+      "type": "js"
+    },
+    {
+      "name": "History-DjgRWctw.js",
+      "size": 315,
+      "gzipSize": 245,
+      "type": "js"
+    },
+    {
+      "name": "Home-CwO1tyR0.js",
+      "size": 130,
+      "gzipSize": 140,
+      "type": "js"
+    },
+    {
+      "name": "Image-LpuW3ErK.js",
+      "size": 201,
+      "gzipSize": 179,
+      "type": "js"
+    },
+    {
+      "name": "LastPage-fqBHFQFA.js",
+      "size": 244,
+      "gzipSize": 193,
+      "type": "js"
+    },
+    {
+      "name": "LicenseUpload-BkIPssR8.js",
+      "size": 7908,
+      "gzipSize": 2829,
+      "type": "js"
+    },
+    {
+      "name": "Lightbulb-DrSDrr8k.js",
+      "size": 244,
+      "gzipSize": 199,
+      "type": "js"
+    },
+    {
+      "name": "LineChart-C8w0z8yz.js",
+      "size": 293398,
+      "gzipSize": 87639,
+      "type": "js"
+    },
+    {
+      "name": "LocalHospital-BMwh71ta.js",
+      "size": 205,
+      "gzipSize": 181,
+      "type": "js"
+    },
+    {
+      "name": "LocalPharmacy-CIolP1Ee.js",
+      "size": 194,
+      "gzipSize": 182,
+      "type": "js"
+    },
+    {
+      "name": "LocalizationProvider-Dw4E6yUa.js",
+      "size": 1319,
+      "gzipSize": 724,
+      "type": "js"
+    },
+    {
+      "name": "MTRContextualHelp-BozT8Suo.js",
+      "size": 5671,
+      "gzipSize": 1847,
+      "type": "js"
+    },
+    {
+      "name": "MTRHelp-je_-ihi9.js",
+      "size": 16693,
+      "gzipSize": 4978,
+      "type": "js"
+    },
+    {
+      "name": "MedicationSettingsPanel-2dX4-e3P.js",
+      "size": 14341,
+      "gzipSize": 3656,
+      "type": "js"
+    },
+    {
+      "name": "MedicationTherapyReview-B96D39Gj.js",
+      "size": 178689,
+      "gzipSize": 43251,
+      "type": "js"
+    },
+    {
+      "name": "Medications-BhO1KC8U.js",
+      "size": 13328,
+      "gzipSize": 3181,
+      "type": "js"
+    },
+    {
+      "name": "MedicationsManagementDashboard-BSuSzjI4.js",
+      "size": 8340,
+      "gzipSize": 2478,
+      "type": "js"
+    },
+    {
+      "name": "ModernDashboardPage-9JSnzaWh.js",
+      "size": 211886,
+      "gzipSize": 59724,
+      "type": "js"
+    },
+    {
+      "name": "ModulePage-B2HnBZCV.js",
+      "size": 3225,
+      "gzipSize": 1014,
+      "type": "js"
+    },
+    {
+      "name": "MonitorHeart-C3w5FqmW.js",
+      "size": 388,
+      "gzipSize": 275,
+      "type": "js"
+    },
+    {
+      "name": "MoreVert-nhhWlZ7h.js",
+      "size": 237,
+      "gzipSize": 161,
+      "type": "js"
+    },
+    {
+      "name": "Pagination-D8bBW3PB.js",
+      "size": 9292,
+      "gzipSize": 3025,
+      "type": "js"
+    },
+    {
+      "name": "PatientForm-mqD0vgdC.js",
+      "size": 12178,
+      "gzipSize": 4209,
+      "type": "js"
+    },
+    {
+      "name": "PatientManagement-Dg41h7NU.js",
+      "size": 125970,
+      "gzipSize": 29423,
+      "type": "js"
+    },
+    {
+      "name": "PatientMedicationsPage-Fiy2VWlS.js",
+      "size": 49300,
+      "gzipSize": 14915,
+      "type": "js"
+    },
+    {
+      "name": "Patients-D1vS0cY-.js",
+      "size": 11374,
+      "gzipSize": 4071,
+      "type": "js"
+    },
+    {
+      "name": "Person-BO7Sszq-.js",
+      "size": 202,
+      "gzipSize": 176,
+      "type": "js"
+    },
+    {
+      "name": "PersonAdd-uFn5Wt3l.js",
+      "size": 232,
+      "gzipSize": 198,
+      "type": "js"
+    },
+    {
+      "name": "PharmacyReports-BfcTgnPS.js",
+      "size": 1070,
+      "gzipSize": 646,
+      "type": "js"
+    },
+    {
+      "name": "PharmacyUserManagement-DqFCgrrK.js",
+      "size": 17350,
+      "gzipSize": 5689,
+      "type": "js"
+    },
+    {
+      "name": "PieChart-DNgwFFqr.js",
+      "size": 13944,
+      "gzipSize": 4937,
+      "type": "js"
+    },
+    {
+      "name": "PlayArrow-CCqGijIh.js",
+      "size": 108,
+      "gzipSize": 121,
+      "type": "js"
+    },
+    {
+      "name": "PlaylistAddCheck-BXgChLeR.js",
+      "size": 191,
+      "gzipSize": 171,
+      "type": "js"
+    },
+    {
+      "name": "Print-DJVTjYC_.js",
+      "size": 229,
+      "gzipSize": 195,
+      "type": "js"
+    },
+    {
+      "name": "QuestionAnswer-C2-ExnTD.js",
+      "size": 212,
+      "gzipSize": 180,
+      "type": "js"
+    },
+    {
+      "name": "Refresh-BWfz7OQR.js",
+      "size": 286,
+      "gzipSize": 233,
+      "type": "js"
+    },
+    {
+      "name": "Remove-BUFeT4ko.js",
+      "size": 110,
+      "gzipSize": 123,
+      "type": "js"
+    },
+    {
+      "name": "ReportsAnalyticsDashboard-DAjQRF-e.js",
+      "size": 35493,
+      "gzipSize": 10921,
+      "type": "js"
+    },
+    {
+      "name": "ResultsReviewPage-DVUwpSou.js",
+      "size": 49746,
+      "gzipSize": 11539,
+      "type": "js"
+    },
+    {
+      "name": "Save-D3qEpRI-.js",
+      "size": 224,
+      "gzipSize": 193,
+      "type": "js"
+    },
+    {
+      "name": "School-HDJIxp9N.js",
+      "size": 157,
+      "gzipSize": 158,
+      "type": "js"
+    },
+    {
+      "name": "Search-BDaMMIPP.js",
+      "size": 315,
+      "gzipSize": 234,
+      "type": "js"
+    },
+    {
+      "name": "Settings-BKMkr2q6.js",
+      "size": 20136,
+      "gzipSize": 5454,
+      "type": "js"
+    },
+    {
+      "name": "SettingsTheme-Dhvz32Op.js",
+      "size": 10484,
+      "gzipSize": 2672,
+      "type": "js"
+    },
+    {
+      "name": "Share-aBoB7pKP.js",
+      "size": 440,
+      "gzipSize": 284,
+      "type": "js"
+    },
+    {
+      "name": "Snackbar-CN1k-M3c.js",
+      "size": 7126,
+      "gzipSize": 2691,
+      "type": "js"
+    },
+    {
+      "name": "StepContent-DsFsbqZA.js",
+      "size": 1440,
+      "gzipSize": 779,
+      "type": "js"
+    },
+    {
+      "name": "SubscriptionManagement-DZtCYiuX.js",
+      "size": 7922,
+      "gzipSize": 3139,
+      "type": "js"
+    },
+    {
+      "name": "SubscriptionSuccess-pMwTQZS9.js",
+      "size": 3466,
+      "gzipSize": 1383,
+      "type": "js"
+    },
+    {
+      "name": "Subscriptions-Zlo7PWJZ.js",
+      "size": 32757,
+      "gzipSize": 9391,
+      "type": "js"
+    },
+    {
+      "name": "Support-CQSyIz9e.js",
+      "size": 565,
+      "gzipSize": 338,
+      "type": "js"
+    },
+    {
+      "name": "Switch-Cd_KxpXf.js",
+      "size": 4466,
+      "gzipSize": 1710,
+      "type": "js"
+    },
+    {
+      "name": "Sync-CKENTmTt.js",
+      "size": 310,
+      "gzipSize": 243,
+      "type": "js"
+    },
+    {
+      "name": "TableCell-ZA4nZKqC.js",
+      "size": 2845,
+      "gzipSize": 1269,
+      "type": "js"
+    },
+    {
+      "name": "TablePagination-F3GtdUGZ.js",
+      "size": 6165,
+      "gzipSize": 2303,
+      "type": "js"
+    },
+    {
+      "name": "TableRow-D2snGkma.js",
+      "size": 3872,
+      "gzipSize": 1315,
+      "type": "js"
+    },
+    {
+      "name": "TimelineSeparator-Buv7JOST.js",
+      "size": 6217,
+      "gzipSize": 1766,
+      "type": "js"
+    },
+    {
+      "name": "TrendingDown-CH8OKfR7.js",
+      "size": 165,
+      "gzipSize": 157,
+      "type": "js"
+    },
+    {
+      "name": "Upgrade-BSH-OY3n.js",
+      "size": 142,
+      "gzipSize": 147,
+      "type": "js"
+    },
+    {
+      "name": "WifiOff-BWXEFsdv.js",
+      "size": 437,
+      "gzipSize": 305,
+      "type": "js"
+    },
+    {
+      "name": "Zoom-BbU3eXfH.js",
+      "size": 1321,
+      "gzipSize": 652,
+      "type": "js"
+    },
+    {
+      "name": "addMonths-BF41cc2b.js",
+      "size": 451,
+      "gzipSize": 269,
+      "type": "js"
+    },
+    {
+      "name": "aiDiagnosticService-ad9XI06d.js",
+      "size": 6211,
+      "gzipSize": 1747,
+      "type": "js"
+    },
+    {
+      "name": "api-Ce5h1_pV.js",
+      "size": 602,
+      "gzipSize": 376,
+      "type": "js"
+    },
+    {
+      "name": "apiClient-BTPkVfjo.js",
+      "size": 922,
+      "gzipSize": 518,
+      "type": "js"
+    },
+    {
+      "name": "clinicalInterventionService-BhSPzGvJ.js",
+      "size": 7054,
+      "gzipSize": 1746,
+      "type": "js"
+    },
+    {
+      "name": "clinicalNote-CntUytxg.js",
+      "size": 2439,
+      "gzipSize": 1053,
+      "type": "js"
+    },
+    {
+      "name": "diagnosticApi-CpaUG7NC.js",
+      "size": 1008,
+      "gzipSize": 395,
+      "type": "js"
+    },
+    {
+      "name": "diagnosticFeatureGuard-BZJ2GOC_.js",
+      "size": 2473,
+      "gzipSize": 1025,
+      "type": "js"
+    },
+    {
+      "name": "format-CuO4PcXN.js",
+      "size": 13322,
+      "gzipSize": 3515,
+      "type": "js"
+    },
+    {
+      "name": "index-DgEE6Mbq.js",
+      "size": 790,
+      "gzipSize": 507,
+      "type": "js"
+    },
+    {
+      "name": "index-louytu0d.js",
+      "size": 1052034,
+      "gzipSize": 308762,
+      "type": "js"
+    },
+    {
+      "name": "labStore-DWXuQil6.js",
+      "size": 23252,
+      "gzipSize": 6237,
+      "type": "js"
+    },
+    {
+      "name": "medicationManagementService-CyHUiaEu.js",
+      "size": 8286,
+      "gzipSize": 2429,
+      "type": "js"
+    },
+    {
+      "name": "mtrService-CHooUu0p.js",
+      "size": 21464,
+      "gzipSize": 5022,
+      "type": "js"
+    },
+    {
+      "name": "parseISO-DJ7zThPR.js",
+      "size": 2702,
+      "gzipSize": 1224,
+      "type": "js"
+    },
+    {
+      "name": "reselect-BYKfjCpY.js",
+      "size": 6114,
+      "gzipSize": 2539,
+      "type": "js"
+    },
+    {
+      "name": "subDays-Ca166ufm.js",
+      "size": 95,
+      "gzipSize": 108,
+      "type": "js"
+    },
+    {
+      "name": "useClinicalNotesErrorHandling-zsNhAG95.js",
+      "size": 17512,
+      "gzipSize": 5910,
+      "type": "js"
+    },
+    {
+      "name": "useDebounce-Bae5tYaG.js",
+      "size": 192,
+      "gzipSize": 161,
+      "type": "js"
+    },
+    {
+      "name": "useMobilePicker-GDqmrovO.js",
+      "size": 140308,
+      "gzipSize": 41382,
+      "type": "js"
+    },
+    {
+      "name": "usePatients--qdYAPd6.js",
+      "size": 6415,
+      "gzipSize": 1394,
+      "type": "js"
+    },
+    {
+      "name": "useResponsive-Bux_zWod.js",
+      "size": 2007,
+      "gzipSize": 752,
+      "type": "js"
+    },
+    {
+      "name": "index-B8pJyx2B.css",
+      "size": 49081,
+      "gzipSize": 8294,
+      "type": "css"
+    }
+  ],
+  "budgetPassed": false,
+  "budgets": {
+    "totalGzipped": 512000,
+    "mainChunkGzipped": 204800,
+    "vendorChunkGzipped": 307200
+  }
+}

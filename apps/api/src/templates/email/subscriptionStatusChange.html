@@ -1,0 +1,289 @@
+<!-- SUBJECT: Subscription status updated for {{workspaceName}} -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subscription Status Change - PharmacyCopilot</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f8fafc;
+      }
+      .container {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2563eb;
+        margin-bottom: 10px;
+      }
+      .title {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+      .status-active {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .status-expired {
+        background: #fecaca;
+        color: #991b1b;
+      }
+      .status-past-due {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .status-canceled {
+        background: #f3f4f6;
+        color: #374151;
+      }
+      .subscription-info {
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        border-left: 4px solid #2563eb;
+      }
+      .info-active {
+        background: #f0fdf4;
+        border-left-color: #059669;
+      }
+      .info-expired {
+        background: #fef2f2;
+        border-left-color: #dc2626;
+      }
+      .info-past-due {
+        background: #fef3c7;
+        border-left-color: #f59e0b;
+      }
+      .info-canceled {
+        background: #f9fafb;
+        border-left-color: #6b7280;
+      }
+      .cta-button {
+        display: inline-block;
+        color: white;
+        padding: 14px 28px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        text-align: center;
+        margin: 20px 0;
+      }
+      .cta-primary {
+        background: #2563eb;
+      }
+      .cta-primary:hover {
+        background: #1d4ed8;
+      }
+      .cta-warning {
+        background: #dc2626;
+      }
+      .cta-warning:hover {
+        background: #b91c1c;
+      }
+      .details-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      .details-table th,
+      .details-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .details-table th {
+        background: #f9fafb;
+        font-weight: 600;
+        color: #374151;
+      }
+      .footer {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        text-align: center;
+        font-size: 14px;
+        color: #6b7280;
+      }
+      .footer a {
+        color: #2563eb;
+        text-decoration: none;
+      }
+      .footer a:hover {
+        text-decoration: underline;
+      }
+      @media only screen and (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+        .container {
+          padding: 20px;
+        }
+        .title {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">🏥 PharmacyCopilot</div>
+        <div class="status-badge status-{{newStatus}}">
+          {{newStatusDisplay}}
+        </div>
+        <h1 class="title" style="color: {{titleColor}};">{{statusTitle}}</h1>
+        <p>Your subscription status has been updated</p>
+      </div>
+
+      <div class="subscription-info info-{{newStatus}}">
+        <div
+          style="
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 5px;
+          "
+        >
+          {{workspaceName}}
+        </div>
+        <div style="color: #64748b; margin-bottom: 10px">{{planName}} Plan</div>
+        <div style="font-size: 14px; margin-bottom: 5px">
+          <strong>Previous Status:</strong>
+          <span style="color: #6b7280">{{oldStatusDisplay}}</span>
+        </div>
+        <div style="font-size: 14px">
+          <strong>New Status:</strong>
+          <span style="color: {{statusColor}}; font-weight: 600;"
+            >{{newStatusDisplay}}</span
+          >
+        </div>
+      </div>
+
+      {{#if statusMessage}}
+      <div
+        style="background: {{messageBackground}}; border-left: 4px solid {{messageBorderColor}}; padding: 15px; margin: 20px 0; border-radius: 4px;"
+      >
+        <div
+          style="font-weight: 600; color: {{messageTextColor}}; margin-bottom: 5px;"
+        >
+          {{messageIcon}} {{messageTitle}}
+        </div>
+        <div style="color: {{messageTextColor}};">{{statusMessage}}</div>
+      </div>
+      {{/if}}
+
+      <table class="details-table">
+        <tr>
+          <th>Subscription Details</th>
+          <th>Information</th>
+        </tr>
+        <tr>
+          <td>Plan</td>
+          <td>{{planName}}</td>
+        </tr>
+        <tr>
+          <td>Status</td>
+          <td style="color: {{statusColor}}; font-weight: 600;">
+            {{newStatusDisplay}}
+          </td>
+        </tr>
+        {{#if nextBillingDate}}
+        <tr>
+          <td>Next Billing Date</td>
+          <td>{{nextBillingDate}}</td>
+        </tr>
+        {{/if}} {{#if gracePeriodEnd}}
+        <tr>
+          <td>Grace Period Ends</td>
+          <td style="color: #dc2626; font-weight: 600">{{gracePeriodEnd}}</td>
+        </tr>
+        {{/if}} {{#if effectiveDate}}
+        <tr>
+          <td>Effective Date</td>
+          <td>{{effectiveDate}}</td>
+        </tr>
+        {{/if}}
+      </table>
+
+      {{#if actionRequired}}
+      <div
+        style="
+          background: #fef2f2;
+          border: 1px solid #fecaca;
+          border-radius: 6px;
+          padding: 15px;
+          margin: 20px 0;
+        "
+      >
+        <div style="font-weight: 600; color: #991b1b; margin-bottom: 5px">
+          ⚠️ Action Required
+        </div>
+        <div style="color: #991b1b">{{actionMessage}}</div>
+      </div>
+      {{/if}} {{#if ctaUrl}}
+      <div style="text-align: center">
+        <a href="{{ctaUrl}}" class="cta-button {{ctaClass}}">{{ctaText}}</a>
+      </div>
+      {{/if}} {{#if features}}
+      <div
+        style="
+          background: #f9fafb;
+          border-radius: 8px;
+          padding: 20px;
+          margin: 20px 0;
+        "
+      >
+        <h3 style="color: #374151; margin-bottom: 15px">{{featuresTitle}}</h3>
+        <ul style="color: #6b7280; margin: 0; padding-left: 20px">
+          {{#each features}}
+          <li>{{this}}</li>
+          {{/each}}
+        </ul>
+      </div>
+      {{/if}}
+
+      <div class="footer">
+        <p>This notification was sent to the owner of {{workspaceName}}.</p>
+        <p>
+          You can manage your subscription and billing in your workspace
+          settings.
+        </p>
+        <p>
+          <a href="{{supportUrl}}">Contact Support</a> |
+          <a href="{{workspaceUrl}}">Workspace Settings</a>
+        </p>
+        <p style="margin-top: 20px">
+          <strong>PharmacyCopilot</strong> - Empowering Healthcare Professionals
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

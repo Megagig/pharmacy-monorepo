@@ -1,0 +1,617 @@
+/* Mobile-specific styles for Patient Engagement & Follow-up Module */
+
+/* Touch-friendly appointment calendar styles */
+.mobile-appointment-calendar {
+  --mobile-touch-target: 44px;
+  --mobile-spacing: 8px;
+  --mobile-border-radius: 8px;
+}
+
+/* Calendar event styling for mobile */
+.fc-event.mobile-appointment-event {
+  border-radius: var(--mobile-border-radius) !important;
+  font-size: 11px !important;
+  padding: 4px 6px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+  min-height: 32px !important;
+  cursor: pointer !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+}
+
+.fc-event.mobile-appointment-event:active {
+  transform: scale(0.98) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.fc-event.mobile-appointment-event .fc-event-title {
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.fc-event.mobile-appointment-event .fc-event-time {
+  font-size: 10px !important;
+  opacity: 0.9 !important;
+}
+
+/* Mobile calendar grid adjustments */
+.fc-timegrid-slot {
+  height: 40px !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.fc-timegrid-slot-minor {
+  border-bottom-style: dotted !important;
+  height: 20px !important;
+}
+
+.fc-timegrid-slot-label {
+  font-size: 12px !important;
+  padding: 4px 8px !important;
+  font-weight: 500 !important;
+}
+
+.fc-col-header-cell {
+  padding: 8px 4px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+.fc-daygrid-day-number {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 4px !important;
+}
+
+.fc-daygrid-day-top {
+  flex-direction: row !important;
+  justify-content: center !important;
+}
+
+/* Mobile calendar navigation */
+.fc-toolbar {
+  padding: 8px !important;
+  margin-bottom: 0 !important;
+}
+
+.fc-toolbar-chunk {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.fc-button {
+  min-height: var(--mobile-touch-target) !important;
+  min-width: var(--mobile-touch-target) !important;
+  font-size: 12px !important;
+  padding: 8px 12px !important;
+  border-radius: var(--mobile-border-radius) !important;
+}
+
+.fc-button:active {
+  transform: scale(0.95) !important;
+}
+
+/* Now indicator styling */
+.fc-now-indicator {
+  border-color: #f44336 !important;
+  border-width: 2px !important;
+  z-index: 3 !important;
+}
+
+.fc-now-indicator-arrow {
+  border-top-color: #f44336 !important;
+  border-bottom-color: #f44336 !important;
+  border-width: 8px !important;
+}
+
+/* Mobile appointment status indicators */
+.appointment-completed .fc-event {
+  opacity: 0.7 !important;
+  filter: grayscale(0.3) !important;
+}
+
+.appointment-cancelled .fc-event {
+  opacity: 0.5 !important;
+  text-decoration: line-through !important;
+  filter: grayscale(0.8) !important;
+}
+
+.appointment-no_show .fc-event {
+  opacity: 0.4 !important;
+  border-style: dotted !important;
+  border-width: 2px !important;
+}
+
+.appointment-in_progress .fc-event {
+  border-width: 3px !important;
+  box-shadow: 0 0 12px rgba(25, 118, 210, 0.4) !important;
+  animation: pulse-glow 2s infinite !important;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(25, 118, 210, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(25, 118, 210, 0.6);
+  }
+}
+
+/* Mobile follow-up task list styles */
+.mobile-task-list {
+  --task-item-height: 80px;
+  --task-border-width: 4px;
+}
+
+.mobile-task-item {
+  min-height: var(--task-item-height) !important;
+  padding: 12px 16px !important;
+  border-left: var(--task-border-width) solid transparent !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.mobile-task-item:active {
+  transform: scale(0.98) !important;
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+.mobile-task-item.overdue {
+  background: linear-gradient(90deg, rgba(244, 67, 54, 0.05) 0%, transparent 100%) !important;
+  border-left-color: #f44336 !important;
+}
+
+.mobile-task-item.high-priority {
+  border-left-color: #ff9800 !important;
+}
+
+.mobile-task-item.critical-priority {
+  border-left-color: #f44336 !important;
+  background: linear-gradient(90deg, rgba(244, 67, 54, 0.03) 0%, transparent 100%) !important;
+}
+
+/* Swipe gesture indicators */
+.mobile-task-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(76, 175, 80, 0.1),
+    transparent
+  );
+  transition: left 0.3s ease;
+  pointer-events: none;
+}
+
+.mobile-task-item.swipe-left::before {
+  left: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(76, 175, 80, 0.2),
+    transparent
+  );
+}
+
+.mobile-task-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(33, 150, 243, 0.1),
+    transparent
+  );
+  transition: right 0.3s ease;
+  pointer-events: none;
+}
+
+.mobile-task-item.swipe-right::after {
+  right: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(33, 150, 243, 0.2),
+    transparent
+  );
+}
+
+/* Mobile form styles */
+.mobile-appointment-form {
+  --form-spacing: 16px;
+  --input-height: 56px;
+}
+
+.mobile-form-step {
+  padding: var(--form-spacing) !important;
+  min-height: calc(100vh - 200px) !important;
+}
+
+.mobile-form-input {
+  margin-bottom: var(--form-spacing) !important;
+}
+
+.mobile-form-input .MuiInputBase-root {
+  min-height: var(--input-height) !important;
+  font-size: 16px !important; /* Prevent zoom on iOS */
+}
+
+.mobile-form-button {
+  min-height: var(--mobile-touch-target) !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  border-radius: var(--mobile-border-radius) !important;
+  text-transform: none !important;
+}
+
+.mobile-form-button:active {
+  transform: scale(0.98) !important;
+}
+
+/* Mobile appointment type cards */
+.mobile-appointment-type-card {
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  border-radius: 12px !important;
+  min-height: 80px !important;
+}
+
+.mobile-appointment-type-card:active {
+  transform: scale(0.98) !important;
+}
+
+.mobile-appointment-type-card.selected {
+  border-width: 2px !important;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2) !important;
+}
+
+/* Mobile time slot grid */
+.mobile-time-slots {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)) !important;
+  gap: 8px !important;
+  padding: 16px 0 !important;
+}
+
+.mobile-time-slot {
+  min-height: 40px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+.mobile-time-slot:active {
+  transform: scale(0.95) !important;
+}
+
+.mobile-time-slot.available {
+  background-color: #e3f2fd !important;
+  border-color: #2196f3 !important;
+  color: #1976d2 !important;
+}
+
+.mobile-time-slot.unavailable {
+  background-color: #ffebee !important;
+  border-color: #f44336 !important;
+  color: #d32f2f !important;
+  opacity: 0.6 !important;
+}
+
+.mobile-time-slot.selected {
+  background-color: #1976d2 !important;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3) !important;
+}
+
+/* Mobile bottom navigation */
+.mobile-bottom-nav {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  background-color: white !important;
+  border-top: 1px solid #e0e0e0 !important;
+  padding-bottom: env(safe-area-inset-bottom) !important;
+  z-index: 1000 !important;
+}
+
+.mobile-bottom-nav-item {
+  min-height: 64px !important;
+  padding: 8px 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+.mobile-bottom-nav-item:active {
+  transform: scale(0.95) !important;
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+.mobile-bottom-nav-item.active {
+  color: #1976d2 !important;
+}
+
+/* Mobile floating action button */
+.mobile-fab {
+  position: fixed !important;
+  bottom: calc(80px + env(safe-area-inset-bottom)) !important;
+  right: 16px !important;
+  z-index: 1000 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.3s ease !important;
+}
+
+.mobile-fab:active {
+  transform: scale(0.95) !important;
+}
+
+/* Mobile drawer styles */
+.mobile-drawer {
+  border-top-left-radius: 16px !important;
+  border-top-right-radius: 16px !important;
+  max-height: 90vh !important;
+}
+
+.mobile-drawer-handle {
+  width: 40px !important;
+  height: 4px !important;
+  background-color: #bdbdbd !important;
+  border-radius: 2px !important;
+  margin: 8px auto !important;
+}
+
+/* Mobile search and filter styles */
+.mobile-search-bar {
+  padding: 16px !important;
+  background-color: white !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+}
+
+.mobile-filter-chips {
+  padding: 8px 16px !important;
+  background-color: #fafafa !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  overflow-x: auto !important;
+  white-space: nowrap !important;
+}
+
+.mobile-filter-chip {
+  margin-right: 8px !important;
+  font-size: 12px !important;
+  height: 32px !important;
+  border-radius: 16px !important;
+}
+
+/* Mobile loading states */
+.mobile-loading-skeleton {
+  border-radius: 8px !important;
+  margin-bottom: 12px !important;
+}
+
+.mobile-loading-spinner {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 32px !important;
+}
+
+/* Mobile error states */
+.mobile-error-state {
+  padding: 32px 16px !important;
+  text-align: center !important;
+}
+
+.mobile-error-icon {
+  font-size: 64px !important;
+  color: #bdbdbd !important;
+  margin-bottom: 16px !important;
+}
+
+/* Mobile success states */
+.mobile-success-state {
+  padding: 24px 16px !important;
+  text-align: center !important;
+  background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%) !important;
+  border-radius: 12px !important;
+  margin: 16px !important;
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+  .fc-timegrid-slot {
+    height: 30px !important;
+  }
+  
+  .fc-timegrid-slot-minor {
+    height: 15px !important;
+  }
+  
+  .mobile-appointment-event {
+    font-size: 10px !important;
+    padding: 2px 4px !important;
+    min-height: 24px !important;
+  }
+  
+  .mobile-task-item {
+    min-height: 60px !important;
+    padding: 8px 16px !important;
+  }
+  
+  .mobile-form-step {
+    padding: 8px !important;
+  }
+  
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+  
+  .mobile-fab {
+    bottom: 16px !important;
+  }
+}
+
+/* Small mobile devices (< 375px width) */
+@media (max-width: 374px) {
+  .mobile-appointment-event {
+    font-size: 10px !important;
+    padding: 2px 4px !important;
+  }
+  
+  .mobile-time-slots {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  .mobile-form-step {
+    padding: 12px !important;
+  }
+  
+  .fc-col-header-cell {
+    font-size: 11px !important;
+    padding: 4px 2px !important;
+  }
+  
+  .fc-daygrid-day-number {
+    font-size: 12px !important;
+  }
+}
+
+/* Large mobile devices (> 414px width) */
+@media (min-width: 415px) and (max-width: 767px) {
+  .mobile-time-slots {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
+  
+  .mobile-appointment-event {
+    font-size: 12px !important;
+    padding: 6px 8px !important;
+    min-height: 36px !important;
+  }
+  
+  .fc-timegrid-slot {
+    height: 45px !important;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .mobile-appointment-event {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  .mobile-fab {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  .mobile-task-item {
+    border-left-width: 3px !important;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .mobile-bottom-nav {
+    background-color: #1e1e1e !important;
+    border-top-color: #333 !important;
+  }
+  
+  .mobile-search-bar {
+    background-color: #1e1e1e !important;
+    border-bottom-color: #333 !important;
+  }
+  
+  .mobile-filter-chips {
+    background-color: #2a2a2a !important;
+    border-bottom-color: #333 !important;
+  }
+  
+  .mobile-drawer {
+    background-color: #1e1e1e !important;
+  }
+  
+  .mobile-drawer-handle {
+    background-color: #666 !important;
+  }
+  
+  .mobile-success-state {
+    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%) !important;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-appointment-event,
+  .mobile-task-item,
+  .mobile-form-button,
+  .mobile-fab,
+  .mobile-bottom-nav-item {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .mobile-appointment-event:active,
+  .mobile-task-item:active,
+  .mobile-form-button:active,
+  .mobile-fab:active {
+    transform: none !important;
+  }
+  
+  .appointment-in_progress .fc-event {
+    animation: none !important;
+  }
+}
+
+/* Focus styles for accessibility */
+.mobile-appointment-event:focus,
+.mobile-task-item:focus,
+.mobile-form-button:focus,
+.mobile-time-slot:focus {
+  outline: 2px solid #1976d2 !important;
+  outline-offset: 2px !important;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .mobile-appointment-event {
+    border-width: 2px !important;
+  }
+  
+  .mobile-task-item {
+    border-left-width: 6px !important;
+  }
+  
+  .mobile-time-slot {
+    border-width: 2px !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mobile-fab,
+  .mobile-bottom-nav,
+  .mobile-search-bar,
+  .mobile-filter-chips {
+    display: none !important;
+  }
+  
+  .mobile-appointment-event {
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
+  }
+}

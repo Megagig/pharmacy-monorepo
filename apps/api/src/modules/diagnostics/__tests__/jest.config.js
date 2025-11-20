@@ -1,0 +1,85 @@
+module.exports = {
+  displayName: 'Diagnostic Module Tests',
+  testEnvironment: 'node',
+  roots: ['<rootDir>/src/modules/diagnostics'],
+  testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.js'],
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+  },
+  collectCoverageFrom: [
+    'src/modules/diagnostics/**/*.{ts,js}',
+    '!src/modules/diagnostics/**/*.d.ts',
+    '!src/modules/diagnostics/**/__tests__/**',
+    '!src/modules/diagnostics/**/node_modules/**',
+  ],
+  coverageDirectory: 'coverage/diagnostics',
+  coverageReporters: ['text', 'lcov', 'html', 'json'],
+  coverageThreshold: {
+    global: {
+      branches: 75,
+      functions: 80,
+      lines: 80,
+      statements: 80,
+    },
+    './src/modules/diagnostics/services/': {
+      branches: 80,
+      functions: 85,
+      lines: 85,
+      statements: 85,
+    },
+    './src/modules/diagnostics/controllers/': {
+      branches: 75,
+      functions: 80,
+      lines: 80,
+      statements: 80,
+    },
+  },
+  setupFilesAfterEnv: ['<rootDir>/src/modules/diagnostics/__tests__/setup.ts'],
+  testTimeout: 30000,
+  verbose: true,
+  detectOpenHandles: true,
+  forceExit: true,
+  maxWorkers: 4,
+  testSequencer: '<rootDir>/src/modules/diagnostics/__tests__/testSequencer.js',
+  globalSetup: '<rootDir>/src/modules/diagnostics/__tests__/globalSetup.ts',
+  globalTeardown:
+    '<rootDir>/src/modules/diagnostics/__tests__/globalTeardown.ts',
+  moduleNameMapping: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@diagnostics/(.*)$': '<rootDir>/src/modules/diagnostics/$1',
+  },
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/build/'],
+  watchPathIgnorePatterns: ['/node_modules/', '/coverage/'],
+  reporters: [
+    'default',
+    [
+      'jest-html-reporters',
+      {
+        publicPath: './coverage/diagnostics/html-report',
+        filename: 'report.html',
+        expand: true,
+        hideIcon: false,
+        pageTitle: 'Diagnostic Module Test Report',
+      },
+    ],
+    [
+      'jest-junit',
+      {
+        outputDirectory: './coverage/diagnostics',
+        outputName: 'junit.xml',
+        suiteName: 'Diagnostic Module Tests',
+      },
+    ],
+  ],
+  collectCoverage: true,
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/__tests__/',
+    '/coverage/',
+    '.d.ts$',
+  ],
+  testResultsProcessor: 'jest-sonar-reporter',
+  errorOnDeprecated: true,
+  notify: false,
+  notifyMode: 'failure-change',
+};

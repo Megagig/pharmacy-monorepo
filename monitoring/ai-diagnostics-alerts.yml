@@ -1,0 +1,303 @@
+# AI Diagnostics & Therapeutics Module - Prometheus Alert Rules
+
+groups:
+  - name: ai_diagnostics_alerts
+    rules:
+      # AI Service Performance Alerts
+      - alert: AIServiceHighLatency
+        expr: histogram_quantile(0.95, rate(ai_diagnostics_request_duration_seconds_bucket{service="openrouter"}[5m])) > 20
+        for: 2m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: ai-service
+        annotations:
+          summary: 'AI service experiencing high latency'
+          description: '95th percentile AI request latency is {{ $value }}s, exceeding 20s threshold'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/ai-service-latency'
+
+      - alert: AIServiceFailureRate
+        expr: rate(ai_diagnostics_requests_failed_total{service="openrouter"}[5m]) / rate(ai_diagnostics_requests_total{service="openrouter"}[5m]) > 0.05
+        for: 1m
+        labels:
+          severity: critical
+          service: ai-diagnostics
+          component: ai-service
+        annotations:
+          summary: 'High AI service failure rate'
+          description: 'AI service failure rate is {{ $value | humanizePercentage }}, exceeding 5% threshold'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/ai-service-failures'
+
+      - alert: AIServiceDown
+        expr: up{job="ai-diagnostics-api", service="openrouter"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: ai-diagnostics
+          component: ai-service
+        annotations:
+          summary: 'AI service is unreachable'
+          description: 'AI service has been unreachable for more than 30 seconds'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/ai-service-down'
+
+      # Diagnostic Processing Alerts
+      - alert: DiagnosticProcessingBacklog
+        expr: ai_diagnostics_pending_requests > 50
+        for: 5m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: processing
+        annotations:
+          summary: 'Diagnostic processing backlog detected'
+          description: '{{ $value }} diagnostic requests are pending processing'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/diagnostic-backlog'
+
+      - alert: DiagnosticProcessingTimeout
+        expr: rate(ai_diagnostics_timeouts_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: processing
+        annotations:
+          summary: 'High diagnostic processing timeout rate'
+          description: 'Diagnostic processing timeout rate is {{ $value }} per second'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/diagnostic-timeouts'
+
+      - alert: DiagnosticValidationFailures
+        expr: rate(ai_diagnostics_validation_failures_total[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: validation
+        annotations:
+          summary: 'High diagnostic validation failure rate'
+          description: 'Diagnostic validation failure rate is {{ $value }} per second'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/validation-failures'
+
+      # External API Alerts
+      - alert: RxNormAPIFailures
+        expr: rate(ai_diagnostics_external_api_failures_total{api="rxnorm"}[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: external-apis
+        annotations:
+          summary: 'RxNorm API experiencing failures'
+          description: 'RxNorm API failure rate is {{ $value }} per second'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/rxnorm-api-failures'
+
+      - alert: OpenFDAAPIFailures
+        expr: rate(ai_diagnostics_external_api_failures_total{api="openfda"}[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: external-apis
+        annotations:
+          summary: 'OpenFDA API experiencing failures'
+          description: 'OpenFDA API failure rate is {{ $value }} per second'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/openfda-api-failures'
+
+      - alert: FHIRIntegrationFailures
+        expr: rate(ai_diagnostics_fhir_failures_total[5m]) > 0.05
+        for: 3m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: fhir-integration
+        annotations:
+          summary: 'FHIR integration experiencing failures'
+          description: 'FHIR integration failure rate is {{ $value }} per second'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/fhir-failures'
+
+      # Lab Integration Alerts
+      - alert: LabResultProcessingErrors
+        expr: rate(ai_diagnostics_lab_processing_errors_total[5m]) > 0.02
+        for: 3m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: lab-integration
+        annotations:
+          summary: 'Lab result processing errors detected'
+          description: 'Lab result processing error rate is {{ $value }} per second'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/lab-processing-errors'
+
+      - alert: LabOrderCreationFailures
+        expr: rate(ai_diagnostics_lab_order_failures_total[5m]) > 0.01
+        for: 2m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: lab-integration
+        annotations:
+          summary: 'Lab order creation failures detected'
+          description: 'Lab order creation failure rate is {{ $value }} per second'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/lab-order-failures'
+
+      # Security and Compliance Alerts
+      - alert: UnauthorizedDiagnosticAccess
+        expr: rate(ai_diagnostics_unauthorized_access_total[5m]) > 0.1
+        for: 1m
+        labels:
+          severity: critical
+          service: ai-diagnostics
+          component: security
+        annotations:
+          summary: 'Unauthorized diagnostic access attempts detected'
+          description: 'Unauthorized access rate is {{ $value }} attempts per second'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/unauthorized-access'
+
+      - alert: ConsentViolations
+        expr: rate(ai_diagnostics_consent_violations_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          service: ai-diagnostics
+          component: compliance
+        annotations:
+          summary: 'Patient consent violations detected'
+          description: 'Consent violation rate is {{ $value }} per second'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/consent-violations'
+
+      - alert: AuditLogFailures
+        expr: rate(ai_diagnostics_audit_log_failures_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          service: ai-diagnostics
+          component: audit
+        annotations:
+          summary: 'Audit logging failures detected'
+          description: 'Audit log failure rate is {{ $value }} per second'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/audit-log-failures'
+
+      # Performance and Resource Alerts
+      - alert: DiagnosticMemoryUsageHigh
+        expr: (container_memory_usage_bytes{pod=~"ai-diagnostics-api-.*"} / container_spec_memory_limit_bytes) > 0.9
+        for: 2m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: resources
+        annotations:
+          summary: 'High memory usage in diagnostic service'
+          description: 'Memory usage is {{ $value | humanizePercentage }} of limit'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/high-memory-usage'
+
+      - alert: DiagnosticCPUUsageHigh
+        expr: rate(container_cpu_usage_seconds_total{pod=~"ai-diagnostics-api-.*"}[5m]) > 0.8
+        for: 3m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: resources
+        annotations:
+          summary: 'High CPU usage in diagnostic service'
+          description: 'CPU usage is {{ $value | humanizePercentage }} of limit'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/high-cpu-usage'
+
+      - alert: DiagnosticDiskSpaceLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/var/log/PharmacyCopilot"} / node_filesystem_size_bytes{mountpoint="/var/log/PharmacyCopilot"}) < 0.1
+        for: 5m
+        labels:
+          severity: critical
+          service: ai-diagnostics
+          component: storage
+        annotations:
+          summary: 'Low disk space for diagnostic logs'
+          description: 'Only {{ $value | humanizePercentage }} disk space remaining'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/low-disk-space'
+
+      # Cache Performance Alerts
+      - alert: DiagnosticCacheHitRateLow
+        expr: ai_diagnostics_cache_hit_rate < 0.7
+        for: 5m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: cache
+        annotations:
+          summary: 'Low cache hit rate for diagnostic data'
+          description: 'Cache hit rate is {{ $value | humanizePercentage }}, below 70% threshold'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/low-cache-hit-rate'
+
+      - alert: DiagnosticCacheConnectionFailures
+        expr: rate(ai_diagnostics_cache_connection_failures_total[5m]) > 0.01
+        for: 2m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: cache
+        annotations:
+          summary: 'Cache connection failures detected'
+          description: 'Cache connection failure rate is {{ $value }} per second'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/cache-connection-failures'
+
+      # Business Logic Alerts
+      - alert: HighRiskDiagnosisDetected
+        expr: increase(ai_diagnostics_high_risk_diagnoses_total[1h]) > 10
+        for: 0s
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: clinical
+        annotations:
+          summary: 'Unusual number of high-risk diagnoses detected'
+          description: '{{ $value }} high-risk diagnoses detected in the last hour'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/high-risk-diagnoses'
+
+      - alert: PharmacistOverrideRateHigh
+        expr: rate(ai_diagnostics_pharmacist_overrides_total[1h]) / rate(ai_diagnostics_completed_total[1h]) > 0.3
+        for: 10m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: clinical
+        annotations:
+          summary: 'High pharmacist override rate detected'
+          description: 'Pharmacist override rate is {{ $value | humanizePercentage }}, exceeding 30% threshold'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/high-override-rate'
+
+      - alert: ReferralRateSpike
+        expr: rate(ai_diagnostics_referrals_created_total[1h]) > rate(ai_diagnostics_referrals_created_total[24h] offset 24h) * 2
+        for: 15m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: clinical
+        annotations:
+          summary: 'Unusual spike in referral rate detected'
+          description: 'Referral rate is {{ $value }}x higher than yesterday'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/referral-rate-spike'
+
+  - name: ai_diagnostics_sla_alerts
+    rules:
+      # SLA Alerts
+      - alert: DiagnosticSLAViolation
+        expr: (rate(ai_diagnostics_requests_total[5m]) - rate(ai_diagnostics_successful_requests_total[5m])) / rate(ai_diagnostics_requests_total[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+          service: ai-diagnostics
+          component: sla
+        annotations:
+          summary: 'Diagnostic service SLA violation'
+          description: 'Service availability is {{ $value | humanizePercentage }}, below 99% SLA'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/sla-violation'
+
+      - alert: DiagnosticResponseTimeSLAViolation
+        expr: histogram_quantile(0.95, rate(ai_diagnostics_request_duration_seconds_bucket[5m])) > 30
+        for: 3m
+        labels:
+          severity: warning
+          service: ai-diagnostics
+          component: sla
+        annotations:
+          summary: 'Diagnostic response time SLA violation'
+          description: '95th percentile response time is {{ $value }}s, exceeding 30s SLA'
+          runbook_url: 'https://docs.PharmacyCopilot.com/runbooks/response-time-sla'
