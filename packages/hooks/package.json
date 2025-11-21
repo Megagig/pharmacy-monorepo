@@ -12,13 +12,14 @@
         }
     },
     "scripts": {
-        "build": "tsc",
+        "build": "tsc --build",
         "dev": "tsc --watch",
-        "clean": "rm -rf dist",
+        "clean": "tsc --build --clean",
         "type-check": "tsc --noEmit"
     },
     "dependencies": {
         "@pharmacy/types": "workspace:*",
+        "@pharmacy/constants": "workspace:*",
         "@pharmacy/api-client": "workspace:*",
         "@tanstack/react-query": "^5.62.11"
     },

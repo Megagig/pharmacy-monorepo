@@ -4,7 +4,9 @@
         "outDir": "./dist",
         "rootDir": "./src",
         "declaration": true,
-        "declarationMap": true
+        "declarationMap": true,
+        "composite": true,
+        "skipLibCheck": true
     },
     "include": [
         "src/**/*"
@@ -12,5 +14,16 @@
     "exclude": [
         "node_modules",
         "dist"
+    ],
+    "references": [
+        {
+            "path": "../types"
+        },
+        {
+            "path": "../constants"
+        },
+        {
+            "path": "../api-client"
+        }
     ]
 }

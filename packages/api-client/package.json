@@ -20,9 +20,9 @@
         }
     },
     "scripts": {
-        "build": "tsc",
+        "build": "tsc --build",
         "dev": "tsc --watch",
-        "clean": "rm -rf dist",
+        "clean": "tsc --build --clean",
         "type-check": "tsc --noEmit"
     },
     "dependencies": {

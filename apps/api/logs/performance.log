@@ -7823,3 +7823,5 @@
 {"alertId":"q0uje4ic9","duration":30001,"level":"info","message":"Alert resolved: High Memory Usage: memory_heap_usage_percent is 96.74620904899255%, threshold is 90%","service":"pharma-care-api","timestamp":"2025-11-20 22:47:50"}
 {"alertId":"0zr269bhi","duration":30000,"level":"info","message":"Alert resolved: High Memory Usage: memory_heap_usage_percent is 90.01746240582247%, threshold is 90%","service":"pharma-care-api","timestamp":"2025-11-20 23:23:20"}
 {"alertId":"4uxne6azn","duration":13050115,"level":"info","message":"Alert resolved: High Memory Usage: memory_heap_usage_percent is 90.0478462280864%, threshold is 90%","service":"pharma-care-api","timestamp":"2025-11-21 03:01:20"}
+{"alertId":"g00ihneip","duration":30000,"level":"info","message":"Alert resolved: High Memory Usage: memory_heap_usage_percent is 90.02140738157568%, threshold is 90%","service":"pharma-care-api","timestamp":"2025-11-21 05:58:00"}
+{"alertId":"bujiibu6h","duration":30000,"level":"info","message":"Alert resolved: High Memory Usage: memory_heap_usage_percent is 90.03546288013777%, threshold is 90%","service":"pharma-care-api","timestamp":"2025-11-21 05:59:00"}
