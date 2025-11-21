@@ -5,7 +5,7 @@ import SubscriptionPlan from '../models/SubscriptionPlan';
 import { FeatureFlag } from '../models/FeatureFlag';
 import Payment from '../models/Payment';
 import { emailService } from '../utils/emailService';
-import { paystackService, PaystackService } from '../services/paystackService';
+import { nombaService, NombaService } from '../services/nombaService';
 import { getSubscriptionFeatures } from '../utils/subscriptionFeatures';
 
 interface AuthRequest extends Request {
@@ -279,32 +279,9 @@ export class SubscriptionController {
       // Try to find plan by ID first, then by slug, then by tier + billingInterval
       let plan = null;
 
-      if (planId) {
-        plan = await SubscriptionPlan.findOne({
-          _id: planId,
-          billingInterval: billingInterval,
-        });
-      }
-
-      if (!plan && planSlug) {
-        // Try to find by matching tier and billingInterval (since PricingPlan uses slug)
-        const tierFromSlug = planSlug.split('-')[0]; // e.g., "basic-monthly" -> "basic"
-        plan = await SubscriptionPlan.findOne({
-          tier: tierFromSlug,
-          billingInterval: billingInterval,
-        });
-      }
-
-      if (!plan && tier) {
-        plan = await SubscriptionPlan.findOne({
-          tier: tier,
-          billingInterval: billingInterval,
-        });
-      }
-
-      // If no SubscriptionPlan found, try to get from PricingPlan
-      if (!plan && planSlug) {
-        console.log('SubscriptionPlan not found, trying PricingPlan...');
+      // PRIORITY 1: Try PricingPlan first (newer model with correct pricing)
+      if (planSlug) {
+        console.log('Trying PricingPlan first with slug:', planSlug);
         const PricingPlan = (await import('../models/PricingPlan')).default;
         const pricingPlan = await PricingPlan.findOne({ slug: planSlug });
 
@@ -326,6 +303,31 @@ export class SubscriptionController {
             features: pricingPlan.features || [],
           } as any;
         }
+      }
+
+      // PRIORITY 2: Fall back to SubscriptionPlan (legacy model) if PricingPlan not found
+      if (!plan && planId) {
+        console.log('PricingPlan not found, trying SubscriptionPlan with ID:', planId);
+        plan = await SubscriptionPlan.findOne({
+          _id: planId,
+          billingInterval: billingInterval,
+        });
+      }
+
+      if (!plan && planSlug) {
+        // Try to find by matching tier and billingInterval (since PricingPlan uses slug)
+        const tierFromSlug = planSlug.split('-')[0]; // e.g., "basic-monthly" -> "basic"
+        plan = await SubscriptionPlan.findOne({
+          tier: tierFromSlug,
+          billingInterval: billingInterval,
+        });
+      }
+
+      if (!plan && tier) {
+        plan = await SubscriptionPlan.findOne({
+          tier: tier,
+          billingInterval: billingInterval,
+        });
       }
 
       if (!plan) {
@@ -395,59 +397,36 @@ export class SubscriptionController {
       });
 
       if (pendingPayment) {
-        console.log('Found existing pending payment, checking if it can be reused:', pendingPayment.paymentReference);
+        console.log('Found existing pending payment:', pendingPayment.paymentReference);
 
-        // Check if the pending payment is recent (within last 30 minutes)
-        const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
-
-        if (pendingPayment.createdAt > thirtyMinutesAgo) {
-          console.log('Reusing recent pending payment:', pendingPayment.paymentReference);
-          return res.json({
-            success: true,
-            data: {
-              authorization_url: `${process.env.NODE_ENV === 'development' ? 'http://localhost:5173' : process.env.FRONTEND_URL}/subscriptions?payment=pending&reference=${pendingPayment.paymentReference}`,
-              access_code: 'existing_pending',
-              reference: pendingPayment.paymentReference,
-            },
-            message: 'Existing pending payment found',
-          });
-        } else {
-          console.log('Pending payment is old, marking as expired and creating new one');
-          pendingPayment.status = 'failed';
-          await pendingPayment.save();
-        }
+        // For Nomba, we can't reuse old payment references because each checkout order
+        // must be created fresh with Nomba's API. Mark the old one as expired.
+        console.log('Marking old pending payment as expired for Nomba');
+        pendingPayment.status = 'failed';
+        await pendingPayment.save();
       }
 
-      // Create payment with Paystack
-      const paymentData = {
-        email: user.email,
-        amount: PaystackService.convertToKobo(plan.priceNGN), // Convert to kobo using static method
+      // Create payment with Nomba
+      const orderReference = `nomba_${Date.now()}_${Math.random()
+        .toString(36)
+        .substring(7)}`;
+
+      const orderData = {
+        orderReference,
+        customerId: user._id.toString(),
+        customerEmail: user.email,
+        amount: NombaService.formatAmount(plan.priceNGN),
         currency: 'NGN',
-        callback_url:
+        callbackUrl:
           req.body.callbackUrl ||
           `${process.env.NODE_ENV === 'development' ? 'http://localhost:5173' : process.env.FRONTEND_URL}/subscription/success`,
-        metadata: {
-          userId: user._id.toString(),
-          planId: plan._id.toString(),
-          billingInterval,
-          tier: plan.tier,
-          customerName: `${user.firstName} ${user.lastName}`,
-          planName: plan.name,
-        },
-        channels: [
-          'card',
-          'bank',
-          'ussd',
-          'qr',
-          'mobile_money',
-          'bank_transfer',
-        ],
+        accountId: nombaService.getAccountId(),
       };
 
-      // Check if this is development mode without Paystack credentials or if Paystack is not configured
+      // Check if this is development mode without Nomba credentials or if Nomba is not configured
       if (
         process.env.NODE_ENV === 'development' &&
-        !paystackService.isConfigured()
+        !nombaService.isConfigured()
       ) {
         // Mock payment response for development
         const mockReference = `mock_${Date.now()}_${user._id}`;
@@ -461,8 +440,15 @@ export class SubscriptionController {
           currency: 'NGN',
           paymentReference: mockReference,
           status: 'pending',
-          paymentMethod: 'paystack',
-          metadata: paymentData.metadata,
+          paymentMethod: 'nomba',
+          metadata: {
+            userId: user._id.toString(),
+            planId: plan._id.toString(),
+            billingInterval,
+            tier: plan.tier,
+            customerName: `${user.firstName} ${user.lastName}`,
+            planName: plan.name,
+          },
         });
 
         return res.json({
@@ -476,8 +462,8 @@ export class SubscriptionController {
         });
       }
 
-      // Check if Paystack is configured in production
-      if (!paystackService.isConfigured()) {
+      // Check if Nomba is configured in production
+      if (!nombaService.isConfigured()) {
         return res.status(500).json({
           success: false,
           message:
@@ -485,12 +471,12 @@ export class SubscriptionController {
         });
       }
 
-      const paymentResponse = await paystackService.initializeTransaction(
-        paymentData
+      const paymentResponse = await nombaService.createCheckoutOrder(
+        orderData
       );
 
       if (!paymentResponse.success) {
-        console.error('Paystack payment initialization failed:', {
+        console.error('Nomba payment initialization failed:', {
           message: paymentResponse.message,
           error: paymentResponse.error,
           details: paymentResponse.details,
@@ -510,20 +496,28 @@ export class SubscriptionController {
         planId: plan._id,
         amount: plan.priceNGN,
         currency: 'NGN',
-        paymentReference: paymentResponse.data!.reference,
+        paymentReference: orderReference,
         status: 'pending',
-        paymentMethod: 'paystack',
-        metadata: paymentData.metadata,
+        paymentMethod: 'nomba',
+        metadata: {
+          userId: user._id.toString(),
+          planId: plan._id.toString(),
+          billingInterval,
+          tier: plan.tier,
+          customerName: `${user.firstName} ${user.lastName}`,
+          planName: plan.name,
+        },
       });
 
       res.json({
         success: true,
         data: {
-          authorization_url: paymentResponse.data!.authorization_url,
-          access_code: paymentResponse.data!.access_code,
-          reference: paymentResponse.data!.reference,
+          authorization_url: paymentResponse.data!.checkoutLink,
+          access_code: paymentResponse.data!.orderId,
+          reference: orderReference,
         },
       });
+
     } catch (error) {
       console.error('Checkout session creation error:', error);
       res.status(500).json({
@@ -534,7 +528,7 @@ export class SubscriptionController {
     }
   }
 
-  // Verify payment by reference (public method for Paystack callback)
+  // Verify payment by reference (public method for Nomba callback)
   async verifyPaymentByReference(req: Request, res: Response): Promise<any> {
     try {
       const reference = req.query.reference as string;
@@ -546,8 +540,8 @@ export class SubscriptionController {
         });
       }
 
-      // Verify with Paystack
-      const verificationResult = await paystackService.verifyTransaction(
+      // Verify with Nomba
+      const verificationResult = await nombaService.verifyTransaction(
         reference
       );
 
@@ -561,7 +555,7 @@ export class SubscriptionController {
       const paymentData = verificationResult.data;
 
       // If payment is successful, also process subscription activation
-      if (paymentData.status === 'success') {
+      if (paymentData.status === 'success' || paymentData.status === 'completed') {
         try {
           console.log('Payment verified as successful, looking for payment record:', reference);
 
@@ -603,7 +597,7 @@ export class SubscriptionController {
         success: true,
         data: {
           status: paymentData.status,
-          reference: paymentData.reference,
+          reference: paymentData.orderReference,
           amount: paymentData.amount,
         },
       });
@@ -644,8 +638,8 @@ export class SubscriptionController {
           customerEmail: '',
         };
       } else {
-        // Verify payment with Paystack
-        const verificationResult = await paystackService.verifyTransaction(
+        // Verify payment with Nomba
+        const verificationResult = await nombaService.verifyTransaction(
           paymentReference
         );
 
@@ -659,7 +653,7 @@ export class SubscriptionController {
 
         paymentData = verificationResult.data;
 
-        if (paymentData.status !== 'success') {
+        if (paymentData.status !== 'success' && paymentData.status !== 'completed') {
           return res.status(400).json({
             success: false,
             message: 'Payment not completed',
@@ -712,7 +706,7 @@ export class SubscriptionController {
       // Cancel existing active subscriptions for the workspace
       await Subscription.updateMany(
         { workspaceId: user.workplaceId, status: { $in: ['active', 'trial'] } },
-        { status: 'cancelled' }
+        { status: 'canceled' }
       );
 
       // Calculate subscription period
@@ -824,7 +818,7 @@ export class SubscriptionController {
 
       res.json({
         success: true,
-        message: 'Subscription cancelled successfully',
+        message: 'Subscription canceled successfully',
         data: {
           gracePeriodEnd: gracePeriodEnd,
           accessUntil: gracePeriodEnd,
@@ -1177,9 +1171,9 @@ export class SubscriptionController {
     }
   }
 
-  // Paystack webhook handler
+  // Nomba webhook handler
   async handleWebhook(req: Request, res: Response): Promise<any> {
-    const signature = req.headers['x-paystack-signature'] as string;
+    const signature = req.headers['x-nomba-signature'] as string;
 
     if (!signature) {
       return res.status(400).json({ error: 'Missing webhook signature' });
@@ -1190,7 +1184,7 @@ export class SubscriptionController {
       const payload = JSON.stringify(req.body);
 
       // Verify webhook signature
-      const isValid = paystackService.verifyWebhookSignature(
+      const isValid = nombaService.verifyWebhookSignature(
         payload,
         signature
       );
@@ -1208,27 +1202,23 @@ export class SubscriptionController {
     }
 
     try {
-      switch (event.event) {
-        case 'charge.success':
-          await this.handlePaystackPaymentSucceeded(event.data);
+      switch (event.event_type) {
+        case 'payment_success':
+          await this.handleNombaPaymentSucceeded(event.data);
           break;
-        case 'charge.failed':
-          await this.handlePaystackPaymentFailed(event.data);
-          break;
-        case 'subscription.create':
-          await this.handlePaystackSubscriptionCreated(event.data);
-          break;
-        case 'subscription.disable':
-          await this.handlePaystackSubscriptionDisabled(event.data);
+        case 'payment_failed':
+          await this.handleNombaPaymentFailed(event.data);
           break;
         default:
-          console.log(`Unhandled event type ${event.event}`);
+          console.log(`Unhandled event type ${event.event_type}`);
       }
 
       res.json({ received: true });
-    } catch (error) {
-      console.error('Webhook processing error:', error);
-      res.status(500).json({ error: 'Webhook processing failed' });
+    } catch (err) {
+      console.log('Error processing webhook:', (err as Error).message);
+      res
+        .status(500)
+        .json({ error: `Webhook handler failed: ${(err as Error).message}` });
     }
   }
 
@@ -1265,10 +1255,10 @@ export class SubscriptionController {
     // Process payment failure logic here
   }
 
-  // Paystack-specific webhook handlers
-  private async handlePaystackPaymentSucceeded(paymentData: any) {
+  // Nomba-specific webhook handlers
+  private async handleNombaPaymentSucceeded(paymentData: any) {
     try {
-      const reference = paymentData.reference;
+      const reference = paymentData.order.orderReference;
       if (!reference) return;
 
       // Find the payment record
@@ -1284,7 +1274,7 @@ export class SubscriptionController {
 
       // Process the subscription activation (this logic is also in handleSuccessfulPayment)
       console.log(
-        'Processing Paystack payment success via webhook:',
+        'Processing Nomba payment success via webhook:',
         reference
       );
 
@@ -1296,13 +1286,13 @@ export class SubscriptionController {
       // Process subscription activation
       await this.processSubscriptionActivation(paymentRecord);
     } catch (error) {
-      console.error('Error handling Paystack payment success:', error);
+      console.error('Error handling Nomba payment success:', error);
     }
   }
 
-  private async handlePaystackPaymentFailed(paymentData: any) {
+  private async handleNombaPaymentFailed(paymentData: any) {
     try {
-      const reference = paymentData.reference;
+      const reference = paymentData.order.orderReference;
       if (!reference) return;
 
       // Update payment record
@@ -1316,17 +1306,11 @@ export class SubscriptionController {
 
       console.log('Payment failed for reference:', reference);
     } catch (error) {
-      console.error('Error handling Paystack payment failure:', error);
+      console.error('Error handling Nomba payment failure:', error);
     }
   }
 
-  private async handlePaystackSubscriptionCreated(subscriptionData: any) {
-    console.log('Paystack subscription created:', subscriptionData);
-  }
 
-  private async handlePaystackSubscriptionDisabled(subscriptionData: any) {
-    console.log('Paystack subscription disabled:', subscriptionData);
-  }
 
   private async processSubscriptionActivation(paymentRecord: any) {
     try {
@@ -1338,12 +1322,10 @@ export class SubscriptionController {
 
       const user = await User.findById(userId);
 
-      // Try to find SubscriptionPlan first
-      let plan = await SubscriptionPlan.findById(planId);
-
-      // If not found, try PricingPlan
-      if (!plan && planId) {
-        console.log('SubscriptionPlan not found, trying PricingPlan...');
+      // PRIORITY 1: Try PricingPlan first (newer model with correct pricing)
+      let plan = null;
+      if (planId) {
+        console.log('Trying PricingPlan first for activation...');
         const PricingPlan = (await import('../models/PricingPlan')).default;
         const pricingPlan = await PricingPlan.findById(planId);
 
@@ -1358,6 +1340,12 @@ export class SubscriptionController {
             features: pricingPlan.features || [],
           } as any;
         }
+      }
+
+      // PRIORITY 2: Fall back to SubscriptionPlan if PricingPlan not found
+      if (!plan && planId) {
+        console.log('PricingPlan not found, trying SubscriptionPlan for activation...');
+        plan = await SubscriptionPlan.findById(planId);
       }
 
       if (!user || !plan) {
@@ -1388,7 +1376,7 @@ export class SubscriptionController {
       // Cancel existing active subscriptions for the workspace
       await Subscription.updateMany(
         { workspaceId: user.workplaceId, status: { $in: ['active', 'trial'] } },
-        { status: 'cancelled' }
+        { status: 'canceled' }
       );
 
       // Calculate subscription period

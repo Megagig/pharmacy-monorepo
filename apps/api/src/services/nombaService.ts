@@ -1,515 +1,422 @@
 import crypto from 'crypto';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { config } from 'dotenv';
 
+// Load environment variables immediately to ensure they're available
 config();
 
-interface NombaPaymentData {
-  amount: number;
-  currency: string;
-  customerEmail: string;
-  customerName: string;
+interface NombaResponse<T = any> {
+  code: string;
   description: string;
-  callbackUrl: string;
-  metadata?: Record<string, any>;
+  data: T;
 }
 
-interface NombaPaymentResponse {
-  success: boolean;
-  data?: {
-    reference: string;
-    checkoutUrl: string;
-    accessCode: string;
-  };
-  message?: string;
-}
-
-interface NombaVerifyResponse {
-  success: boolean;
-  data?: {
-    reference: string;
-    amount: number;
-    currency: string;
-    status: string;
-    customerEmail: string;
-    paidAt?: string;
-    metadata?: Record<string, any>;
-  };
-  message?: string;
-}
-
-interface NombaCustomerData {
-  email: string;
-  name: string;
-  phone?: string;
-  metadata?: Record<string, any>;
-}
-
-interface NombaCustomerResponse {
-  success: boolean;
-  data?: {
-    customerId: string;
-    email: string;
-    name: string;
-  };
-  message?: string;
-}
-
-interface NombaSubscriptionData {
+interface NombaCheckoutOrder {
+  orderReference: string;
   customerId: string;
-  planCode: string;
+  callbackUrl: string;
+  customerEmail: string;
+  amount: string;
+  currency: string;
+  accountId: string;
+}
+
+interface NombaCheckoutResponse {
+  checkoutLink: string;
+  orderReference: string;
+  orderId: string;
+}
+
+interface NombaTransactionVerification {
+  orderId: string;
+  orderReference: string;
   amount: number;
   currency: string;
-  startDate?: Date;
-  metadata?: Record<string, any>;
+  status: string;
+  paymentMethod: string;
+  customerEmail: string;
+  accountId: string;
+  transactionId?: string;
+  cardType?: string;
+  cardLast4Digits?: string;
+  paidAt?: string;
 }
 
-interface NombaSubscriptionResponse {
-  success: boolean;
-  data?: {
-    subscriptionId: string;
-    subscriptionCode: string;
-    status: string;
-    nextPaymentDate: string;
+interface NombaWebhookPayload {
+  event_type: string;
+  requestId: string;
+  data: {
+    merchant: {
+      walletId: string;
+      walletBalance: number;
+      userId: string;
+    };
+    transaction: {
+      fee: number;
+      type: string;
+      transactionId: string;
+      cardIssuer?: string;
+      responseCode: string;
+      originatingFrom: string;
+      merchantTxRef: string;
+      transactionAmount: number;
+      time: string;
+    };
+    order: {
+      amount: number;
+      orderId: string;
+      cardType?: string;
+      accountId: string;
+      cardLast4Digits?: string;
+      cardCurrency: string;
+      customerEmail: string;
+      customerId: string;
+      isTokenizedCardPayment: string;
+      orderReference: string;
+      paymentMethod: string;
+      callbackUrl: string;
+      currency: string;
+    };
+    tokenizedCardData?: {
+      tokenKey: string;
+      cardType: string;
+      tokenExpiryYear: string;
+      tokenExpiryMonth: string;
+      cardPan: string;
+    };
   };
+}
+
+interface ServiceResponse<T = any> {
+  success: boolean;
   message?: string;
+  data?: T;
+  error?: string;
+  details?: any;
 }
 
 class NombaService {
-  private clientId: string;
-  private privateKey: string;
-  private accountId: string;
-  private baseURL: string = 'https://api.nomba.com/v1';
-  private isConfigured: boolean = false;
+  private readonly baseUrl = 'https://api.nomba.com/v1';
+  private readonly clientId: string;
+  private readonly privateKey: string;
+  private readonly accountId: string;
+  private accessToken: string | null = null;
+  private tokenExpiry: Date | null = null;
 
   constructor() {
     this.clientId = process.env.NOMBA_CLIENT_ID || '';
     this.privateKey = process.env.NOMBA_PRIVATE_KEY || '';
     this.accountId = process.env.NOMBA_ACCOUNT_ID || '';
 
-    this.isConfigured = !!(this.clientId && this.privateKey && this.accountId);
+    // Add better logging to debug environment variable issues
+    console.log('Nomba Service initialized with: ', {
+      clientIdExists: !!this.clientId,
+      privateKeyExists: !!this.privateKey,
+      accountIdExists: !!this.accountId,
+      clientIdFirstChars: this.clientId
+        ? this.clientId.substring(0, 8) + '...'
+        : 'none',
+      accountIdFirstChars: this.accountId
+        ? this.accountId.substring(0, 8) + '...'
+        : 'none',
+    });
 
-    if (!this.isConfigured) {
-      console.warn('Nomba API credentials are not properly configured. Payment functionality will be limited.');
-    }
-  }
-
-  isNombaConfigured(): boolean {
-    return this.isConfigured;
-  }
-
-  private generateSignature(payload: string, timestamp: string): string {
-    const message = `${timestamp}.${payload}`;
-    return crypto
-      .createHmac('sha256', this.privateKey)
-      .update(message)
-      .digest('hex');
-  }
-
-  private getHeaders(payload?: string): Record<string, string> {
-    const timestamp = Math.floor(Date.now() / 1000).toString();
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.clientId}`,
-      'X-Nomba-Account-ID': this.accountId,
-      'X-Nomba-Timestamp': timestamp,
-    };
-
-    if (payload) {
-      headers['X-Nomba-Signature'] = this.generateSignature(payload, timestamp);
-    }
-
-    return headers;
-  }
-
-  async initiatePayment(
-    paymentData: NombaPaymentData
-  ): Promise<NombaPaymentResponse> {
-    try {
-      const payload = {
-        amount: paymentData.amount * 100, // Convert to kobo
-        currency: paymentData.currency || 'NGN',
-        customer: {
-          email: paymentData.customerEmail,
-          name: paymentData.customerName,
-        },
-        description: paymentData.description,
-        callback_url: paymentData.callbackUrl,
-        metadata: paymentData.metadata || {},
-      };
-
-      const payloadString = JSON.stringify(payload);
-      const headers = this.getHeaders(payloadString);
-
-      const response = await axios.post(
-        `${this.baseURL}/checkout/initialize`,
-        payload,
-        { headers }
-      );
-
-      if (response.data.status === 'success') {
-        return {
-          success: true,
-          data: {
-            reference: response.data.data.reference,
-            checkoutUrl: response.data.data.authorization_url,
-            accessCode: response.data.data.access_code,
-          },
-        };
-      } else {
-        return {
-          success: false,
-          message: response.data.message || 'Payment initialization failed',
-        };
-      }
-    } catch (error: any) {
-      console.error(
-        'Nomba payment initiation error:',
-        error.response?.data || error.message
-      );
-      return {
-        success: false,
-        message:
-          error.response?.data?.message || 'Payment initialization failed',
-      };
+    if (!this.clientId || !this.privateKey || !this.accountId) {
+      console.warn('Nomba credentials not found in environment variables');
     }
   }
 
   /**
-   * Create payment intent (alias for initiatePayment)
+   * Get access token for API authentication
+   * Tokens are cached and reused until they expire
    */
-  async createPaymentIntent(data: {
-    amount: number;
-    currency?: string;
-    description?: string;
-    metadata?: Record<string, any>;
-  }): Promise<{
-    reference: string;
-    transactionId: string;
-    paymentUrl?: string;
-  }> {
+  private async getAccessToken(): Promise<string> {
+    // Return cached token if still valid
+    if (this.accessToken && this.tokenExpiry && new Date() < this.tokenExpiry) {
+      return this.accessToken;
+    }
+
     try {
-      const paymentData: NombaPaymentData = {
-        amount: data.amount,
-        currency: data.currency || 'NGN',
-        description: data.description || 'Payment',
-        customerEmail: data.metadata?.email || 'customer@example.com',
-        customerName: data.metadata?.name || 'Customer',
-        callbackUrl: process.env.NOMBA_CALLBACK_URL || `${process.env.API_BASE_URL}/api/payments/callback`,
-        metadata: data.metadata,
-      };
+      const response = await axios.post(
+        `${this.baseUrl}/auth/token/issue`,
+        {
+          grant_type: 'client_credentials',
+          client_id: this.clientId,
+          client_secret: this.privateKey,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'accountId': this.accountId,
+          },
+        }
+      );
 
-      const result = await this.initiatePayment(paymentData);
+      // Nomba returns a nested structure: { data: { data: { access_token: ... } } }
+      const tokenData = response.data?.data;
 
-      if (result.success && result.data) {
-        return {
-          reference: result.data.reference,
-          transactionId: result.data.reference,
-          paymentUrl: result.data.checkoutUrl,
-        };
+      if (tokenData && tokenData.access_token) {
+        this.accessToken = tokenData.access_token;
+
+        // Use expiresAt if provided, otherwise default to 1 hour
+        if (tokenData.expiresAt) {
+          this.tokenExpiry = new Date(tokenData.expiresAt);
+        } else {
+          const expiresIn = tokenData.expires_in || 3600;
+          this.tokenExpiry = new Date(Date.now() + (expiresIn - 300) * 1000);
+        }
+
+        console.log('Nomba access token obtained successfully');
+        return this.accessToken;
       } else {
-        throw new Error(result.message || 'Payment creation failed');
+        console.error('Nomba authentication response:', {
+          status: response.status,
+          data: response.data,
+          hasAccessToken: !!tokenData?.access_token,
+          dataKeys: response.data ? Object.keys(response.data) : []
+        });
+        throw new Error('Invalid token response from Nomba');
       }
     } catch (error: any) {
-      console.error('Create payment intent error:', error.message);
-      throw error;
+      console.error('Error obtaining Nomba access token:', {
+        message: error.message,
+        responseData: error.response?.data,
+        responseStatus: error.response?.status,
+      });
+      throw new Error('Failed to authenticate with Nomba API');
     }
   }
 
-  async verifyPayment(reference: string): Promise<NombaVerifyResponse> {
+  /**
+   * Get headers for API requests
+   */
+  private async getHeaders(): Promise<Record<string, string>> {
+    const token = await this.getAccessToken();
+    return {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      accountId: this.accountId,
+    };
+  }
+
+  /**
+   * Check if Nomba is properly configured
+   */
+  public isConfigured(): boolean {
+    return Boolean(this.clientId && this.privateKey && this.accountId);
+  }
+
+  /**
+   * Create a checkout order
+   */
+  async createCheckoutOrder(
+    orderData: NombaCheckoutOrder
+  ): Promise<ServiceResponse<NombaCheckoutResponse>> {
     try {
-      const headers = this.getHeaders();
+      // Log configuration status
+      console.log('Nomba configuration status:', {
+        isConfigured: this.isConfigured(),
+        hasClientId: !!this.clientId,
+        hasPrivateKey: !!this.privateKey,
+        hasAccountId: !!this.accountId,
+      });
 
-      const response = await axios.get(
-        `${this.baseURL}/checkout/verify/${reference}`,
-        { headers }
-      );
+      // More detailed logging before making the API call
+      console.log('Creating Nomba checkout order with:', {
+        email: orderData.customerEmail,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        callbackUrl: orderData.callbackUrl,
+        orderReference: orderData.orderReference,
+      });
 
-      if (response.data.status === 'success') {
-        const data = response.data.data;
+      const headers = await this.getHeaders();
+      const response: AxiosResponse<NombaResponse<NombaCheckoutResponse>> =
+        await axios.post(
+          `${this.baseUrl}/checkout/order`,
+          {
+            order: orderData,
+          },
+          { headers }
+        );
+
+      if (response.data && response.data.data) {
         return {
           success: true,
-          data: {
-            reference: data.reference,
-            amount: data.amount / 100, // Convert from kobo
-            currency: data.currency,
-            status: data.status,
-            customerEmail: data.customer.email,
-            paidAt: data.paid_at,
-            metadata: data.metadata,
-          },
+          message: response.data.description || 'Checkout order created successfully',
+          data: response.data.data,
         };
       } else {
         return {
           success: false,
-          message: response.data.message || 'Payment verification failed',
+          message: response.data?.description || 'Failed to create checkout order',
         };
       }
     } catch (error: any) {
-      console.error(
-        'Nomba payment verification error:',
-        error.response?.data || error.message
-      );
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Payment verification failed',
-      };
-    }
-  }
-
-  async refundPayment(
-    reference: string,
-    amount?: number
-  ): Promise<{ success: boolean; message?: string }> {
-    try {
-      const payload = {
-        transaction: reference,
-        amount: amount ? amount * 100 : undefined, // Convert to kobo if specified
-      };
-
-      const payloadString = JSON.stringify(payload);
-      const headers = this.getHeaders(payloadString);
-
-      const response = await axios.post(`${this.baseURL}/refund`, payload, {
-        headers,
+      console.error('Error creating Nomba checkout order:', {
+        message: error.message,
+        responseData: error.response?.data,
+        responseStatus: error.response?.status,
+        stack: error.stack,
       });
 
       return {
-        success: response.data.status === 'success',
-        message: response.data.message,
-      };
-    } catch (error: any) {
-      console.error(
-        'Nomba refund error:',
-        error.response?.data || error.message
-      );
-      return {
         success: false,
-        message: error.response?.data?.message || 'Refund failed',
+        message:
+          error.response?.data?.description || 'Failed to create checkout order',
+        error: error.message,
+        details: error.response?.data,
       };
     }
   }
 
   /**
-   * Create a customer in Nomba for subscription management
+   * Verify a transaction by order reference
    */
-  async createCustomer(customerData: NombaCustomerData): Promise<NombaCustomerResponse> {
+  async verifyTransaction(
+    orderReference: string
+  ): Promise<ServiceResponse<NombaTransactionVerification>> {
     try {
-      const payload = {
-        email: customerData.email,
-        name: customerData.name,
-        phone: customerData.phone,
-        metadata: customerData.metadata || {},
-      };
-
-      const payloadString = JSON.stringify(payload);
-      const headers = this.getHeaders(payloadString);
-
-      const response = await axios.post(
-        `${this.baseURL}/customers`,
-        payload,
+      const headers = await this.getHeaders();
+      const response: AxiosResponse<
+        NombaResponse<NombaTransactionVerification>
+      > = await axios.get(
+        `${this.baseUrl}/checkout/order/${orderReference}`,
         { headers }
       );
 
-      if (response.data.status === 'success') {
+      if (response.data && response.data.data) {
         return {
           success: true,
-          data: {
-            customerId: response.data.data.customer_code,
-            email: response.data.data.email,
-            name: response.data.data.name,
-          },
+          message: response.data.description || 'Transaction verified successfully',
+          data: response.data.data,
         };
       } else {
         return {
           success: false,
-          message: response.data.message || 'Customer creation failed',
+          message: response.data?.description || 'Failed to verify transaction',
         };
       }
     } catch (error: any) {
-      console.error('Nomba customer creation error:', error.response?.data || error.message);
+      console.error('Error verifying Nomba transaction:', {
+        message: error.message,
+        responseData: error.response?.data,
+        responseStatus: error.response?.status,
+      });
+
       return {
         success: false,
-        message: error.response?.data?.message || 'Customer creation failed',
+        message:
+          error.response?.data?.description || 'Failed to verify transaction',
+        error: error.message,
+        details: error.response?.data,
       };
     }
   }
 
   /**
-   * Create a subscription in Nomba
+   * Verify webhook signature
+   * Nomba uses HMAC SHA-512 for webhook signature validation
    */
-  async createSubscription(subscriptionData: NombaSubscriptionData): Promise<NombaSubscriptionResponse> {
+  verifyWebhookSignature(payload: string, signature: string): boolean {
+    if (!this.privateKey) {
+      console.error('Nomba private key not configured for webhook verification');
+      return false;
+    }
+
     try {
-      const payload = {
-        customer: subscriptionData.customerId,
-        plan: subscriptionData.planCode,
-        amount: subscriptionData.amount * 100, // Convert to kobo
-        currency: subscriptionData.currency || 'NGN',
-        start_date: subscriptionData.startDate?.toISOString(),
-        metadata: subscriptionData.metadata || {},
-      };
+      const hash = crypto
+        .createHmac('sha512', this.privateKey)
+        .update(payload, 'utf8')
+        .digest('hex');
 
-      const payloadString = JSON.stringify(payload);
-      const headers = this.getHeaders(payloadString);
-
-      const response = await axios.post(
-        `${this.baseURL}/subscriptions`,
-        payload,
-        { headers }
-      );
-
-      if (response.data.status === 'success') {
-        return {
-          success: true,
-          data: {
-            subscriptionId: response.data.data.subscription_code,
-            subscriptionCode: response.data.data.subscription_code,
-            status: response.data.data.status,
-            nextPaymentDate: response.data.data.next_payment_date,
-          },
-        };
-      } else {
-        return {
-          success: false,
-          message: response.data.message || 'Subscription creation failed',
-        };
-      }
-    } catch (error: any) {
-      console.error('Nomba subscription creation error:', error.response?.data || error.message);
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Subscription creation failed',
-      };
+      return hash === signature;
+    } catch (error) {
+      console.error('Error verifying Nomba webhook signature:', error);
+      return false;
     }
   }
 
   /**
-   * Cancel a subscription in Nomba
+   * Handle webhook events
    */
-  async cancelSubscription(subscriptionCode: string): Promise<{ success: boolean; message?: string }> {
+  async handleWebhookEvent(event: NombaWebhookPayload): Promise<ServiceResponse> {
     try {
-      const headers = this.getHeaders();
+      const { event_type, data } = event;
 
-      const response = await axios.post(
-        `${this.baseURL}/subscriptions/${subscriptionCode}/cancel`,
-        {},
-        { headers }
-      );
+      console.log(`Processing Nomba webhook event: ${event_type}`);
 
-      return {
-        success: response.data.status === 'success',
-        message: response.data.message,
-      };
+      switch (event_type) {
+        case 'payment_success':
+          return await this.handlePaymentSuccess(data);
+        case 'payment_failed':
+          return await this.handlePaymentFailed(data);
+        default:
+          console.log(`Unhandled Nomba webhook event: ${event_type}`);
+          return {
+            success: true,
+            message: `Event ${event_type} received but not handled`,
+          };
+      }
     } catch (error: any) {
-      console.error('Nomba subscription cancellation error:', error.response?.data || error.message);
+      console.error('Error handling Nomba webhook event:', error);
       return {
         success: false,
-        message: error.response?.data?.message || 'Subscription cancellation failed',
+        message: 'Failed to handle webhook event',
+        error: error.message,
       };
     }
+  }
+
+  private async handlePaymentSuccess(data: NombaWebhookPayload['data']): Promise<ServiceResponse> {
+    console.log('Payment successful:', data.order.orderReference);
+    // This will be handled by the subscription controller
+    return {
+      success: true,
+      message: 'Payment success event processed',
+      data: {
+        orderReference: data.order.orderReference,
+        amount: data.order.amount,
+        status: 'success',
+      }
+    };
+  }
+
+  private async handlePaymentFailed(data: NombaWebhookPayload['data']): Promise<ServiceResponse> {
+    console.log('Payment failed:', data.order.orderReference);
+    // This will be handled by the subscription controller
+    return {
+      success: true,
+      message: 'Payment failed event processed',
+      data: {
+        orderReference: data.order.orderReference,
+        amount: data.order.amount,
+        status: 'failed',
+      }
+    };
   }
 
   /**
-   * Get subscription details from Nomba
+   * Get account ID for frontend or other services
    */
-  async getSubscription(subscriptionCode: string): Promise<NombaSubscriptionResponse> {
-    try {
-      const headers = this.getHeaders();
-
-      const response = await axios.get(
-        `${this.baseURL}/subscriptions/${subscriptionCode}`,
-        { headers }
-      );
-
-      if (response.data.status === 'success') {
-        const data = response.data.data;
-        return {
-          success: true,
-          data: {
-            subscriptionId: data.subscription_code,
-            subscriptionCode: data.subscription_code,
-            status: data.status,
-            nextPaymentDate: data.next_payment_date,
-          },
-        };
-      } else {
-        return {
-          success: false,
-          message: response.data.message || 'Failed to fetch subscription',
-        };
-      }
-    } catch (error: any) {
-      console.error('Nomba subscription fetch error:', error.response?.data || error.message);
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Failed to fetch subscription',
-      };
-    }
+  getAccountId(): string {
+    return this.accountId;
   }
 
   /**
-   * Process a payment for an invoice
+   * Convert amount to Nomba format (string with 2 decimal places)
    */
-  async processInvoicePayment(
-    customerId: string,
-    amount: number,
-    description: string,
-    metadata?: Record<string, any>
-  ): Promise<NombaPaymentResponse> {
-    try {
-      const payload = {
-        customer: customerId,
-        amount: amount * 100, // Convert to kobo
-        currency: 'NGN',
-        description,
-        metadata: metadata || {},
-      };
-
-      const payloadString = JSON.stringify(payload);
-      const headers = this.getHeaders(payloadString);
-
-      const response = await axios.post(
-        `${this.baseURL}/charges`,
-        payload,
-        { headers }
-      );
-
-      if (response.data.status === 'success') {
-        return {
-          success: true,
-          data: {
-            reference: response.data.data.reference,
-            checkoutUrl: response.data.data.authorization_url,
-            accessCode: response.data.data.access_code,
-          },
-        };
-      } else {
-        return {
-          success: false,
-          message: response.data.message || 'Payment processing failed',
-        };
-      }
-    } catch (error: any) {
-      console.error('Nomba invoice payment error:', error.response?.data || error.message);
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Payment processing failed',
-      };
-    }
+  static formatAmount(amountInNGN: number): string {
+    return amountInNGN.toFixed(2);
   }
 
-  verifyWebhookSignature(
-    payload: string,
-    signature: string,
-    timestamp: string
-  ): boolean {
-    const expectedSignature = this.generateSignature(payload, timestamp);
-    return crypto.timingSafeEqual(
-      Buffer.from(signature, 'hex'),
-      Buffer.from(expectedSignature, 'hex')
-    );
+  /**
+   * Parse amount from Nomba format to number
+   */
+  static parseAmount(amountString: string): number {
+    return parseFloat(amountString);
   }
 }
 
 export const nombaService = new NombaService();
-export default NombaService;
+export { NombaService };

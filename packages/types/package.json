@@ -1,0 +1,74 @@
+{
+    "name": "@pharmacy/types",
+    "version": "1.0.0",
+    "description": "Shared TypeScript types, interfaces, and Zod schemas for Pharmacy Copilot",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+        },
+        "./patient": {
+            "types": "./dist/patient.d.ts",
+            "import": "./dist/patient.js"
+        },
+        "./prescription": {
+            "types": "./dist/prescription.d.ts",
+            "import": "./dist/prescription.js"
+        },
+        "./medication": {
+            "types": "./dist/medication.d.ts",
+            "import": "./dist/medication.js"
+        },
+        "./appointment": {
+            "types": "./dist/appointment.d.ts",
+            "import": "./dist/appointment.js"
+        },
+        "./user": {
+            "types": "./dist/user.d.ts",
+            "import": "./dist/user.js"
+        },
+        "./workspace": {
+            "types": "./dist/workspace.d.ts",
+            "import": "./dist/workspace.js"
+        },
+        "./rbac": {
+            "types": "./dist/rbac.d.ts",
+            "import": "./dist/rbac.js"
+        },
+        "./mtr": {
+            "types": "./dist/mtr.d.ts",
+            "import": "./dist/mtr.js"
+        },
+        "./clinical-note": {
+            "types": "./dist/clinical-note.d.ts",
+            "import": "./dist/clinical-note.js"
+        },
+        "./drug": {
+            "types": "./dist/drug.d.ts",
+            "import": "./dist/drug.js"
+        },
+        "./alert": {
+            "types": "./dist/alert.d.ts",
+            "import": "./dist/alert.js"
+        }
+    },
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "clean": "rm -rf dist",
+        "type-check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "zod": "^4.1.8"
+    },
+    "devDependencies": {
+        "@repo/typescript-config": "workspace:*",
+        "typescript": "^5.9.2"
+    },
+    "files": [
+        "dist"
+    ]
+}

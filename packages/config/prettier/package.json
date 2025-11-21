@@ -1,0 +1,13 @@
+{
+    "name": "@repo/prettier-config",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Shared Prettier configuration for Pharmacy Copilot monorepo",
+    "main": "index.js",
+    "files": [
+        "index.js"
+    ],
+    "peerDependencies": {
+        "prettier": "^3.0.0"
+    }
+}

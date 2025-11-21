@@ -59,13 +59,13 @@ export class SubscriptionLifecycleService {
     switch (options.prorationBehavior) {
       case 'immediate':
         return this.processImmediateUpgrade(subscription, newPlan, effectiveDate);
-      
+
       case 'next_cycle':
         return this.scheduleUpgradeForNextCycle(subscription, newPlan);
-      
+
       case 'create_prorations':
         return this.processUpgradeWithProrations(subscription, newPlan, effectiveDate);
-      
+
       default:
         throw new Error('Invalid proration behavior');
     }
@@ -210,19 +210,19 @@ export class SubscriptionLifecycleService {
   ): number {
     const totalPeriodMs = subscription.currentPeriodEnd.getTime() - subscription.currentPeriodStart.getTime();
     const remainingPeriodMs = subscription.currentPeriodEnd.getTime() - effectiveDate.getTime();
-    
+
     if (remainingPeriodMs <= 0) {
       return 0; // No proration needed if at end of period
     }
 
     const remainingPeriodRatio = remainingPeriodMs / totalPeriodMs;
-    
+
     // Calculate unused portion of current plan
     const currentPlanCredit = subscription.unitAmount * remainingPeriodRatio;
-    
+
     // Calculate prorated charge for new plan
     const newPlanCharge = newPlanAmount * remainingPeriodRatio;
-    
+
     return Math.round((newPlanCharge - currentPlanCredit) * 100) / 100; // Round to 2 decimal places
   }
 
@@ -244,7 +244,7 @@ export class SubscriptionLifecycleService {
     // Update subscription
     subscription.planId = newPlan._id;
     subscription.unitAmount = newPlan.priceNGN;
-    
+
     // Update plan features and limits
     const tierMapping: Record<string, string> = {
       'Free Trial': 'free_trial',
@@ -254,7 +254,7 @@ export class SubscriptionLifecycleService {
       'Network': 'network',
       'Enterprise': 'enterprise'
     };
-    
+
     const newTier = tierMapping[newPlan.name] || 'basic';
     subscription.metadata = {
       ...subscription.metadata,
@@ -396,13 +396,13 @@ export class SubscriptionLifecycleService {
     const invoice = await this.createRenewalInvoice(subscription);
 
     // Attempt payment
-    if (nombaService.isNombaConfigured() && subscription.nombaCustomerId) {
+    if (nombaService.isConfigured() && subscription.nombaCustomerId) {
       const paymentResult = await this.attemptPayment(subscription, invoice);
-      
+
       if (paymentResult.success) {
         // Update subscription period
         await this.updateSubscriptionPeriod(subscription);
-        
+
         // Mark invoice as paid
         invoice.status = 'paid';
         invoice.paidAt = new Date();
@@ -434,7 +434,7 @@ export class SubscriptionLifecycleService {
           subscription.planId = newPlan._id;
           subscription.unitAmount = newPlan.priceNGN;
           subscription.pendingUpdate = undefined;
-          
+
           subscription.metadata = {
             ...subscription.metadata,
             planChangeProcessed: now,
@@ -466,14 +466,14 @@ export class SubscriptionLifecycleService {
           // Attempt to convert trial to paid subscription
           subscription.status = 'active';
           await subscription.save();
-          
+
           // Create first invoice
           await this.createRenewalInvoice(subscription);
         } else {
           // No payment method, mark as incomplete
           subscription.status = 'incomplete';
           await subscription.save();
-          
+
           // Send payment method required email
           // await this.sendPaymentMethodRequiredEmail(subscription);
         }
@@ -604,7 +604,7 @@ export class SubscriptionLifecycleService {
 
     const nextPeriodStart = subscription.currentPeriodEnd;
     const nextPeriodEnd = new Date(nextPeriodStart);
-    
+
     if (subscription.billingInterval === 'yearly') {
       nextPeriodEnd.setFullYear(nextPeriodEnd.getFullYear() + 1);
     } else {
@@ -656,7 +656,7 @@ export class SubscriptionLifecycleService {
   private async updateSubscriptionPeriod(subscription: IBillingSubscription): Promise<void> {
     const newPeriodStart = subscription.currentPeriodEnd;
     const newPeriodEnd = new Date(newPeriodStart);
-    
+
     if (subscription.billingInterval === 'yearly') {
       newPeriodEnd.setFullYear(newPeriodEnd.getFullYear() + 1);
     } else {
@@ -666,7 +666,7 @@ export class SubscriptionLifecycleService {
     subscription.currentPeriodStart = newPeriodStart;
     subscription.currentPeriodEnd = newPeriodEnd;
     subscription.status = 'active';
-    
+
     // Reset dunning fields
     subscription.pastDueNotificationsSent = 0;
     subscription.lastDunningAttempt = undefined;

@@ -54,7 +54,7 @@ export class BillingService {
 
     const now = new Date();
     const trialEnd = data.trialDays ? new Date(now.getTime() + (data.trialDays * 24 * 60 * 60 * 1000)) : null;
-    
+
     // Calculate billing period
     const periodStart = trialEnd || now;
     const periodEnd = new Date(periodStart);
@@ -82,7 +82,7 @@ export class BillingService {
     await subscription.save();
 
     // Create Nomba customer if not in trial
-    if (!trialEnd && nombaService.isNombaConfigured()) {
+    if (!trialEnd && nombaService.isConfigured()) {
       try {
         // Note: Nomba customer creation would be implemented here
         // This is a placeholder for the actual Nomba customer creation API
@@ -118,7 +118,7 @@ export class BillingService {
     if (data.prorationBehavior === 'immediate') {
       // Calculate proration
       const prorationAmount = subscription.calculateProration(newPlan.priceNGN);
-      
+
       // Create proration invoice if amount is positive
       if (prorationAmount > 0) {
         await this.createProrationInvoice(subscription, newPlan, prorationAmount);
@@ -145,7 +145,7 @@ export class BillingService {
    * Cancel a subscription
    */
   async cancelSubscription(
-    subscriptionId: string, 
+    subscriptionId: string,
     cancelAtPeriodEnd: boolean = true,
     reason?: string
   ): Promise<IBillingSubscription> {
@@ -197,16 +197,16 @@ export class BillingService {
   private async renewSubscription(subscription: IBillingSubscription): Promise<void> {
     // Create renewal invoice
     const invoice = await this.createRenewalInvoice(subscription);
-    
+
     // Attempt payment with Nomba
-    if (nombaService.isNombaConfigured() && subscription.nombaCustomerId) {
+    if (nombaService.isConfigured() && subscription.nombaCustomerId) {
       try {
         const paymentResult = await this.processPayment(invoice);
         if (paymentResult.success) {
           // Update subscription period
           const newPeriodStart = subscription.currentPeriodEnd;
           const newPeriodEnd = new Date(newPeriodStart);
-          
+
           if (subscription.billingInterval === 'yearly') {
             newPeriodEnd.setFullYear(newPeriodEnd.getFullYear() + 1);
           } else {
@@ -254,7 +254,7 @@ export class BillingService {
         unitAmount: subscription.unitAmount,
         planId: plan._id,
         periodStart: subscription.currentPeriodEnd,
-        periodEnd: subscription.billingInterval === 'yearly' 
+        periodEnd: subscription.billingInterval === 'yearly'
           ? new Date(subscription.currentPeriodEnd.getFullYear() + 1, subscription.currentPeriodEnd.getMonth(), subscription.currentPeriodEnd.getDate())
           : new Date(subscription.currentPeriodEnd.getFullYear(), subscription.currentPeriodEnd.getMonth() + 1, subscription.currentPeriodEnd.getDate())
       }]
@@ -268,8 +268,8 @@ export class BillingService {
    * Create a proration invoice
    */
   private async createProrationInvoice(
-    subscription: IBillingSubscription, 
-    newPlan: any, 
+    subscription: IBillingSubscription,
+    newPlan: any,
     prorationAmount: number
   ): Promise<IBillingInvoice> {
     const invoice = new BillingInvoice({
@@ -313,7 +313,7 @@ export class BillingService {
   async getBillingAnalytics(timeRange?: { start: Date; end: Date }): Promise<BillingAnalytics> {
     // Use existing Subscription model
     const Subscription = (await import('../models/Subscription')).default;
-    
+
     const matchStage: any = {};
     if (timeRange) {
       matchStage.createdAt = { $gte: timeRange.start, $lte: timeRange.end };
@@ -330,7 +330,7 @@ export class BillingService {
     const monthlyRevenue = activeSubscriptions
       .filter(sub => sub.billingInterval === 'monthly')
       .reduce((sum, sub) => sum + (sub.priceAtPurchase || 0), 0);
-    
+
     const yearlyRevenue = activeSubscriptions
       .filter(sub => sub.billingInterval === 'yearly')
       .reduce((sum, sub) => sum + ((sub.priceAtPurchase || 0) / 12), 0);
@@ -343,12 +343,12 @@ export class BillingService {
       { $match: { status: 'active' } },
       { $lookup: { from: 'pricingplans', localField: 'planId', foreignField: '_id', as: 'plan' } },
       { $unwind: '$plan' },
-      { 
-        $group: { 
-          _id: '$plan.name', 
+      {
+        $group: {
+          _id: '$plan.name',
           revenue: { $sum: '$priceAtPurchase' },
           count: { $sum: 1 }
-        } 
+        }
       },
       { $project: { planName: '$_id', revenue: 1, count: 1, _id: 0 } }
     ]);
@@ -430,7 +430,7 @@ export class BillingService {
       .sort({ createdAt: -1 })
       .limit(limit)
       .populate('subscriptionId');
-    
+
     return invoices;
   }
 }

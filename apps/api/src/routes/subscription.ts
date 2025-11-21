@@ -23,7 +23,7 @@ router.post(
   authOptionalSubscription,
   subscriptionController.createCheckoutSession
 );
-// Add a route specifically for handling Paystack redirects without requiring authentication
+// Add a route specifically for handling Nomba redirects without requiring authentication
 router.get('/verify', subscriptionController.verifyPaymentByReference);
 
 router.post(

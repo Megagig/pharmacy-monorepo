@@ -1,0 +1,65 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "compilerOptions": {
+        "strict": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strictBindCallApply": true,
+        "strictPropertyInitialization": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "moduleResolution": "bundler",
+        "allowSyntheticDefaultImports": true,
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUncheckedIndexedAccess": true,
+        "paths": {
+            "@pharmacy/types": [
+                "../../packages/types/src"
+            ],
+            "@pharmacy/api-client": [
+                "../../packages/api-client/src"
+            ],
+            "@pharmacy/hooks": [
+                "../../packages/hooks/src"
+            ],
+            "@pharmacy/utils": [
+                "../../packages/utils/src"
+            ],
+            "@pharmacy/store": [
+                "../../packages/store/src"
+            ],
+            "@pharmacy/constants": [
+                "../../packages/constants/src"
+            ],
+            "@pharmacy/ui": [
+                "../../packages/ui/src"
+            ],
+            "@web/*": [
+                "../../apps/web/src/*"
+            ],
+            "@mobile/*": [
+                "../../apps/mobile/src/*"
+            ],
+            "@api/*": [
+                "../../apps/api/src/*"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        ".turbo"
+    ]
+}

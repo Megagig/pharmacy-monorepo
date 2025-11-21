@@ -5,7 +5,7 @@ import Subscription from '../models/Subscription';
 import SubscriptionPlan from '../models/SubscriptionPlan';
 import User from '../models/User';
 import { emailService } from '../utils/emailService';
-import { paystackService } from '../services/paystackService';
+import { nombaService, NombaService } from '../services/nombaService';
 import Payment from '../models/Payment';
 import mongoose from 'mongoose';
 
@@ -402,27 +402,21 @@ export class SubscriptionManagementController {
         });
       }
 
-      // Create payment with Paystack
-      const paymentData = {
-        email: req.user!.email,
-        amount: plan.priceNGN * 100, // Convert to kobo
+      // Create payment with Nomba
+      const orderReference = `nomba_ws_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+
+      const orderData = {
+        orderReference,
+        customerId: req.user!._id.toString(),
+        customerEmail: req.user!.email,
+        amount: NombaService.formatAmount(plan.priceNGN),
         currency: 'NGN',
-        callback_url: req.body.callbackUrl || `${process.env.FRONTEND_URL}/workspace/subscription/success`,
-        metadata: {
-          userId: req.user!._id.toString(),
-          workspaceId: workspaceId.toString(),
-          planId: plan._id.toString(),
-          billingInterval,
-          tier: plan.tier,
-          customerName: `${req.user!.firstName} ${req.user!.lastName}`,
-          planName: plan.name,
-          workspaceName: workspace.name,
-        },
-        channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer'],
+        callbackUrl: req.body.callbackUrl || `${process.env.FRONTEND_URL}/workspace/subscription/success`,
+        accountId: nombaService.getAccountId(),
       };
 
       // Handle development mode
-      if (process.env.NODE_ENV === 'development' && !paystackService.isConfigured()) {
+      if (process.env.NODE_ENV === 'development' && !nombaService.isConfigured()) {
         const mockReference = `mock_ws_${Date.now()}_${workspaceId}`;
         const mockCheckoutUrl = `${process.env.FRONTEND_URL}/workspace/subscription/checkout?reference=${mockReference}&workspaceId=${workspaceId}&planId=${planId}`;
 
@@ -434,10 +428,16 @@ export class SubscriptionManagementController {
           currency: 'NGN',
           paymentReference: mockReference,
           status: 'pending',
-          paymentMethod: 'paystack',
+          paymentMethod: 'nomba',
           metadata: {
-            ...paymentData.metadata,
+            userId: req.user!._id.toString(),
             workspaceId: workspaceId.toString(),
+            planId: plan._id.toString(),
+            billingInterval,
+            tier: plan.tier,
+            customerName: `${req.user!.firstName} ${req.user!.lastName}`,
+            planName: plan.name,
+            workspaceName: workspace.name,
           },
         });
 
@@ -452,18 +452,18 @@ export class SubscriptionManagementController {
         });
       }
 
-      // Initialize payment with Paystack
-      if (!paystackService.isConfigured()) {
+      // Initialize payment with Nomba
+      if (!nombaService.isConfigured()) {
         return res.status(500).json({
           success: false,
           message: 'Payment service is not properly configured. Please contact support.',
         });
       }
 
-      const paymentResponse = await paystackService.initializeTransaction(paymentData);
+      const paymentResponse = await nombaService.createCheckoutOrder(orderData);
 
       if (!paymentResponse.success) {
-        console.error('Paystack payment initialization failed:', paymentResponse);
+        console.error('Nomba payment initialization failed:', paymentResponse);
         return res.status(400).json({
           success: false,
           message: paymentResponse.message || 'Failed to initialize payment',
@@ -477,21 +477,27 @@ export class SubscriptionManagementController {
         planId: plan._id,
         amount: plan.priceNGN,
         currency: 'NGN',
-        paymentReference: paymentResponse.data!.reference,
+        paymentReference: orderReference,
         status: 'pending',
-        paymentMethod: 'paystack',
+        paymentMethod: 'nomba',
         metadata: {
-          ...paymentData.metadata,
+          userId: req.user!._id.toString(),
           workspaceId: workspaceId.toString(),
+          planId: plan._id.toString(),
+          billingInterval,
+          tier: plan.tier,
+          customerName: `${req.user!.firstName} ${req.user!.lastName}`,
+          planName: plan.name,
+          workspaceName: workspace.name,
         },
       });
 
       res.json({
         success: true,
         data: {
-          authorization_url: paymentResponse.data!.authorization_url,
-          access_code: paymentResponse.data!.access_code,
-          reference: paymentResponse.data!.reference,
+          authorization_url: paymentResponse.data!.checkoutLink,
+          access_code: paymentResponse.data!.orderId,
+          reference: orderReference,
         },
       });
     } catch (error) {
@@ -538,10 +544,10 @@ export class SubscriptionManagementController {
         });
       }
 
-      // Verify payment with Paystack (skip for mock payments)
+      // Verify payment with Nomba (skip for mock payments)
       if (!paymentReference.startsWith('mock_')) {
-        const verificationResult = await paystackService.verifyTransaction(paymentReference);
-        if (!verificationResult.success || verificationResult.data?.status !== 'success') {
+        const verificationResult = await nombaService.verifyTransaction(paymentReference);
+        if (!verificationResult.success || verificationResult.data?.status !== 'success' && verificationResult.data?.status !== 'completed') {
           return res.status(400).json({
             success: false,
             message: 'Payment verification failed',
@@ -762,30 +768,20 @@ export class SubscriptionManagementController {
       }
 
       // For paid upgrades, create payment session
-      const paymentData = {
-        email: req.user!.email,
-        amount: upgradeAmount * 100, // Convert to kobo
+      const orderReference = `nomba_upgrade_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+
+      const orderData = {
+        orderReference,
+        customerId: req.user!._id.toString(),
+        customerEmail: req.user!.email,
+        amount: NombaService.formatAmount(upgradeAmount),
         currency: 'NGN',
-        callback_url: req.body.callbackUrl || `${process.env.FRONTEND_URL}/workspace/subscription/upgrade-success`,
-        metadata: {
-          userId: req.user!._id.toString(),
-          workspaceId: workspaceId.toString(),
-          planId: newPlan._id.toString(),
-          currentSubscriptionId: currentSubscription._id.toString(),
-          billingInterval,
-          tier: newPlan.tier,
-          upgradeAmount: upgradeAmount,
-          proratedDiscount: proratedDiscount,
-          customerName: `${req.user!.firstName} ${req.user!.lastName}`,
-          planName: newPlan.name,
-          workspaceName: workspace.name,
-          isUpgrade: true,
-        },
-        channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer'],
+        callbackUrl: req.body.callbackUrl || `${process.env.FRONTEND_URL}/workspace/subscription/upgrade-success`,
+        accountId: nombaService.getAccountId(),
       };
 
       // Handle development mode
-      if (process.env.NODE_ENV === 'development' && !paystackService.isConfigured()) {
+      if (process.env.NODE_ENV === 'development' && !nombaService.isConfigured()) {
         const mockReference = `mock_upgrade_${Date.now()}_${workspaceId}`;
 
         // Store pending payment record
@@ -796,8 +792,21 @@ export class SubscriptionManagementController {
           currency: 'NGN',
           paymentReference: mockReference,
           status: 'pending',
-          paymentMethod: 'paystack',
-          metadata: paymentData.metadata,
+          paymentMethod: 'nomba',
+          metadata: {
+            userId: req.user!._id.toString(),
+            workspaceId: workspaceId.toString(),
+            planId: newPlan._id.toString(),
+            currentSubscriptionId: currentSubscription._id.toString(),
+            billingInterval,
+            tier: newPlan.tier,
+            upgradeAmount: upgradeAmount,
+            proratedDiscount: proratedDiscount,
+            customerName: `${req.user!.firstName} ${req.user!.lastName}`,
+            planName: newPlan.name,
+            workspaceName: workspace.name,
+            isUpgrade: true,
+          },
         });
 
         return res.json({
@@ -813,18 +822,18 @@ export class SubscriptionManagementController {
         });
       }
 
-      // Initialize payment with Paystack
-      if (!paystackService.isConfigured()) {
+      // Initialize payment with Nomba
+      if (!nombaService.isConfigured()) {
         return res.status(500).json({
           success: false,
           message: 'Payment service is not properly configured. Please contact support.',
         });
       }
 
-      const paymentResponse = await paystackService.initializeTransaction(paymentData);
+      const paymentResponse = await nombaService.createCheckoutOrder(orderData);
 
       if (!paymentResponse.success) {
-        console.error('Paystack upgrade payment initialization failed:', paymentResponse);
+        console.error('Nomba upgrade payment initialization failed:', paymentResponse);
         return res.status(400).json({
           success: false,
           message: paymentResponse.message || 'Failed to initialize upgrade payment',
@@ -838,18 +847,31 @@ export class SubscriptionManagementController {
         planId: newPlan._id,
         amount: upgradeAmount,
         currency: 'NGN',
-        paymentReference: paymentResponse.data!.reference,
+        paymentReference: orderReference,
         status: 'pending',
-        paymentMethod: 'paystack',
-        metadata: paymentData.metadata,
+        paymentMethod: 'nomba',
+        metadata: {
+          userId: req.user!._id.toString(),
+          workspaceId: workspaceId.toString(),
+          planId: newPlan._id.toString(),
+          currentSubscriptionId: currentSubscription._id.toString(),
+          billingInterval,
+          tier: newPlan.tier,
+          upgradeAmount: upgradeAmount,
+          proratedDiscount: proratedDiscount,
+          customerName: `${req.user!.firstName} ${req.user!.lastName}`,
+          planName: newPlan.name,
+          workspaceName: workspace.name,
+          isUpgrade: true,
+        },
       });
 
       res.json({
         success: true,
         data: {
-          authorization_url: paymentResponse.data!.authorization_url,
-          access_code: paymentResponse.data!.access_code,
-          reference: paymentResponse.data!.reference,
+          authorization_url: paymentResponse.data!.checkoutLink,
+          access_code: paymentResponse.data!.orderId,
+          reference: orderReference,
           upgradeAmount: upgradeAmount,
           proratedDiscount: proratedDiscount,
         },
@@ -1090,10 +1112,10 @@ export class SubscriptionManagementController {
         });
       }
 
-      // Verify payment with Paystack (skip for mock payments)
+      // Verify payment with Nomba (skip for mock payments)
       if (!paymentReference.startsWith('mock_')) {
-        const verificationResult = await paystackService.verifyTransaction(paymentReference);
-        if (!verificationResult.success || verificationResult.data?.status !== 'success') {
+        const verificationResult = await nombaService.verifyTransaction(paymentReference);
+        if (!verificationResult.success || verificationResult.data?.status !== 'success' && verificationResult.data?.status !== 'completed') {
           return res.status(400).json({
             success: false,
             message: 'Payment verification failed',

@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import BillingInvoice, { IBillingInvoice } from '../models/BillingInvoice';
 import Payment, { IPayment } from '../models/Payment';
 import Patient, { IPatient } from '../models/Patient';
-import { nombaService } from './nombaService';
+import { nombaService, NombaService } from './nombaService';
 import logger from '../utils/logger';
 
 export interface PatientInvoiceFilter {
@@ -304,7 +304,7 @@ export class PatientBillingService {
     try {
       // Get invoice details
       const invoice = await this.getInvoiceDetails(patientId, invoiceId, workplaceId);
-      
+
       if (invoice.status !== 'open') {
         throw new Error('Invoice is not available for payment');
       }
@@ -342,27 +342,29 @@ export class PatientBillingService {
       // Process payment based on method
       let paymentResult;
       if (paymentData.paymentMethod === 'nomba') {
-        paymentResult = await nombaService.createPaymentIntent({
-          amount: paymentData.amount,
+        const orderReference = `nomba_patient_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+
+        paymentResult = await nombaService.createCheckoutOrder({
+          orderReference,
+          customerId: patientId,
+          customerEmail: paymentData.metadata?.customerEmail || 'patient@example.com',
+          amount: NombaService.formatAmount(paymentData.amount),
           currency: paymentData.currency || invoice.currency,
-          description: paymentData.description || `Payment for invoice ${invoice.invoiceNumber}`,
-          metadata: {
-            paymentId: payment._id.toString(),
-            invoiceId: invoice._id.toString(),
-            patientId,
-            workplaceId
-          }
+          callbackUrl: paymentData.metadata?.callbackUrl || `${process.env.FRONTEND_URL}/patient/payment/success`,
+          accountId: nombaService.getAccountId(),
         });
 
-        // Update payment with Nomba details
-        payment.paymentReference = paymentResult.reference;
-        payment.transactionId = paymentResult.transactionId;
-        await payment.save();
+        if (paymentResult.success && paymentResult.data) {
+          // Update payment with Nomba details
+          payment.paymentReference = orderReference;
+          payment.transactionId = paymentResult.data.orderId;
+          await payment.save();
+        }
       }
 
       return {
         paymentId: payment._id.toString(),
-        paymentUrl: paymentResult?.paymentUrl,
+        paymentUrl: paymentResult?.success ? paymentResult.data?.checkoutLink : undefined,
         paymentReference: payment.paymentReference || payment.transactionId,
         status: payment.status
       };
@@ -421,12 +423,12 @@ export class PatientBillingService {
         if (invoice) {
           invoice.amountPaid += payment.amount;
           invoice.calculateTotals();
-          
+
           if (invoice.amountDue <= 0) {
             invoice.status = 'paid';
             invoice.paidAt = new Date();
           }
-          
+
           await invoice.save();
         }
       }
@@ -494,7 +496,7 @@ export class PatientBillingService {
     try {
       // Get invoice details
       const invoice = await this.getInvoiceDetails(patientId, invoiceId, workplaceId);
-      
+
       // Verify patient has insurance info
       const patient = await Patient.findById(patientId);
       if (!patient?.insuranceInfo?.provider) {
@@ -518,7 +520,7 @@ export class PatientBillingService {
       // 1. Submit to insurance API
       // 2. Store claim in database
       // 3. Set up webhooks for status updates
-      
+
       logger.info('Insurance claim submitted:', {
         claimId: claim.id,
         patientId,

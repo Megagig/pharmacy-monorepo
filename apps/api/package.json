@@ -1,7 +1,7 @@
 {
-  "name": "pharma-care-backend",
+  "name": "api",
   "version": "1.0.0",
-  "description": "Backend API for Pharmaceutical Care SaaS application",
+  "description": "Backend API for Pharmacy Copilot application",
   "main": "dist/server.js",
   "scripts": {
     "build": "npm install && npx tsc && echo 'Build completed successfully! Check dist/ directory.'",
