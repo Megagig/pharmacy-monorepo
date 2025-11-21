@@ -545,6 +545,43 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@22.19.1)(@vitest/ui@3.2.4)(jsdom@26.1.0(canvas@3.2.0))
 
+  packages/api-client:
+    dependencies:
+      '@pharmacy/constants':
+        specifier: workspace:*
+        version: link:../constants
+      '@pharmacy/types':
+        specifier: workspace:*
+        version: link:../types
+      '@tanstack/react-query':
+        specifier: ^5.62.11
+        version: 5.90.10(react@18.3.1)
+      axios:
+        specifier: ^1.7.9
+        version: 1.13.2
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/react':
+        specifier: ^18.3.18
+        version: 18.3.27
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.2
+
+  packages/constants:
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.2
+
   packages/eslint-config:
     devDependencies:
       '@eslint/js':
@@ -580,6 +617,56 @@ importers:
       typescript-eslint:
         specifier: ^8.46.3
         version: 8.47.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.2)
+
+  packages/hooks:
+    dependencies:
+      '@pharmacy/api-client':
+        specifier: workspace:*
+        version: link:../api-client
+      '@pharmacy/constants':
+        specifier: workspace:*
+        version: link:../constants
+      '@pharmacy/types':
+        specifier: workspace:*
+        version: link:../types
+      '@tanstack/react-query':
+        specifier: ^5.62.11
+        version: 5.90.10(react@18.3.1)
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/react':
+        specifier: ^18.3.18
+        version: 18.3.27
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.2
+
+  packages/store:
+    dependencies:
+      '@pharmacy/types':
+        specifier: workspace:*
+        version: link:../types
+      zustand:
+        specifier: ^5.0.2
+        version: 5.0.8(@types/react@18.3.27)(immer@10.2.0)(react@18.3.1)(use-sync-external-store@1.6.0(react@18.3.1))
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/react':
+        specifier: ^18.3.18
+        version: 18.3.27
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.2
 
   packages/types:
     dependencies:
@@ -625,6 +712,19 @@ importers:
         version: 9.39.1(jiti@2.6.1)
       typescript:
         specifier: 5.9.2
+        version: 5.9.2
+
+  packages/utils:
+    dependencies:
+      date-fns:
+        specifier: ^3.6.0
+        version: 3.6.0
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: ^5.9.2
         version: 5.9.2
 
 packages:
@@ -4472,6 +4572,9 @@ packages:
 
   datadog-metrics@0.9.3:
     resolution: {integrity: sha512-BVsBX2t+4yA3tHs7DnB5H01cHVNiGJ/bHA8y6JppJDyXG7s2DLm6JaozPGpgsgVGd42Is1CHRG/yMDQpt877Xg==, tarball: https://registry.npmjs.org/datadog-metrics/-/datadog-metrics-0.9.3.tgz}
+
+  date-fns@3.6.0:
+    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==, tarball: https://registry.npmjs.org/date-fns/-/date-fns-3.6.0.tgz}
 
   date-fns@4.1.0:
     resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==, tarball: https://registry.npmjs.org/date-fns/-/date-fns-4.1.0.tgz}
@@ -14385,6 +14488,8 @@ snapshots:
       dogapi: 2.8.4
     transitivePeerDependencies:
       - supports-color
+
+  date-fns@3.6.0: {}
 
   date-fns@4.1.0: {}
 

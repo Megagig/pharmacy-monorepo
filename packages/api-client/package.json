@@ -1,0 +1,46 @@
+{
+    "name": "@pharmacy/api-client",
+    "version": "1.0.0",
+    "description": "Shared API client with axios and TanStack Query configuration",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+        },
+        "./axios": {
+            "types": "./dist/axios.d.ts",
+            "import": "./dist/axios.js"
+        },
+        "./query": {
+            "types": "./dist/query.d.ts",
+            "import": "./dist/query.js"
+        }
+    },
+    "scripts": {
+        "build": "tsc --build",
+        "dev": "tsc --watch",
+        "clean": "tsc --build --clean",
+        "type-check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@pharmacy/types": "workspace:*",
+        "@pharmacy/constants": "workspace:*",
+        "@tanstack/react-query": "^5.62.11",
+        "axios": "^1.7.9"
+    },
+    "devDependencies": {
+        "@repo/typescript-config": "workspace:*",
+        "@types/react": "^18.3.18",
+        "react": "^18.3.1",
+        "typescript": "^5.9.2"
+    },
+    "peerDependencies": {
+        "react": "^18.0.0"
+    },
+    "files": [
+        "dist"
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "name": "@pharmacy/store",
+    "version": "1.0.0",
+    "description": "Shared Zustand stores for UI state management",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+        }
+    },
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "clean": "rm -rf dist",
+        "type-check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@pharmacy/types": "workspace:*",
+        "zustand": "^5.0.2"
+    },
+    "devDependencies": {
+        "@repo/typescript-config": "workspace:*",
+        "@types/react": "^18.3.18",
+        "react": "^18.3.1",
+        "typescript": "^5.9.2"
+    },
+    "peerDependencies": {
+        "react": "^18.0.0"
+    },
+    "files": [
+        "dist"
+    ]
+}

@@ -1,0 +1,42 @@
+{
+    "name": "@pharmacy/utils",
+    "version": "1.0.0",
+    "description": "Shared utility functions for Pharmacy Copilot monorepo",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+        },
+        "./date": {
+            "types": "./dist/date.d.ts",
+            "import": "./dist/date.js"
+        },
+        "./format": {
+            "types": "./dist/format.d.ts",
+            "import": "./dist/format.js"
+        },
+        "./validation": {
+            "types": "./dist/validation.d.ts",
+            "import": "./dist/validation.js"
+        }
+    },
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "clean": "rm -rf dist",
+        "type-check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "date-fns": "^3.6.0"
+    },
+    "devDependencies": {
+        "@repo/typescript-config": "workspace:*",
+        "typescript": "^5.9.2"
+    },
+    "files": [
+        "dist"
+    ]
+}
