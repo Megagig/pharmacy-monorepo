@@ -1,0 +1,39 @@
+{
+    "name": "@pharmacy/constants",
+    "version": "1.0.0",
+    "description": "Shared constants for Pharmacy Copilot monorepo",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+        },
+        "./api": {
+            "types": "./dist/api.d.ts",
+            "import": "./dist/api.js"
+        },
+        "./roles": {
+            "types": "./dist/roles.d.ts",
+            "import": "./dist/roles.js"
+        },
+        "./nigeria": {
+            "types": "./dist/nigeria.d.ts",
+            "import": "./dist/nigeria.js"
+        }
+    },
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "clean": "rm -rf dist",
+        "type-check": "tsc --noEmit"
+    },
+    "devDependencies": {
+        "@repo/typescript-config": "workspace:*",
+        "typescript": "^5.9.2"
+    },
+    "files": [
+        "dist"
+    ]
+}
